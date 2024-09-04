@@ -1,0 +1,87 @@
+/* Home.css */
+.motto-section {
+    border-radius: 0.75rem;
+    font-size: 3rem;
+    display: flex;
+    justify-content: space-between;
+    padding: 3rem;
+    background: linear-gradient(to right, black, #380760);
+  }
+  
+  .feature-card {
+    margin-left: 7rem;
+    transform: skewY(-3deg);
+  }
+  
+  .feature-card:nth-child(odd) {
+    transform: skewY(3deg);
+  }
+  
+  .feature-card-content {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    transition-duration: 500ms;
+    width: 16rem;
+    height: 18rem;
+    padding: 0.5rem;
+  }
+  
+  .feature-background {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    transition-duration: 500ms;
+  }
+  
+  .feature-content {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.125rem;
+    font-style: italic;
+    font-weight: 800;
+    color: red;
+    opacity: 0;
+    transition: transform 300ms, opacity 300ms;
+  }
+  
+  .feature-card-content:hover .feature-background {
+    transform: scale(1.1);
+  }
+  
+  .feature-card-content:hover .feature-content {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  
+  .feature-description {
+    position: absolute;
+    width: 14rem;
+    left: 0;
+    padding: 1.25rem;
+    transition: transform 500ms, opacity 500ms;
+  }
+  
+  .feature-description-bg {
+    position: absolute;
+    z-index: -10;
+    width: 16rem;
+    height: 7rem;
+    opacity: 0;
+    transition: opacity 300ms;
+  }
+  
+  .feature-card-content:hover .feature-description-bg {
+    opacity: 0.9;
+    background-color: #380760;
+  }
+  
+  .feature-card-content:hover .feature-description {
+    transform: translateY(5rem);
+    opacity: 1;
+  }
+  

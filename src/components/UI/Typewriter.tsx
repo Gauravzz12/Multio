@@ -1,14 +1,10 @@
-"use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { cn } from "../../utils/utils";
-import { motion} from "framer-motion";
-
-
+import { motion } from "framer-motion";
 
 export const TypewriterEffectSmooth = ({
   words,
   className,
-
 }: {
   words: {
     text: string;
@@ -17,12 +13,19 @@ export const TypewriterEffectSmooth = ({
   className?: string;
   cursorClassName?: string;
 }) => {
+  const [animate, setAnimate] = useState(true);
+
+  useEffect(() => {
+    setAnimate(true);
+  }, []);
+
   const wordsArray = words.map((word) => {
     return {
       ...word,
       text: word.text.split(""),
     };
   });
+
   const renderWords = () => {
     return (
       <div>
@@ -52,11 +55,9 @@ export const TypewriterEffectSmooth = ({
         initial={{
           width: "0%",
         }}
-        whileInView={{
-          width: "fit-content",
-        }}
+        animate={animate ? { width: "fit-content" } : {}}
         transition={{
-          duration: 1.5,
+          duration: 1.2,
           ease: "linear",
           delay: 0.3,
         }}
@@ -79,11 +80,9 @@ export const TypewriterEffectSmooth = ({
         }}
         transition={{
           duration: 0.1,
-
           repeat: Infinity,
           repeatType: "reverse",
         }}
-        
       ></motion.span>
     </div>
   );
