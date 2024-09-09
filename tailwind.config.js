@@ -7,11 +7,9 @@ module.exports = {
         "reggae-one": ["Reggae One"],
       },
       dropShadow: {
-        "3xl": "35px 35px 35px rgba(241, 3, 170,0.3)",
+        "3xl": "-60px 60px 80px rgba(241, 3, 170,0.5)",
       },
-      backgroundImage: {
-        "Multi": "url('../src/assets/images/1.png')",
-      },
+     
       screens: {
         xs: "480px",
         ss: "620px",
