@@ -12,12 +12,14 @@ function App() {
   return (
     <div className="w-full overflow-hidden ">
     <Router >
-          <Header />
+          {/* <Header /> */}
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} /> 
+            <Route path="/Login" element={<Login />} /> 
+            <Route path="/Register" element={<Register />} /> 
           </Routes>
-          <Footer />
+          {/* <Footer /> */}
     </Router>
     </div>
   );

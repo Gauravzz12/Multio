@@ -1,11 +1,101 @@
-import React from 'react'
+import React from "react";
+import {
+  AiOutlineUser,
+  AiOutlineMail,
+  AiOutlineLock,
+  AiOutlineGithub,
+} from "react-icons/ai";
+import { FcGoogle } from "react-icons/fc";
 
-const Registration = () => {
+
+const Register = () => {
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <div className="Container h-screen w-screen flex justify-center items-center relative">
+      <div className=" absolute  h-screen w-screen brightness-[0.3] bg-[url('../src/assets/images/Auth/Authbg.png')] bg-no-repeat bg-center   "></div>
+      <form className="Login   w-fit h-fit  bg-[#30303059]/65 backdrop-blur-lg  rounded-xl flex flex-col p-6 gap-1 border-[#4C4C4C40] border-2">
+        <div className="Heading flex items-center justify-start mb-3 font-mono ">
+          <img
+            src="../src/assets/images/Auth/Logo.png"
+            className="w-16 bg-contain"
+            alt="Logo"
+          />
+          <p className="Text text-white ml-2 text-3xl font-semibold tracking-wider font-Outfit">
+            MULTIO
+          </p>
+        </div>
+        <p className="Text text-white ml-2 text-[26px] font-normal">
+          Create Your Gaming Profile
+        </p>
+        <p className="Text text-white ml-2 text-sm font-normal ">
+          Sign up to unlock multiplayer fun!
+        </p>
 
-export default Registration
+        <div className="Inputs flex flex-col gap-4 ml-4 mt-4 mr-6" >
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
+            <div className="InputField w-[340px] flex items-center bg-[#212121] rounded-lg p-[12px] border-gradient-to-r from-cyan-500 to-blue-500">
+              <AiOutlineUser className="text-white mr-2" />
+              <input
+                className="Username bg-transparent text-white placeholder:text-white placeholder:text-sm w-full h-full focus:outline-none"
+                placeholder="Username"
+              />
+            </div>
+          </div>
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
+            <div className="InputField flex items-center bg-[#212121] rounded-lg p-[12px]">
+              <AiOutlineMail className="text-white mr-2" />
+              <input
+                className="Email bg-transparent text-white placeholder:text-white placeholder:text-sm w-full focus:outline-none"
+                placeholder="Email"
+              />
+            </div>
+          </div>
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
+            <div className="InputField flex items-center bg-[#212121] rounded-lg p-[12px]">
+              <AiOutlineLock className="text-white mr-2" />
+              <input
+                className="Password bg-transparent text-white placeholder:text-white placeholder:text-sm w-full focus:outline-none"
+                type="password"
+                placeholder="Password"
+              />
+            </div>
+          </div>
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
+            <div className="InputField flex items-center bg-[#212121] rounded-lg p-[12px]">
+              <AiOutlineLock className="text-white mr-2" />
+              <input
+                className="Confirm bg-transparent text-white placeholder:text-white placeholder:text-sm w-full focus:outline-none"
+                type="password"
+                placeholder="Confirm Password"
+              />
+            </div>
+          </div>
+          <button
+            className="py-2 px-6 bg-[#484848] text-base border-none text-[#A1A1A1]"
+            style={{
+              clipPath:
+                "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
+            }}
+          >
+            SIGN IN
+          </button>
+          <div className="flex  items-center gap-4 justify-center">
+            <hr className="w-full bg-[#484848] h-[2px] border-none"></hr>
+            <span className="text-[#484848]">Or</span>
+            <hr className="w-full bg-[#484848] h-[2px] border-none"></hr>
+          </div>
+          <div className="Methods flex justify-center gap-2 -mt-2 items-center">
+            <FcGoogle className="text-white text-4xl cursor-pointer" />
+            <AiOutlineGithub className="text-white text-4xl cursor-pointer" />
+          </div>
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80] to-[#5612E180] p-[0.8px] shadow-lg">
+            <button className="h-full w-full bg-gradient-to-b from-[#393838]/100 from-20% to-[#3a3939]/80 to-100% text-white text-sm rounded-lg py-2 px-6 text-center">
+              Continue as a Guest
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default Register;
