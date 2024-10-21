@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   AiOutlineUser,
   AiOutlineMail,
@@ -7,12 +7,15 @@ import {
 } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 
+
 const Register = () => {
-
-
+  const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+  const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+  const EMAIL_REGEX=/^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+  const [passMatch,setPassMatch]=useState(true);
   
   return (
-    <div className="container h-screen w-screen flex justify-center items-center relative">
+    <div className="Container h-screen w-screen flex justify-center items-center relative">
       <div className="absolute h-screen w-screen brightness-[0.3] bg-[url('../src/assets/images/Auth/Authbg.png')] bg-no-repeat bg-center bg-cover"></div>
 
       <main
@@ -150,15 +153,6 @@ const Register = () => {
             </button>
           </section>
 
-          {/* Guest Button */}
-          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80] to-[#5612E180] p-[0.8px] shadow-lg">
-            <button
-              className="h-full w-full bg-gradient-to-b from-[#393838]/100 to-[#3a3939]/80 text-white text-sm rounded-lg py-2 px-6 text-center"
-              aria-label="Continue as guest"
-            >
-              Continue as a Guest
-            </button>
-          </div>
         </section>
       </main>
     </div>

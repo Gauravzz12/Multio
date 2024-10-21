@@ -1,26 +1,45 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Register from "./pages/Registration";
+import Games from "./pages/Games";
+import Profile from "./pages/Profile";
 
 function App() {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        {
+          path: "/Home",
+          element: <Home />,
+        },
 
-  
+        {
+          path: "/Games",
+          element: <Games />,
+        },
+        {
+          path: "/Profile",
+          element: <Profile />,
+        },
+      ],
+    },
+    {
+      path: "/Register",
+      element: <Register />,
+    },
+    {
+      path: "/Login",
+      element: <Login />,
+    },
+  ]);
   return (
     <div className="w-full overflow-hidden ">
-    <Router >
-          {/* <Header /> */}
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} /> 
-            <Route path="/Login" element={<Login />} /> 
-            <Route path="/Register" element={<Register />} /> 
-          </Routes>
-          {/* <Footer /> */}
-    </Router>
+      <RouterProvider router={router} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   AiOutlineMail,
   AiOutlineLock,
@@ -9,17 +9,20 @@ import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { PiEyeBold } from "react-icons/pi";
 
-const Login = () => {
+const Login = React.memo(() => {
   const navigate = useNavigate();
-  const [showPass,setShowPass]=useState(true);
-  
+  const [showPass, setShowPass] = useState(true);
+  const toggleShowPass = useCallback((e) => {
+    e.preventDefault();
+    setShowPass((prevShowPass) => !prevShowPass);
+  }, []);
 
   return (
-    <div className="container h-screen w-screen flex flex-grow justify-center items-center relative">
-      <div className="absolute h-screen w-screen brightness-[0.3] bg-[url('../src/assets/images/Auth/Authbg.png')] bg-no-repeat bg-center bg-cover"></div>
-
-      <main
-        className="login-form w-fit h-fit bg-[#30303059]/65 backdrop-blur-lg rounded-xl flex flex-col p-6 gap-1 border-[#4C4C4C40] border-2"
+    <div className="Container h-screen w-screen flex justify-center items-center relative">
+      <div className=" inset-0 absolute bg-center h-screen w-screen brightness-[0.3] bg-[url('../src/assets/images/Auth/Authbg.png')] bg-no-repeat bg-cover "></div>
+    
+      <form
+        className="login-form w-fit h-fit bg-[#30303059]/65 backdrop-blur-lg rounded-xl flex flex-col p-6 gap-1 border-[#4C4C4C40] border-2 bg-center"
         aria-label="Login Form"
       >
         {/* Header Section */}
@@ -68,13 +71,12 @@ const Login = () => {
               <input
                 id="password"
                 className="bg-transparent text-white placeholder:text-white placeholder:text-sm w-full focus:outline-none"
-                type={showPass?"password":"text"}
+                type={showPass ? "password" : "text"}
                 placeholder="Password"
                 aria-label="Password"
               />
-              <button aria-label="Toggle Password Visibility" onClick={()=>setShowPass(!showPass)}>
-              {showPass?<PiEyeClosedBold className="text-white size-5" />:<PiEyeBold className="text-white size-5"/>}
-                
+              <button aria-label="Toggle Password Visibility" onClick={toggleShowPass}>
+                {showPass ? <PiEyeClosedBold className="text-white size-5" /> : <PiEyeBold className="text-white size-5" />}
               </button>
             </div>
           </div>
@@ -129,14 +131,14 @@ const Login = () => {
 
           {/* Guest Login */}
           <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80] to-[#5612E180] p-[0.8px] shadow-lg">
-            <button className="h-full w-full bg-gradient-to-b from-[#393838]/100 to-[#3a3939]/80 text-white text-sm rounded-lg py-2 px-6 text-center" aria-label="Continue as guest">
+            <button className="h-full w-full bg-gradient-to-b from-[#393838]/100 to-[#3a3939]/80 text-white text-sm rounded-lg py-2 px-6 text-center font-semibold tracking-wide" aria-label="Continue as guest">
               Continue as a Guest
             </button>
           </div>
         </section>
-      </main>
+      </form>
     </div>
   );
-};
+});
 
 export default Login;

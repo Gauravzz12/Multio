@@ -1,5 +1,4 @@
 import React from "react";
-import { TypeWriterText } from "../components/UI/TypeWriterText";
 import img from "../assets/images/hero.png";
 import feature from "../assets/images/Features/features.png";
 import Popular from "../assets/images/Popular.jpg";
@@ -45,11 +44,7 @@ function Home() {
           {textGroups.map((group, groupIndex) => (
             <div key={groupIndex} className="flex flex-row mb-4">
               {group.map((item, itemIndex) => (
-                <TypeWriterText
-                  key={itemIndex}
-                  text={item.text}
-                  color={item.color}
-                />
+                <h1 className={`${item.color} tracking-wider font-reggae-one italic `} >{item.text}</h1>
               ))}
             </div>
           ))}
