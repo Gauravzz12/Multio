@@ -23,24 +23,24 @@ function Footer() {
             <br></br>
           </ol>
         </div>
-        <form class="bg-gradient-to-r from-[#7b7fc7] to-[#3d258b] w-[90vw] md:w-[50vw] p-6 rounded-lg shadow-md">
-          <div class="mb-4 bg-red">
+        <form className="bg-gradient-to-r from-[#7b7fc7] to-[#3d258b] w-[90vw] md:w-[50vw] p-6 rounded-lg shadow-md">
+          <div className="mb-4 bg-red">
             <label
-              for="title"
-              class="block text-gray-700 text-sm font-bold mb-2 "
+              htmlFor="title"
+              className="block text-gray-700 text-sm font-bold mb-2 "
             >
               Title
             </label>
             <input
               placeholder="Enter title"
               type="text"
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-blue-950"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-blue-950"
             />
           </div>
-          <div class="mb-4">
+          <div className="mb-4">
             <label
-              for="content"
-              class="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="content"
+              className="block text-gray-700 text-sm font-bold mb-2"
             >
               Message
             </label>
@@ -48,17 +48,17 @@ function Footer() {
               rows="5"
               placeholder="Enter your content"
               id="content"
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-blue-950"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline bg-blue-950"
             ></textarea>
           </div>
-          <div class="flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <button
               type="submit"
-              class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-sm hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-sm hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Post
             </button>
-            <div class="flex items-center"></div>
+            <div className="flex items-center"></div>
           </div>
         </form>
       </main>

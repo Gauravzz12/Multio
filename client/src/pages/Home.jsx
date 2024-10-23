@@ -41,10 +41,10 @@ function Home() {
     <main className=" m-0  bg-black text-white font-bold flex flex-col scroll-smooth ">
       <section className="motto rounded pl-24 text-5xl flex justify-between bg-gradient-to-r from-[#020530] to-[#13063e] p-12">
         <article className="flex flex-col items-center justify-center ">
-          {textGroups.map((group, groupIndex) => (
-            <div key={groupIndex} className="flex flex-row mb-4">
+          {textGroups.map((group, index) => (
+            <div key={index} className="flex flex-row mb-4">
               {group.map((item, itemIndex) => (
-                <h1 className={`${item.color} tracking-wider font-reggae-one italic `} >{item.text}</h1>
+                <h1 className={`${item.color} tracking-wider font-reggae-one italic `} key={itemIndex} >{item.text}</h1>
               ))}
             </div>
           ))}
