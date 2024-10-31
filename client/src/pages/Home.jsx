@@ -5,16 +5,16 @@ import Popular from "../assets/images/Popular.jpg";
 function Home() {
   const textGroups = [
     [
-      { text: "Welcome To", color: "text-white" },
-      { text: "Multio", color: "text-[#a908ff]" },
+      { text: "Welcome To ", color: "text-white" },
+      { text: " Multio", color: "text-[#a908ff]" },
     ],
     [
       { text: "Your", color: "text-white" },
-      { text: "Multiplayer", color: "text-[#a908ff]" },
+      { text: " Multiplayer", color: "text-[#a908ff]" },
     ],
     [
-      { text: "Gaming", color: "text-[#a908ff]" },
-      { text: "Destination", color: "text-white" },
+      { text: " Gaming", color: "text-[#a908ff]" },
+      { text: " Destination", color: "text-white" },
     ],
   ];
 
@@ -38,13 +38,20 @@ function Home() {
   ];
 
   return (
-    <main className=" m-0  bg-black text-white font-bold flex flex-col scroll-smooth ">
+    <main className="m-0 bg-black text-white font-bold flex flex-col scroll-smooth">
       <section className="motto rounded pl-24 text-5xl flex justify-between bg-gradient-to-r from-[#020530] to-[#13063e] p-12">
-        <article className="flex flex-col items-center justify-center ">
+        <article className="flex flex-col items-center justify-center">
           {textGroups.map((group, index) => (
             <div key={index} className="flex flex-row mb-4">
               {group.map((item, itemIndex) => (
-                <h1 className={`${item.color} tracking-wider font-reggae-one italic `} key={itemIndex} >{item.text}</h1>
+                <h1
+                className={`${item.color} tracking-wider font-reggae-one italic`}
+                key={itemIndex}
+                style={{ marginRight: "1rem" }} 
+              >
+                {item.text}
+              </h1>
+              
               ))}
             </div>
           ))}
@@ -120,7 +127,6 @@ function Home() {
               alt="Hero"
               className="object-cover rounded-lg "
             />
-            
           </picture>
         </div>
         <div className="flex gap-5">
@@ -144,7 +150,6 @@ function Home() {
           ></div>
         </div>
       </section>
-      
     </main>
   );
 }

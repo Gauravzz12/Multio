@@ -7,12 +7,18 @@ import {
   AiOutlineInfoCircle,
 } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
+import { PiEyeClosedBold, PiEyeBold } from "react-icons/pi";
 import { toast } from "react-toastify";
+import { useRegisterMutation } from "./authApiSlice";
+import { useNavigate } from "react-router-dom";
+import Loader from "../../components/Loader";
+
 const Register = () => {
   const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
   const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
   const EMAIL_REGEX = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
-
+  const [register, { isLoading }] = useRegisterMutation();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     userName: "",
@@ -20,6 +26,8 @@ const Register = () => {
   });
   const [confirmPwd, setConfirmPwd] = useState("");
   const [isPwdSame, setIsPwdSame] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     setIsPwdSame(comparePwd());
@@ -33,7 +41,7 @@ const Register = () => {
 
   const handlePwd = (e) => setConfirmPwd(e.target.value);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (
       !USER_REGEX.test(formData.userName) ||
@@ -42,11 +50,26 @@ const Register = () => {
     ) {
       toast.error("Please enter valid data");
     } else {
-      toast.success("Form Submitted Successfully");
+      try {
+        const res = await register({ ...formData }).unwrap();
+        toast.success(res.message);
+        navigate("/Login");
+      } catch (err) {
+        if (err.status === 409) {
+          toast.warn(err.data.message);
+        } else if (err.status === 500) {
+          toast.error(err.data.message);
+        } else {
+          toast.error("An error occurred during registration");
+          console.log(err);
+        }
+      }
     }
   };
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="Container h-screen w-screen flex justify-center items-center relative">
       <div className="absolute h-screen w-screen brightness-[0.3] bg-[url('../src/assets/images/Auth/Authbg.png')] bg-no-repeat bg-center bg-cover"></div>
 
@@ -70,6 +93,7 @@ const Register = () => {
           aria-labelledby="inputs"
           onSubmit={handleSubmit}
         >
+          {/* Username Input */}
           <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
             <label htmlFor="username" className="sr-only">
               Username
@@ -85,16 +109,10 @@ const Register = () => {
                 required
                 onChange={handleInput}
               />
-              <div className="group relative ml-2">
-                <AiOutlineInfoCircle className="text-gray-400 cursor-pointer" />
-                <div className="absolute w-64 bg-gray-900 text-white text-xs rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -top-8 -left-40">
-                  Username must be 4-24 characters long, start with a letter,
-                  and can include letters, numbers, hyphens, and underscores.
-                </div>
-              </div>
             </div>
           </div>
 
+          {/* Email Input */}
           <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
             <label htmlFor="email" className="sr-only">
               Email
@@ -111,15 +129,10 @@ const Register = () => {
                 required
                 onChange={handleInput}
               />
-              <div className="group relative ml-2">
-                <AiOutlineInfoCircle className="text-gray-400 cursor-pointer" />
-                <div className="absolute w-64 bg-gray-900 text-white text-xs rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -top-8 -left-24">
-                  Enter a valid email address (e.g., user@example.com).
-                </div>
-              </div>
             </div>
           </div>
 
+          {/* Password Input */}
           <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
             <label htmlFor="password" className="sr-only">
               Password
@@ -128,7 +141,7 @@ const Register = () => {
               <AiOutlineLock className="text-white mr-2" />
               <input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="bg-transparent text-white placeholder:text-white placeholder:text-sm w-full focus:outline-none"
                 placeholder="Password"
                 aria-label="Password"
@@ -136,39 +149,48 @@ const Register = () => {
                 required
                 onChange={handleInput}
               />
-              <div className="group relative ml-2">
-                <AiOutlineInfoCircle className="text-gray-400 cursor-pointer" />
-                <div className="absolute w-64 bg-gray-900 text-white text-xs rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -top-8 -left-40">
-                  Password must be 8-24 characters long, and include at least
-                  one uppercase, lowercase, digit, and special character
-                  (!@#$%).
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-white ml-2"
+              >
+                {showPassword ? <PiEyeBold /> : <PiEyeClosedBold />}
+              </button>
             </div>
           </div>
 
+          {/* Confirm Password Input */}
           <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
             <label htmlFor="confirm-password" className="sr-only">
               Confirm Password
             </label>
-            <div className="input-field flex items-center bg-[#212121] rounded-lg p-[12px]">
+            <div className="input-field flex items-center bg-[#212121] rounded-lg p-[12px] relative">
               <AiOutlineLock className="text-white mr-2" />
               <input
                 id="confirm-password"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 className="bg-transparent text-white placeholder:text-white placeholder:text-sm w-full focus:outline-none"
                 placeholder="Confirm Password"
                 aria-label="Confirm Password"
                 required
                 onChange={handlePwd}
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="text-white ml-2"
+              >
+                {showConfirmPassword ? <PiEyeBold /> : <PiEyeClosedBold />}
+              </button>
             </div>
           </div>
 
+          {/* Error Message */}
           <div className={`text-center ${!isPwdSame ? "visible" : "hidden"}`}>
             <p className="text-red-400">Passwords don't match</p>
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             className="py-2 px-6 bg-gradient-to-r from-[#D0517E] to-[#5612E1] text-base border-none text-white disabled:cursor-not-allowed disabled:grayscale"
@@ -181,7 +203,6 @@ const Register = () => {
           >
             SIGN UP
           </button>
-
           <div className="flex items-center gap-4 justify-center">
             <hr className="w-full bg-[#484848] h-[2px] border-none" />
             <span className="text-[#484848]">Or</span>

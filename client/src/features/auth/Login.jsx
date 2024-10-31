@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { setCredentials } from "./authSlice";
+import { logIn,guest } from "./authSlice";
 import { useLoginMutation } from "./authApiSlice";
 import React, { useState, useCallback } from "react";
 import { AiOutlineMail, AiOutlineLock, AiOutlineGithub } from "react-icons/ai";
@@ -8,6 +8,8 @@ import { PiEyeClosedBold } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 import { PiEyeBold } from "react-icons/pi";
 import Loader from "../../components/Loader";
+import { toast } from "react-toastify";
+
 export const Login = () => {
   const dispatch = useDispatch();
   const [login, { isLoading }] = useLoginMutation();
@@ -17,7 +19,7 @@ export const Login = () => {
     user: "",
     pwd: "",
   });
-console.log(isLoading)
+
   const toggleShowPass = useCallback((e) => {
     e.preventDefault();
     setShowPass((prevShowPass) => !prevShowPass);
@@ -29,20 +31,30 @@ console.log(isLoading)
       [e.target.name]: e.target.value,
     });
   };
-
+  const handleGuest= () => {
+    dispatch(guest());
+    navigate('/Home')
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const userData = await login({ formData }).unwrap();
-      dispatch(setCredentials({ ...userData, user }));
+      const userData = await login({ ...formData }).unwrap();
+      dispatch(logIn({ ...userData, user: formData.user }));
       setFormData({
         user: "",
         pwd: "",
       });
+      toast.success("Login Successful");
       navigate("/Home");
     } catch (err) {
-      console.log(err);
+      if (err.status === 404) {
+        toast.error(err.data.message);
+      } else if (err.status === 401) {
+        toast.warn(err.data.message);
+      } else {
+        toast.error("Login failed. Please try again.");
+      }
     }
   };
 
@@ -57,7 +69,7 @@ console.log(isLoading)
         aria-label="Login Form"
         onSubmit={handleSubmit}
       >
-        <header className="heading flex items-center justify-start mb-12 font-mono">
+        <header className="heading flex items-center justify-start mb-6 font-mono">
           <img
             src="../src/assets/images/Auth/Logo.png"
             className="w-16 bg-contain"
@@ -179,6 +191,7 @@ console.log(isLoading)
             <button
               className="h-full w-full bg-gradient-to-b from-[#393838]/100 to-[#3a3939]/80 text-white text-sm rounded-lg py-2 px-6 text-center font-semibold tracking-wide"
               aria-label="Continue as guest"
+              onClick={handleGuest}
             >
               Continue as a Guest
             </button>

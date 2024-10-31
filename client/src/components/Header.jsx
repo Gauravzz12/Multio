@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
+import {selectCurrentUser} from  '../features/auth/authSlice'
 function Header() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const currentUser = useSelector(selectCurrentUser);
   const navigate=useNavigate();
   return (
     <div className="header top-0 p-3 m-0 radius-20 bg-gradient-to-r from-[#020530] to-[#13063e] text-white flex items-center justify-center w-full ">
@@ -16,7 +18,7 @@ function Header() {
           <button onClick={() =>  (navigate("/Games"))} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
             Games
           </button>
-          {loggedIn ? (
+          {!currentUser || currentUser=="Guest" ? (
           <button onClick={() =>  (navigate("/Login"))} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
            Login
           </button>
