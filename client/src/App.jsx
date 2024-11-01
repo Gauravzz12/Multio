@@ -54,7 +54,7 @@ function App() {
       ],
     },
     {
-      element: <RequireAuth />,
+      element: user!='Guest'?<RequireAuth />:"",
       children: [
         {
           path: "/Register",

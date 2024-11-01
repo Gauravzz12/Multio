@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
-import { logIn,guest } from "./authSlice";
+import { logIn, guest } from "./authSlice";
 import { useLoginMutation } from "./authApiSlice";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { AiOutlineMail, AiOutlineLock, AiOutlineGithub } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { PiEyeClosedBold } from "react-icons/pi";
@@ -9,9 +9,11 @@ import { useNavigate } from "react-router-dom";
 import { PiEyeBold } from "react-icons/pi";
 import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
-
+import { useLogoutMutation } from "./authApiSlice";
+import { logOut } from "./authSlice";
 export const Login = () => {
   const dispatch = useDispatch();
+  const [logout] = useLogoutMutation();
   const [login, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
   const [showPass, setShowPass] = useState(true);
@@ -19,7 +21,10 @@ export const Login = () => {
     user: "",
     pwd: "",
   });
-
+  useEffect(() => {
+    dispatch(logOut())
+  }, []);
+   
   const toggleShowPass = useCallback((e) => {
     e.preventDefault();
     setShowPass((prevShowPass) => !prevShowPass);
@@ -31,10 +36,10 @@ export const Login = () => {
       [e.target.name]: e.target.value,
     });
   };
-  const handleGuest= () => {
+  const handleGuest = () => {
     dispatch(guest());
-    navigate('/Home')
-};
+    navigate("/Home");
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -48,7 +53,9 @@ export const Login = () => {
       toast.success("Login Successful");
       navigate("/Home");
     } catch (err) {
-      if (err.status === 404) {
+      if (err.status === 403) {
+        toast.error(err.data.message);
+      } else if (err.status === 404) {
         toast.error(err.data.message);
       } else if (err.status === 401) {
         toast.warn(err.data.message);

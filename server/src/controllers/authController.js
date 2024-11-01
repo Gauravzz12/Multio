@@ -88,21 +88,19 @@ module.exports = {
         .json({ message: "An error occurred during Login" });
     }
   },
-  logOut:async(req,res)=>{
-    try{
-      const cookies=req.cookies;
+  logOut: async (req, res) => {
+    try {
+      const cookies = req.cookies;
       if (!cookies?.refreshToken) return res.sendStatus(204);
-      const refreshToken=cookies.refreshToken;
-      const found=await pool.query("Select * from users where refreshtoken=$1",[refreshToken]);
-      if (found.rowCount==1) {
-        const deleteToken = await pool.query("UPDATE users SET refreshtoken = NULL WHERE id = $1", [found.rows[0].id]);
-    }
-    res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'None', secure: true });
-        return res.sendStatus(204);
-    
-    }
-    catch(err){
-
+      const refreshToken = cookies.refreshToken;
+      const found = await pool.query("SELECT * FROM users WHERE refreshtoken = $1", [refreshToken]);
+      if (found.rowCount === 1) {
+        await pool.query("UPDATE users SET refreshtoken = NULL WHERE id = $1", [found.rows[0].id]);
+      }
+      res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'None', secure: true });
+      return res.sendStatus(204);
+    } catch (err) {
+      return res.status(500).json({ message: "An error occurred during logout" });
     }
   },
 
@@ -145,3 +143,4 @@ module.exports = {
   },
   
 };
+    
