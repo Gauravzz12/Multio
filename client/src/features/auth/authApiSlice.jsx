@@ -23,12 +23,19 @@ export const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          console.log(data)
           dispatch(logIn({ user: data.user, accessToken: data.accessToken }));
         } catch (err) {
           console.error("Token refresh failed:", err);
         }
       },
     }),
+    logout: builder.mutation({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+      }),
+    })
   }),
 });
 
@@ -36,4 +43,5 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useRefreshQuery,
+  useLogoutMutation,
 } = authApiSlice;

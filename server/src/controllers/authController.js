@@ -52,27 +52,29 @@ module.exports = {
     try {
       const { user, pwd } = req.body;
       const checkUser = await pool.query(
-        "Select * from users where email=$1 or username=$1",
+        "SELECT * FROM users WHERE email = $1 OR username = $1",
         [user]
       );
+
       if (checkUser.rowCount > 0) {
         const passMatch = bcrypt.compareSync(pwd, checkUser.rows[0].password);
         if (passMatch) {
           const accessToken = generateToken(checkUser.rows[0], "15m");
           const refreshToken = generateToken(checkUser.rows[0], "7d");
 
-          const addToken = await pool.query(
-            "UPDATE users SET refreshtoken = $1 WHERE id = $2",
-            [refreshToken, checkUser.rows[0].id]
-          );
+          await pool.query("UPDATE users SET refreshtoken = $1 WHERE id = $2", [
+            refreshToken,
+            checkUser.rows[0].id,
+          ]);
+
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            //  secure:true,
+            secure: true,
             maxAge: 24 * 60 * 60 * 1000,
           });
           return res
             .status(200)
-            .json({ message: "Log in Successfull", accessToken });
+            .json({ message: "Log in Successful", accessToken });
         } else {
           return res.status(401).json({ message: "Incorrect Password" });
         }
@@ -80,43 +82,66 @@ module.exports = {
         return res.status(404).json({ message: "User Doesn't Exist" });
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return res
         .status(500)
         .json({ message: "An error occurred during Login" });
     }
   },
+  logOut:async(req,res)=>{
+    try{
+      const cookies=req.cookies;
+      if (!cookies?.refreshToken) return res.sendStatus(204);
+      const refreshToken=cookies.refreshToken;
+      const found=await pool.query("Select * from users where refreshtoken=$1",[refreshToken]);
+      if (found.rowCount==1) {
+        const deleteToken = await pool.query("UPDATE users SET refreshtoken = NULL WHERE id = $1", [found.rows[0].id]);
+    }
+    res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'None', secure: true });
+        return res.sendStatus(204);
+    
+    }
+    catch(err){
+
+    }
+  },
 
   refreshToken: async (req, res) => {
     try {
-      const { refreshToken } = req.cookies;
-      if (!refreshToken)
-        return res.status(401).json({ message: "Unauthorized" });
-
+      const refreshToken = req.cookies.refreshToken;
+      if (!refreshToken) return res.status(401).json({ message: "Unauthorized" });
+  
       const userResult = await pool.query(
         "SELECT * FROM users WHERE refreshtoken = $1",
         [refreshToken]
       );
-      if (userResult.rowCount === 0)
-        return res.status(403).json({ message: "Forbidden" });
-
+  
+      if (userResult.rowCount === 0) return res.status(403).json({ message: "Forbidden" });
+  
       const user = userResult.rows[0];
-
-      jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
-        if (err || user.id !== decoded.id)
-          return res.status(403).json({ message: "Forbidden" });
-
+  
+      jwt.verify(refreshToken, process.env.JWT_SECRET, async (err, decoded) => {
+        if (err || user.id !== decoded.id) return res.status(403).json({ message: "Forbidden" });
+  
         const newAccessToken = generateToken(user, "15m");
-        res.json({
-          accessToken: newAccessToken,
-          user: { id: user.id, username: user.username },
+        const newRefreshToken = generateToken(user, "7d");
+  
+        await pool.query(
+          "UPDATE users SET refreshtoken = $1 WHERE id = $2",
+          [newRefreshToken, user.id]
+        );
+  
+        res.cookie("refreshToken", newRefreshToken, {
+          httpOnly: true,
+          secure: true,
+          maxAge: 24 * 60 * 60 * 1000,
         });
+        res.json({ accessToken: newAccessToken, user: user.username });
       });
     } catch (err) {
       console.error(err);
-      res
-        .status(500)
-        .json({ message: "An error occurred during token refresh" });
+      res.status(500).json({ message: "An error occurred during token refresh" });
     }
   },
+  
 };

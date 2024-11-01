@@ -1,4 +1,3 @@
-// App.js
 import React, { useEffect } from "react";
 import {
   createBrowserRouter,
@@ -29,7 +28,11 @@ function App() {
       children: [
         {
           path: "/",
-          element: user ? <Navigate to="/Home" replace /> : <Navigate to="/Login" replace />,
+          element: user ? (
+            <Navigate to="/Home" replace />
+          ) : (
+            <Navigate to="/Login" replace />
+          ),
         },
         {
           element: <RequireAuth />,
@@ -38,25 +41,30 @@ function App() {
               path: "/Profile",
               element: <Profile />,
             },
+            {
+              path: "/Home",
+              element: <Home />,
+            },
+            {
+              path: "/Games",
+              element: <Games />,
+            },
           ],
-        },
-        {
-          path: "/Home",
-          element: <Home />,
-        },
-        {
-          path: "/Games",
-          element: <Games />,
         },
       ],
     },
     {
-      path: "/Register",
-      element: <Register />,
-    },
-    {
-      path: "/Login",
-      element: <LoginPage />,
+      element: <RequireAuth />,
+      children: [
+        {
+          path: "/Register",
+          element: <Register />,
+        },
+        {
+          path: "/Login",
+          element: <LoginPage />,
+        },
+      ],
     },
   ]);
 

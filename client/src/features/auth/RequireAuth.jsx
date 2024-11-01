@@ -2,13 +2,22 @@ import { useLocation, Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "./authSlice";
 import React from "react";
-import { toast } from "react-toastify";
 
-const RequireAuth = () => {
+const RequireAuth = ({ redirectTo }) => {
   const token = useSelector(selectCurrentToken);
   const location = useLocation();
-  if (token ) return <Outlet />;
-  else return <Navigate to="/Login" state={{ from: location }} replace />;
+
+  if (token) {
+    if (location.pathname === "/Login" || location.pathname === "/Register") {
+      return <Navigate to={'/Home'} replace />;
+    }
+    return <Outlet />;
+  } else {
+    if (location.pathname !== "/Login" && location.pathname !== "/Register") {
+      return <Navigate to="/Login" state={{ from: location }} replace />;
+    }
+    return <Outlet />;
+  }
 };
 
 export default RequireAuth;
