@@ -14,12 +14,4 @@ server.listen(API_PORT, () => {
   console.log(`Server running on port ${API_PORT}`);
 });
 
-const shutdown = () => {
-  server.close(() => {
-    console.log("Server shut down successfully");
-    process.exit(0);
-  });
-};
 
-process.on("SIGTERM", shutdown); 
-process.on("SIGINT", shutdown); 
