@@ -1,89 +1,102 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setGameMode,
+  setResult,
+  setRoomName,
+  setOpponentChoice,
+} from "../../features/games/rpsSlice";
 import rockIcon from "../../assets/images/RPS/rock.svg";
 import paperIcon from "../../assets/images/RPS/paper.svg";
 import scissorsIcon from "../../assets/images/RPS/scissors.svg";
-import { io } from "socket.io-client";
-import { selectCurrentUser } from "../../features/auth/authSlice";
-import { useSelector } from "react-redux";
+import GameModeSelector from "../GameModeSelector";
+import GameDisplay from "../GameDisplay";
+import RoomManager from "../RoomManager";
+import OpponentLoader from "../OpponentLoader";
 
 const RPS = () => {
-  const [userChoice, setUserChoice] = useState(null);
-  const [opponentChoice, setOpponentChoice] = useState(null);
-  const [result, setResult] = useState(null);
+  const dispatch = useDispatch();
+  const { gameMode, roomName, result, opponentChoice } = useSelector((state) => state.rps);
   const [socket, setSocket] = useState(null);
-  const user = useSelector(selectCurrentUser);
+  const [userChoice, setUserChoice] = useState(null);
+  const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
     const newSocket = io("http://localhost:5000");
     setSocket(newSocket);
-    newSocket.emit("joinRoom","RPS");
-    newSocket.on("result", (gameResult) => {
-      setResult(gameResult.result);
-      setOpponentChoice(gameResult.opponentChoice);
+
+    newSocket.on("startGame", () => {
+      setGameStarted(true);
     });
-    newSocket.on("joined",()=>{
-     
-        alert(newSocket.id+"User Joined the Room")
-    })
-    
+
+    newSocket.on("gameResult", (data) => {
+      dispatch(setResult(data.result));
+      dispatch(setOpponentChoice(data.opponentChoice));
+    });
+
+    newSocket.on("playerLeft", () => {
+      // Handle opponent leaving
+    });
 
     return () => {
       if (newSocket) newSocket.disconnect();
+      dispatch(setGameMode(null));
+      dispatch(setRoomName(""));
+      setUserChoice(null);
+      setGameStarted(false);
     };
-  }, []);
+  }, [dispatch]);
 
-  const handleUserChoice = (choice) => {
+  useEffect(() => {
+    if (socket && gameMode) {
+      let roomId = roomName;
+      if (gameMode === "online") {
+        roomId = "RPS_AutoRoom";
+      }
+      socket.emit("joinRoom", { game: "RPS", roomId });
+    }
+  }, [socket, gameMode, roomName]);
+
+  const handleChoice = (choice) => {
     setUserChoice(choice);
-    if (socket) socket.emit("choice", choice);
+    socket.emit("makeChoice", { roomId: roomName || "RPS_AutoRoom", choice });
   };
 
-  const handlePlayAgain = () => {
-    setUserChoice(null);
-    setOpponentChoice(null);
-    setResult(null);
+  const ChoiceButtons = () => {
+    const choices = [
+      { name: "Rock", icon: rockIcon },
+      { name: "Paper", icon: paperIcon },
+      { name: "Scissors", icon: scissorsIcon },
+    ];
+
+    return (
+      <div className="flex gap-10 justify-center items-center h-[95%]">
+        {choices.map((choice) => (
+          <button
+            key={choice.name}
+            className="bg-amber-500 rounded-md p-2 border-4"
+            onClick={() => handleChoice(choice.name)}
+          >
+            <img src={choice.icon} alt={choice.name} className="w-12 h-12" />
+          </button>
+        ))}
+      </div>
+    );
   };
 
   return (
     <div className="flex flex-col items-center text-center text-white">
-      {userChoice ? (
-        <>
-          <h1 className="text-5xl">Your choice: {userChoice}</h1>
-          {opponentChoice && (
-            <h1 className="text-5xl">Opponent's choice: {opponentChoice}</h1>
-          )}
-          <h1 className="text-5xl">
-            Result: {result || "Waiting for opponent..."}
-          </h1>
-          <button
-            onClick={handlePlayAgain}
-            className="text-4xl text-white mt-8 border-4 border-white"
-          >
-            Play Again
-          </button>
-        </>
+      {!gameMode ? (
+        <GameModeSelector />
+      ) : gameMode === "friends" && !roomName ? (
+        <RoomManager socket={socket} />
+      ) : !gameStarted ? (
+        <OpponentLoader />
+      ) : userChoice && result ? (
+        <GameDisplay userChoice={userChoice} opponentChoice={opponentChoice} result={result} />
       ) : (
-        <div className="flex gap-10 justify-center items-center h-[95%]">
-          {["Rock", "Paper", "Scissors"].map((choice) => (
-            <button
-              key={choice}
-              onClick={() => handleUserChoice(choice)}
-              className="bg-amber-500 rounded-md p-2 border-4"
-            >
-              <img
-                src={
-                  choice === "Rock"
-                    ? rockIcon
-                    : choice === "Paper"
-                    ? paperIcon
-                    : scissorsIcon
-                }
-                alt={choice}
-                className="w-12 h-12"
-              />
-            </button>
-          ))}
-          {result && <div className="text-4xl mt-8">{result}</div>}
-        </div>
+        <ChoiceButtons />
       )}
     </div>
   );

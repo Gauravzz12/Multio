@@ -1,17 +1,8 @@
 import React, { useEffect, useState } from "react";
 import RPS from "../components/GameBoards/RPS";
-import { io } from "socket.io-client";
-import { useSelector } from "react-redux";
 function Games() {
   const [selectedGame, setSelectedGame] = useState(null);
-  const [socket, setSocket] = useState(null);
-  const [roomSize, setRoomSize] = useState({
-    RPS: { min: 2, max: 2 },
-    TTT: { min: 2, max: 2 },
-  });
-
   const handleGameClick = (name, game) => {
-    
     setSelectedGame(game);
   };
 
@@ -51,7 +42,7 @@ function Games() {
             >
               &times;
             </button>
-            <h2 className="text-white text-4xl mb-4 flex justify-center">
+            <h2 className="text-white text-5xl mb-4 font-bold tracking-wider flex justify-center">
               {selectedGame}
             </h2>
             {selectedGame == "Rock Paper Scissors" ? <RPS /> : ""}

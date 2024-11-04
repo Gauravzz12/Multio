@@ -8,61 +8,66 @@ const startSocketServer = (server) => {
     },
   });
 
-  const rooms = { RPS: {}, TTT: {} };
+  const rooms = {};
 
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
-    socket.on("joinRoom", (game) => {
-      const gameRooms = rooms[game];
-      const roomKeys = Object.keys(gameRooms);
-      let currentRoomKey;
-
-      if (roomKeys.length === 0) {
-        currentRoomKey = '1';
-        gameRooms[currentRoomKey] = [socket.id];
-      } else {
-        currentRoomKey = roomKeys[roomKeys.length - 1];
-        const currentRoom = gameRooms[currentRoomKey];
-
-        if (currentRoom.length < 2) {
-          currentRoom.push(socket.id);
-        } else {
-          currentRoomKey = (parseInt(currentRoomKey) + 1).toString();
-          gameRooms[currentRoomKey] = [socket.id];
-        }
+    socket.on("joinRoom", ({ game, roomId }) => {
+      socket.join(roomId);
+      if (!rooms[roomId]) {
+        rooms[roomId] = { players: [], choices: {} };
       }
+      rooms[roomId].players.push(socket.id);
 
-      socket.join(`${game}-${currentRoomKey}`);
-      console.log(`User ${socket.id} joined room ${game}-${currentRoomKey}`);
-      console.log("Current rooms:", rooms[game]);
+      if (rooms[roomId].players.length === 2) {
+        io.to(roomId).emit("startGame");
+      }
+    });
+
+    socket.on("makeChoice", ({ roomId, choice }) => {
+      rooms[roomId].choices[socket.id] = choice;
+      if (Object.keys(rooms[roomId].choices).length === 2) {
+        const result = determineWinner(rooms[roomId].choices);
+        io.to(roomId).emit("gameResult", result);
+        rooms[roomId].choices = {};
+      }
     });
 
     socket.on("disconnect", () => {
-      for (const game in rooms) {
-        const gameRooms = rooms[game];
-        for (const roomKey in gameRooms) {
-          const room = gameRooms[roomKey];
-          const playerIndex = room.indexOf(socket.id);
-
-          if (playerIndex !== -1) {
-            room.splice(playerIndex, 1);
-            console.log(`User ${socket.id} left ${game} room ${roomKey}`);
-
-            if (room.length === 0) {
-              delete gameRooms[roomKey];
-              console.log(`Room ${game}-${roomKey} is now empty and removed.`);
-            }
-            break; 
+      console.log("User Disconnected:", socket.id);
+      for (const roomId in rooms) {
+        const room = rooms[roomId];
+        if (room.players.includes(socket.id)) {
+          room.players = room.players.filter((id) => id !== socket.id);
+          delete room.choices[socket.id];
+          io.to(roomId).emit("playerLeft");
+          if (room.players.length === 0) {
+            delete rooms[roomId];
           }
+          break;
         }
       }
     });
-
-    socket.on("choice", (choice) => {
-      console.log(`User ${socket.id} selected:`, choice);
-    });
   });
+
+  const determineWinner = (choices) => {
+      const [user1, user2] = Object.keys(choices);
+      const choice1 = choices[user1];
+      const choice2 = choices[user2];
+  
+      if (choice1 === choice2) {
+        return { result: "It's a tie!", opponentChoice: choice2 };
+      } else if (
+        (choice1 === "Rock" && choice2 === "Scissors") ||
+        (choice1 === "Paper" && choice2 === "Rock") ||
+        (choice1 === "Scissors" && choice2 === "Paper")
+      ) {
+        return { result: `${user1} wins!`, opponentChoice: choice2 };
+      } else {
+        return { result: `${user2} wins!`, opponentChoice: choice2 };
+      }
+    };
 };
 
 module.exports = startSocketServer;
