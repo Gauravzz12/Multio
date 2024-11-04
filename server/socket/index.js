@@ -9,6 +9,12 @@ const startSocketServer = (server) => {
   });
 
   const rooms = {};
+  const resetRoomState = (roomId) => {
+    if (rooms[roomId]) {
+      rooms[roomId].choices = {};
+      rooms[roomId].ready = {};
+    }
+  };
 
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
@@ -74,30 +80,26 @@ const startSocketServer = (server) => {
     });
 
     socket.on("makeChoice", ({ roomId, choice }) => {
-      if (!rooms[roomId]) return;
-      
-      // Verify that the socket is part of the room
-      if (!rooms[roomId].players.includes(socket.id)) return;
+      if (!rooms[roomId] || !rooms[roomId].players.includes(socket.id)) return;
       
       rooms[roomId].choices[socket.id] = choice;
+      rooms[roomId].lastActivity = Date.now();
       
-      // Ensure both players are still connected
-      if (rooms[roomId].players.length !== 2) return;
-      
-      // Check that both players have made their choices
-      const playerChoices = rooms[roomId].choices;
-      const allPlayersChoiced = rooms[roomId].players.every(playerId => playerChoices[playerId]);
-      
-      if (allPlayersChoiced) {
-        const result = determineWinner(playerChoices);
-        for (const playerId of rooms[roomId].players) {
-          const opponentId = rooms[roomId].players.find(id => id !== playerId);
-          io.to(playerId).emit("gameResult", {
-            result: result[playerId],
-            opponentChoice: playerChoices[opponentId],
+      if (rooms[roomId].players.length === 2) {
+        const playerChoices = rooms[roomId].choices;
+        const allPlayersChoiced = rooms[roomId].players.every(playerId => playerChoices[playerId]);
+        
+        if (allPlayersChoiced) {
+          const result = determineWinner(playerChoices);
+          rooms[roomId].players.forEach(playerId => {
+            const opponentId = rooms[roomId].players.find(id => id !== playerId);
+            io.to(playerId).emit("gameResult", {
+              result: result[playerId],
+              opponentChoice: playerChoices[opponentId],
+            });
           });
+          resetRoomState(roomId);
         }
-        rooms[roomId].choices = {};
       }
     });
 
@@ -114,31 +116,37 @@ const startSocketServer = (server) => {
     });
 
     socket.on("playAgain", ({ roomId }) => {
-      if (!rooms[roomId]) return;
+      if (!rooms[roomId] || !rooms[roomId].players.includes(socket.id)) return;
+      
       rooms[roomId].ready[socket.id] = true;
-      if (Object.keys(rooms[roomId].ready).length === 2) {
+      rooms[roomId].lastActivity = Date.now();
+
+      const readyPlayers = Object.keys(rooms[roomId].ready).length;
+      const totalPlayers = rooms[roomId].players.length;
+
+      if (readyPlayers === totalPlayers) {
+        resetRoomState(roomId);
         io.to(roomId).emit("startGame");
-        rooms[roomId].ready = {};
       } else {
-        io.to(socket.id).emit("waitingForPlayer");
+        socket.emit("waitingForPlayer");
       }
     });
 
     socket.on("disconnect", () => {
       console.log("User Disconnected:", socket.id);
+      
       for (const roomId in rooms) {
         const room = rooms[roomId];
         if (room.players.includes(socket.id)) {
-          room.players = room.players.filter((id) => id !== socket.id);
+          room.players = room.players.filter(id => id !== socket.id);
           delete room.choices[socket.id];
           delete room.ready[socket.id];
-          io.to(roomId).emit("playerLeft");
-          if (room.players.length === 1) {
-            const remainingPlayerId = room.players[0];
-            io.to(remainingPlayerId).emit("opponentDisconnected");
-            rooms[roomId].choices = {};
-          }
-          if (room.players.length === 0) {
+
+          if (room.players.length > 0) {
+            resetRoomState(roomId);
+            io.to(roomId).emit("playerLeft");
+            io.to(roomId).emit("waitingForOpponent");
+          } else {
             delete rooms[roomId];
           }
           break;
@@ -172,4 +180,3 @@ const startSocketServer = (server) => {
 };
 
 module.exports = startSocketServer;
- 

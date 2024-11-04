@@ -16,7 +16,7 @@ import GameDisplay from "../GameDisplay";
 import RoomManager from "../RoomManager";
 import OpponentLoader from "../OpponentLoader";
 import { FaCopy } from "react-icons/fa";
-import { toast } from "react-toastify";
+import useSocket from "../../hooks/useSocket"; 
 
 const RPS = () => {
   const dispatch = useDispatch();
@@ -25,81 +25,22 @@ const RPS = () => {
   const [userChoice, setUserChoice] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
-  const [opponentDisconnected, setOpponentDisconnected] = useState(false);
 
   useEffect(() => {
     const newSocket = io("http://localhost:5000");
     setSocket(newSocket);
-
-    newSocket.on("roomAssigned", ({ roomId }) => {
-      dispatch(setRoomName(roomId));
-      setWaitingForOpponent(true);  
-    });
-
-    newSocket.on("startGame", () => {
-      setGameStarted(true);
-      setWaitingForOpponent(false);
-      setOpponentDisconnected(false);
-      dispatch(setOpponentChoice(null)); 
-      dispatch(setResult(null)); 
-    });
-
-    newSocket.on("waitingForOpponent", () => {
-      setWaitingForOpponent(true);
-      setGameStarted(false);
-    });
-
-    newSocket.on("gameResult", (data) => {
-      dispatch(setResult(data.result));
-      dispatch(setOpponentChoice(data.opponentChoice));
-      setWaitingForOpponent(false);
-    });
-
-    newSocket.on("waitingForPlayer", () => {
-      setGameStarted(false);
-      setWaitingForOpponent(true);
-    });
-
-    newSocket.on("playerLeft", () => {
-      setGameStarted(false);
-      setUserChoice(null);
-      setWaitingForOpponent(true);  
-      dispatch(resetGame());
-      toast.info("Your opponent has left the game.");
-      dispatch(setOpponentChoice(null));
-      dispatch(setResult(null));
-    });
-
-    newSocket.on("opponentDisconnected", () => {
-      setOpponentDisconnected(true);
-      setGameStarted(false);
-      setUserChoice(null);
-      dispatch(resetGame());
-      dispatch(setOpponentChoice(null));
-      dispatch(setResult(null));
-    });
-
-    newSocket.on("roomNotFound", () => {
-      toast.error("Room does not exist.");
-      dispatch(setGameMode(null));
-      dispatch(setRoomName(""));
-    });
-
-    newSocket.on("roomFull", () => {
-      toast.error("The room is full.");
-      dispatch(setGameMode(null));
-      dispatch(setRoomName(""));
-    });
 
     return () => {
       if (newSocket) newSocket.disconnect();
       dispatch(setGameMode(null));
       dispatch(setRoomName(""));
       setUserChoice(null);
-      setGameStarted(false);
+      setGameStarted(false); 
       setWaitingForOpponent(false);
     };
   }, [dispatch]);
+
+  useSocket(socket, setGameStarted, setWaitingForOpponent, setUserChoice); 
 
   useEffect(() => {
     if (socket && gameMode === "online" && !roomName) {
@@ -178,21 +119,7 @@ const RPS = () => {
           </button>
         </div>
       )}
-      {opponentDisconnected ? (
-        <div>
-          <h2 className="text-2xl">Your opponent has disconnected.</h2>
-          <button
-            className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => {
-              setOpponentDisconnected(false);
-              dispatch(setGameMode(null));
-              dispatch(setRoomName(""));
-            }}
-          >
-            Return to Game Mode Selection
-          </button>
-        </div>
-      ) : !gameMode ? (
+      {!gameMode ? (
         <GameModeSelector />
       ) : gameMode === "friends" && !roomName ? (
         <RoomManager />
