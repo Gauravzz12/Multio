@@ -25,6 +25,12 @@ const rpsSlice = createSlice({
       state.result = null;
       state.opponentChoice = null;
     },
+    setOpponentDisconnected: (state) => {
+      state.result = null;
+      state.opponentChoice = null;
+      state.gameMode = null;
+      state.roomName = "";
+    },
   },
 });
 
@@ -34,6 +40,7 @@ export const {
   setRoomName,
   setOpponentChoice,
   resetGame,
+  setOpponentDisconnected,
 } = rpsSlice.actions;
 
 export default rpsSlice.reducer;

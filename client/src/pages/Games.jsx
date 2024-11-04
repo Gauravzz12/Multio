@@ -45,7 +45,8 @@ function Games() {
             <h2 className="text-white text-5xl mb-4 font-bold tracking-wider flex justify-center">
               {selectedGame}
             </h2>
-            {selectedGame == "Rock Paper Scissors" ? <RPS /> : ""}
+            {selectedGame === "Rock Paper Scissors" ? <RPS /> : ""}
+            {/* Add similar conditionals for other games if necessary */}
           </div>
         </div>
       )}
