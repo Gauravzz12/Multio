@@ -109,13 +109,15 @@ const RPS = () => {
 
   return (
     <div className="flex flex-col items-center text-center text-white relative">
-      {(gameMode === "friends" || gameMode === "online") && roomName && (
+      {(gameMode === "friends" ) && roomName && (
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-gray-800 p-2 rounded">
-          <span className="text-lg ">Room ID: {roomName}</span>
-          <span className="text-lg">Socket ID: {socket.id}</span>
 
           <button onClick={copyRoomId}>
+            <p className="flex">
+
+            Copy Room Id
             <FaCopy className="text-xl hover:text-gray-300" />
+            </p>
           </button>
         </div>
       )}
