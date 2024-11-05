@@ -128,7 +128,7 @@ const startSocketServer = (server) => {
         resetRoomState(roomId);
         io.to(roomId).emit("startGame");
       } else {
-        socket.emit("waitingForPlayer");
+        socket.emit("waitingForOpponent");
       }
     });
 

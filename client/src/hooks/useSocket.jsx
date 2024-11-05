@@ -48,10 +48,7 @@ const useSocket = (socket, setGameStarted, setWaitingForOpponent, setUserChoice)
       setWaitingForOpponent(false);
     });
 
-    socket.on("waitingForPlayer", () => {
-      setGameStarted(false);
-      setWaitingForOpponent(true);
-    });
+    
 
     socket.on("playerLeft", resetGameState);
 
