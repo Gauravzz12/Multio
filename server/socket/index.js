@@ -9,6 +9,7 @@ const startSocketServer = (server) => {
   });
 
   const rooms = {};
+
   const resetRoomState = (roomId) => {
     if (rooms[roomId]) {
       rooms[roomId].choices = {};
@@ -22,8 +23,9 @@ const startSocketServer = (server) => {
     socket.on("joinRoom", ({ game, roomId }) => {
       if (game === "RPS") {
         let assignedRoom = roomId;
+
         if (!roomId) {
-            for (const [id, room] of Object.entries(rooms)) {
+          for (const [id, room] of Object.entries(rooms)) {
             if (
               room.game === "RPS" &&
               room.players.length < 2 &&
@@ -32,18 +34,18 @@ const startSocketServer = (server) => {
               assignedRoom = id;
               break;
             }
-            }
+          }
           if (!assignedRoom) {
-            assignedRoom = `roomO_${Math.random().toString(36).substr(2, 9)}`;
+            assignedRoom = `room_${Math.random().toString(36).substr(2, 9)}`;
             rooms[assignedRoom] = {
               game: "RPS",
               players: [],
               choices: {},
               ready: {},
               mode: "online",
-              createdAt: Date.now(),
             };
           }
+
           socket.emit("roomAssigned", { roomId: assignedRoom });
         }
 
@@ -54,7 +56,6 @@ const startSocketServer = (server) => {
             choices: {},
             ready: {},
             mode: roomId ? "friends" : "online",
-            createdAt: Date.now(),
           };
         } else {
           rooms[assignedRoom].choices = {};
@@ -69,7 +70,9 @@ const startSocketServer = (server) => {
         if (!rooms[assignedRoom].players.includes(socket.id)) {
           rooms[assignedRoom].players.push(socket.id);
         }
-        console.log(`Room ID: ${assignedRoom}, Players: ${rooms[assignedRoom].players} `);
+        console.log(
+          `Room ID: ${assignedRoom}, Players: ${rooms[assignedRoom].players}`
+        );
 
         if (rooms[assignedRoom].players.length === 2) {
           io.to(assignedRoom).emit("startGame");
@@ -81,23 +84,27 @@ const startSocketServer = (server) => {
 
     socket.on("makeChoice", ({ roomId, choice }) => {
       if (!rooms[roomId] || !rooms[roomId].players.includes(socket.id)) return;
-      
+
       rooms[roomId].choices[socket.id] = choice;
-      rooms[roomId].lastActivity = Date.now();
-      
+
       if (rooms[roomId].players.length === 2) {
         const playerChoices = rooms[roomId].choices;
-        const allPlayersChoiced = rooms[roomId].players.every(playerId => playerChoices[playerId]);
-        
-        if (allPlayersChoiced) {
+
+        const allChociesMade = Object.keys(playerChoices).length === 2;
+
+        if (allChociesMade) {
           const result = determineWinner(playerChoices);
-          rooms[roomId].players.forEach(playerId => {
-            const opponentId = rooms[roomId].players.find(id => id !== playerId);
+
+          rooms[roomId].players.forEach((playerId) => {
+            const opponentId = rooms[roomId].players.find(
+              (id) => id !== playerId
+            );
             io.to(playerId).emit("gameResult", {
               result: result[playerId],
               opponentChoice: playerChoices[opponentId],
             });
           });
+
           resetRoomState(roomId);
         }
       }
@@ -117,9 +124,8 @@ const startSocketServer = (server) => {
 
     socket.on("playAgain", ({ roomId }) => {
       if (!rooms[roomId] || !rooms[roomId].players.includes(socket.id)) return;
-      
+
       rooms[roomId].ready[socket.id] = true;
-      rooms[roomId].lastActivity = Date.now();
 
       const readyPlayers = Object.keys(rooms[roomId].ready).length;
       const totalPlayers = rooms[roomId].players.length;
@@ -128,17 +134,18 @@ const startSocketServer = (server) => {
         resetRoomState(roomId);
         io.to(roomId).emit("startGame");
       } else {
-        socket.emit("waitingForOpponent");
+        socket.emit("waitingForOpponent", "again");
       }
     });
 
     socket.on("disconnect", () => {
       console.log("User Disconnected:", socket.id);
-      
+
       for (const roomId in rooms) {
         const room = rooms[roomId];
         if (room.players.includes(socket.id)) {
-          room.players = room.players.filter(id => id !== socket.id);
+          room.players = room.players.filter((id) => id !== socket.id);
+
           delete room.choices[socket.id];
           delete room.ready[socket.id];
 

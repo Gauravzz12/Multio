@@ -16,6 +16,7 @@ const useSocket = (socket, setGameStarted, setWaitingForOpponent, setUserChoice)
     if (!socket) return;
 
     const resetGameState = () => {
+      console.log("Game state Resetted")
       setGameStarted(false);
       setUserChoice(null);
       setWaitingForOpponent(true);
@@ -50,7 +51,10 @@ const useSocket = (socket, setGameStarted, setWaitingForOpponent, setUserChoice)
 
     
 
-    socket.on("playerLeft", resetGameState);
+    socket.on("playerLeft", ()=>{
+      toast.info("Opponent left The Game")
+      resetGameState();
+    });
 
     socket.on("roomNotFound", () => {
       toast.error("Room does not exist.");
