@@ -1,4 +1,3 @@
-// authApiSlice.js
 import { apiSlice } from "../../app/api/apiSlice";
 import { logIn } from "./authSlice";
 
@@ -27,6 +26,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
           dispatch(logIn({ user: data.user, accessToken: data.accessToken }));
         } catch (err) {
           console.error("Token refresh failed:", err);
+           dispatch(logOut());
         }
       },
     }),

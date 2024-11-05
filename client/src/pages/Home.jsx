@@ -36,7 +36,7 @@ function Home() {
       description: "View your game history and statistics.",
     },
   ];
-
+  
   return (
     <main className="m-0 bg-black text-white font-bold flex flex-col scroll-smooth">
       <section className="motto rounded pl-24 text-5xl flex justify-between bg-gradient-to-r from-[#020530] to-[#13063e] p-12">

@@ -19,7 +19,9 @@ import { useRefreshQuery } from "./features/auth/authApiSlice";
 
 function App() {
   const user = useSelector(selectCurrentUser);
-  const { isLoading } = useRefreshQuery();
+  const { isLoading, isError } = useRefreshQuery(undefined, {
+    skip: user === 'Guest'
+  });
 
   const router = createBrowserRouter([
     {
@@ -68,6 +70,10 @@ function App() {
     },
   ]);
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="w-full overflow-hidden">
       <ToastContainer
@@ -83,7 +89,7 @@ function App() {
         theme="light"
         transition={Bounce}
       />
-      {!isLoading && <RouterProvider router={router} />}
+      <RouterProvider router={router} />
     </div>
   );
 }

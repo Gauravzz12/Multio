@@ -6,7 +6,7 @@ const baseQuery = fetchBaseQuery({
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = getState().auth.token;
-        if (token && token!='Guest') {
+        if (token && token !== 'Guest') {
             headers.set('authorization', `Bearer ${token}`);
         }
         return headers;
@@ -19,11 +19,9 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     if (result?.error?.status === 403) {
         console.log("Access token expired. Attempting to refresh token...");
         const refreshResult = await baseQuery('auth/refresh', api, extraOptions);
-
         if (refreshResult.data) {
             console.log("Refresh token valid. Access token refreshed.");
-            const user = api.getState().auth.user;
-            api.dispatch(logIn({ ...refreshResult.data, user }));
+            api.dispatch(logIn({ user: refreshResult.data.user, accessToken: refreshResult.data.accessToken }));
             result = await baseQuery(args, api, extraOptions);
         } else {
             console.log("Refresh token expired or invalid. Logging out.");
