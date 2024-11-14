@@ -20,7 +20,7 @@ import { useRefreshQuery } from "./features/auth/authApiSlice";
 function App() {
   const user = useSelector(selectCurrentUser);
   const { isLoading, isError } = useRefreshQuery(undefined, {
-    skip: user === 'Guest'
+    skip: user === "Guest",
   });
 
   const router = createBrowserRouter([
@@ -56,17 +56,12 @@ function App() {
       ],
     },
     {
-      element: user!='Guest'?<RequireAuth />:"",
-      children: [
-        {
-          path: "/Register",
-          element: <Register />,
-        },
-        {
-          path: "/Login",
-          element: <LoginPage />,
-        },
-      ],
+      path: "/Register",
+      element: <Register />,
+    },
+    {
+      path: "/Login",
+      element: <LoginPage />,
     },
   ]);
 

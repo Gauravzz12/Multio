@@ -46,7 +46,6 @@ function Games() {
               {selectedGame}
             </h2>
             {selectedGame === "Rock Paper Scissors" ? <RPS /> : ""}
-            {/* Add similar conditionals for other games if necessary */}
           </div>
         </div>
       )}

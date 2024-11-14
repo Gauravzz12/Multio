@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
-import {logOut, selectCurrentUser} from  '../features/auth/authSlice'
+import { useDispatch, useSelector } from "react-redux";
+import { logOut, selectCurrentUser } from "../features/auth/authSlice";
 import { useLogoutMutation } from "../features/auth/authApiSlice";
 function Header() {
   const currentUser = useSelector(selectCurrentUser);
-  const navigate=useNavigate();
-  const dispatch=useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [logout] = useLogoutMutation();
   const handleLogOut = async () => {
     try {
@@ -24,26 +24,42 @@ function Header() {
           Multio
         </div>
         <div className="pages flex gap-20 justify-end w-full font-bold">
-          <button onClick={() => (navigate("/"))} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
+          <button
+            onClick={() => navigate("/")}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+          >
             Home
           </button>
-          <button onClick={() =>  (navigate("/Games"))} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
+          <button
+            onClick={() => navigate("/Games")}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+          >
             Games
           </button>
-          <button onClick={() =>  (navigate("/Profile"))} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
-            Profile
-          </button>
-          {!currentUser || currentUser=="Guest" ? (
-          <button onClick={() =>  (navigate("/Login"))} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
-           Login
-          </button>
-          ) : (
-            <button onClick={handleLogOut} className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
-            Logout
-          </button>
-          )}
 
-         
+          {!currentUser || currentUser == "Guest" ? (
+            <button
+              onClick={() => navigate("/Login")}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+            >
+              Login
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate("/Profile")}
+                className={`bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out `}
+              >
+                Profile
+              </button>
+              <button
+                onClick={handleLogOut}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+              >
+                Logout
+              </button>
+            </>
+          )}
         </div>
       </nav>
     </div>

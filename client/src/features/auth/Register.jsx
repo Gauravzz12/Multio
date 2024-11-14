@@ -209,14 +209,17 @@ const Register = () => {
             <hr className="w-full bg-[#484848] h-[2px] border-none" />
           </div>
 
-          <section className="methods flex justify-center gap-2 -mt-2 items-center">
-            <button aria-label="Sign in with Google">
-              <FcGoogle className="text-4xl cursor-pointer" />
-            </button>
-            <button aria-label="Sign in with GitHub">
-              <AiOutlineGithub className="text-4xl cursor-pointer text-white" />
-            </button>
-          </section>
+          <div className="flex justify-center items-center">
+            <p className="text-white text-sm">
+              Already have an account?{" "}
+              <span
+                className="text-[#D0517E] cursor-pointer"
+                onClick={() => navigate("/Login")}
+              >
+              Sign in
+              </span>
+            </p>
+          </div>
         </form>
       </main>
     </div>

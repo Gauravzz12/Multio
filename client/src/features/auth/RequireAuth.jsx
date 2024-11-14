@@ -7,18 +7,17 @@ const RequireAuth = () => {
   const token = useSelector(selectCurrentToken);
   const location = useLocation();
 
-  if (token ) {
+  if (token) {
     if (location.pathname === "/Login" || location.pathname === "/Register") {
       return <Navigate to="/Home" replace />;
     }
     return <Outlet />;
-  }  else {
+  } else {
     if (location.pathname !== "/Login" && location.pathname !== "/Register") {
-      return <Navigate to="/Login" state={{ from: location }} replace />;
+      return <Navigate to="/Login" replace />;
     }
     return <Outlet />;
   }
 };
-
 
 export default RequireAuth;

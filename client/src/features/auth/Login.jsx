@@ -148,12 +148,7 @@ export const Login = () => {
             </div>
           </div>
 
-          <div className="flex gap-3 ml-1 items-center">
-            <input type="checkbox" id="remember-me" aria-label="Remember Me" />
-            <label htmlFor="remember-me" className="text-white">
-              Remember Me
-            </label>
-          </div>
+          
 
           <button
             className="py-2 px-6 bg-gradient-to-r from-[#D0517E] to-[#5612E1] text-base border-none text-white"
