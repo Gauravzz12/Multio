@@ -149,6 +149,8 @@ module.exports = {
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: false,
+            sameSite:'Lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000, 
           });
           return res
             .status(200)
@@ -167,13 +169,10 @@ module.exports = {
     }
   },
   logOut: async (req, res) => {
-    console.log("Logging Out")
     try {
       const cookies = req.cookies;
-      console.log(cookies)
       if (!cookies?.refreshToken) return res.sendStatus(204);
       const refreshToken = cookies.refreshToken;
-      console.log("refresh: ",refreshToken)
       const found = await pool.query(
         "SELECT * FROM users WHERE refreshtoken = $1",
         [refreshToken]
@@ -185,7 +184,7 @@ module.exports = {
       }
       res.clearCookie("refreshToken", {
         httpOnly: true,
-        sameSite: "None",
+        sameSite: "Lax",
         secure: false,
       });
       return res.sendStatus(204);
@@ -231,7 +230,8 @@ module.exports = {
         res.cookie("refreshToken", newRefreshToken, {
           httpOnly: true,
           secure: false,
-          sameSite: "None",
+          sameSite: "Lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, 
         });
 
         res.json({
@@ -260,7 +260,8 @@ module.exports = {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "None",
+        sameSite: "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
         `http://localhost:5173/oauth/success?token=${accessToken}&user=${req.user.username}`
@@ -283,7 +284,8 @@ module.exports = {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "None",
+        sameSite: "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
         `http://localhost:5173/oauth/success?token=${accessToken}&user=${req.user.username}`

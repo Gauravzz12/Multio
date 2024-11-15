@@ -22,6 +22,7 @@ export const Login = () => {
     pwd: "",
   });
   useEffect(() => {
+    logout();
     dispatch(logOut());
   }, []);
 
@@ -38,7 +39,7 @@ export const Login = () => {
   };
   const handleGuest = () => {
     dispatch(guest());
-    <Navigate to="/Home" replace />;
+    navigate('/Home')
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,7 +53,6 @@ export const Login = () => {
       });
       toast.success("Login Successful");
       navigate("/Home");
-  
     } catch (err) {
       console.log(err);
       if (err.status === 403) {

@@ -19,6 +19,7 @@ import { useRefreshQuery } from "./features/auth/authApiSlice";
 import OAuthSuccess from "./features/auth/OAuthSuccess";
 
 function App() {
+  useEffect(()=>{})
   const user = useSelector(selectCurrentUser);
   const { isLoading, isError } = useRefreshQuery(undefined, {
     skip: user === "Guest",
