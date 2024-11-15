@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { selectCurrentUser } from "./features/auth/authSlice";
 import { useSelector } from "react-redux";
 import { useRefreshQuery } from "./features/auth/authApiSlice";
+import OAuthSuccess from "./features/auth/OAuthSuccess";
 
 function App() {
   const user = useSelector(selectCurrentUser);
@@ -62,6 +63,10 @@ function App() {
     {
       path: "/Login",
       element: <LoginPage />,
+    },
+    {
+      path: "/oauth/success",
+      element: <OAuthSuccess />,
     },
   ]);
 

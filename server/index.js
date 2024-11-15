@@ -8,8 +8,10 @@ const API_PORT = process.env.API_PORT || 5000;
 
 const app = express();
 const server = http.createServer(app); 
+
 startApiServer(app);
 startSocketServer(server);
+
 server.listen(API_PORT, () => {
   console.log(`Server running on port ${API_PORT}`);
 });

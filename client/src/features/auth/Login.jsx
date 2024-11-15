@@ -5,7 +5,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { AiOutlineMail, AiOutlineLock, AiOutlineGithub } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { PiEyeClosedBold } from "react-icons/pi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate, replace } from "react-router-dom";
 import { PiEyeBold } from "react-icons/pi";
 import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
@@ -22,9 +22,9 @@ export const Login = () => {
     pwd: "",
   });
   useEffect(() => {
-    dispatch(logOut())
+    dispatch(logOut());
   }, []);
-   
+
   const toggleShowPass = useCallback((e) => {
     e.preventDefault();
     setShowPass((prevShowPass) => !prevShowPass);
@@ -38,7 +38,7 @@ export const Login = () => {
   };
   const handleGuest = () => {
     dispatch(guest());
-    navigate("/Home");
+    <Navigate to="/Home" replace />;
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,7 +52,9 @@ export const Login = () => {
       });
       toast.success("Login Successful");
       navigate("/Home");
+  
     } catch (err) {
+      console.log(err);
       if (err.status === 403) {
         toast.error(err.data.message);
       } else if (err.status === 404) {
@@ -63,6 +65,14 @@ export const Login = () => {
         toast.error("Login failed. Please try again.");
       }
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:5000/auth/google";
+  };
+
+  const handleGithubLogin = () => {
+    window.location.href = "http://localhost:5000/auth/github";
   };
 
   return isLoading ? (
@@ -148,8 +158,6 @@ export const Login = () => {
             </div>
           </div>
 
-          
-
           <button
             className="py-2 px-6 bg-gradient-to-r from-[#D0517E] to-[#5612E1] text-base border-none text-white"
             style={{
@@ -169,10 +177,10 @@ export const Login = () => {
           </div>
 
           <section className="methods flex justify-center gap-2 -mt-2 items-center">
-            <button aria-label="Login with Google">
+            <button aria-label="Login with Google" onClick={handleGoogleLogin}>
               <FcGoogle className="text-4xl cursor-pointer" />
             </button>
-            <button aria-label="Login with GitHub">
+            <button aria-label="Login with GitHub" onClick={handleGithubLogin}>
               <AiOutlineGithub className="text-white text-4xl cursor-pointer" />
             </button>
           </section>

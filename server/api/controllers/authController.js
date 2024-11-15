@@ -2,6 +2,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { pool } = require("../db/config");
 const { v4: uuidv4 } = require("uuid");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const GitHubStrategy = require("passport-github2").Strategy;
 
 const generateToken = (user, expiry) => {
   return jwt.sign(
@@ -10,6 +13,82 @@ const generateToken = (user, expiry) => {
     { expiresIn: expiry }
   );
 };
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:5000/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const existingUser = await pool.query(
+          "SELECT * FROM users WHERE google_id = $1 OR email = $2",
+          [profile.id, profile.emails[0].value]
+        );
+        if (existingUser.rowCount > 0) {
+          return done(null, existingUser.rows[0]);
+        }
+
+        const id = uuidv4();
+        const newUser = await pool.query(
+          "INSERT INTO users (id, username,password, email, google_id) VALUES ($1, $2, $3, $4,$5) RETURNING *",
+          [
+            id,
+            profile.displayName,
+            "OauthLogin",
+            profile.emails[0].value,
+            profile.id,
+          ]
+        );
+
+        return done(null, newUser.rows[0]);
+      } catch (err) {
+        return done(err, null);
+      }
+    }
+  )
+);
+
+passport.use(
+  new GitHubStrategy(
+    {
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: "http://localhost:5000/auth/github/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const existingUser = await pool.query(
+          "SELECT * FROM users WHERE github_id = $1 OR email = $2",
+          [profile.id, profile.emails[0].value]
+        );
+
+        if (existingUser.rowCount > 0) {
+          return done(null, existingUser.rows[0]);
+        }
+
+        const id = uuidv4();
+        const newUser = await pool.query(
+          "INSERT INTO users (id, username, password,email, github_id) VALUES ($1, $2, $3, $4,$5) RETURNING *",
+          [
+            id,
+            profile.username,
+            "OauthLogin",
+            profile.emails[0].value,
+            profile.id,
+          ]
+        );
+
+        return done(null, newUser.rows[0]);
+      } catch (err) {
+        return done(err, null);
+      }
+    }
+  )
+);
+
 module.exports = {
   register: async (req, res) => {
     try {
@@ -69,7 +148,7 @@ module.exports = {
 
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: true,
+            secure: false,
           });
           return res
             .status(200)
@@ -88,10 +167,13 @@ module.exports = {
     }
   },
   logOut: async (req, res) => {
+    console.log("Logging Out")
     try {
       const cookies = req.cookies;
+      console.log(cookies)
       if (!cookies?.refreshToken) return res.sendStatus(204);
       const refreshToken = cookies.refreshToken;
+      console.log("refresh: ",refreshToken)
       const found = await pool.query(
         "SELECT * FROM users WHERE refreshtoken = $1",
         [refreshToken]
@@ -104,7 +186,7 @@ module.exports = {
       res.clearCookie("refreshToken", {
         httpOnly: true,
         sameSite: "None",
-        secure: true,
+        secure: false,
       });
       return res.sendStatus(204);
     } catch (err) {
@@ -117,6 +199,7 @@ module.exports = {
   refreshToken: async (req, res) => {
     try {
       const refreshToken = req.cookies.refreshToken;
+      console.log(refreshToken)
       if (!refreshToken) {
         return res.status(401).json({ message: "Unauthorized" });
       }
@@ -147,7 +230,7 @@ module.exports = {
 
         res.cookie("refreshToken", newRefreshToken, {
           httpOnly: true,
-          secure: true,
+          secure: false,
           sameSite: "None",
         });
 
@@ -161,6 +244,52 @@ module.exports = {
       res
         .status(500)
         .json({ message: "An error occurred during token refresh" });
+    }
+  },
+
+  handleGoogleCallback: async (req, res) => {
+    try {
+      const accessToken = generateToken(req.user, "15m");
+      const refreshToken = generateToken(req.user, "7d");
+
+      await pool.query("UPDATE users SET refreshtoken = $1 WHERE id = $2", [
+        refreshToken,
+        req.user.id,
+      ]);
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "None",
+      });
+      res.redirect(
+        `http://localhost:5173/oauth/success?token=${accessToken}&user=${req.user.username}`
+      );
+    } catch (err) {
+      res.redirect("http://localhost:5173/");
+    }
+  },
+
+  handleGithubCallback: async (req, res) => {
+    try {
+      const accessToken = generateToken(req.user, "15m");
+      const refreshToken = generateToken(req.user, "7d");
+
+      await pool.query("UPDATE users SET refreshtoken = $1 WHERE id = $2", [
+        refreshToken,
+        req.user.id,
+      ]);
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "None",
+      });
+      res.redirect(
+        `http://localhost:5173/oauth/success?token=${accessToken}&user=${req.user.username}`
+      );
+    } catch (err) {
+      res.redirect("http://localhost:5173/");
     }
   },
 };
