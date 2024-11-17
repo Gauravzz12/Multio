@@ -109,6 +109,9 @@ const RPS = () => {
 
   return (
     <div className="flex flex-col items-center text-center text-white relative">
+      <h2 className="text-white text-5xl mb-4 font-bold tracking-wider flex justify-center">
+              Rock Paper Scissors
+            </h2>
       {(gameMode === "friends" ) && roomName && (
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-gray-800 p-2 rounded">
 

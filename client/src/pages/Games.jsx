@@ -1,13 +1,26 @@
 import React, { useEffect, useState } from "react";
 import RPS from "../components/GameBoards/RPS";
+import TTT from "../components/GameBoards/TTT";
+
 function Games() {
   const [selectedGame, setSelectedGame] = useState(null);
-  const handleGameClick = (name, game) => {
+  const handleGameClick = (game) => {
     setSelectedGame(game);
   };
 
   const closeGameBoard = () => {
     setSelectedGame(null);
+  };
+
+  const renderGameBoard = () => {
+    switch (selectedGame) {
+      case "RPS":
+        return <RPS />;
+      case "TTT":
+        return <TTT />;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -17,7 +30,7 @@ function Games() {
       <div className="grid grid-cols-2  gap-6 mt-8 place-items-center  ">
         <div
           className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-          onClick={() => handleGameClick("RPS", "Rock Paper Scissors")}
+          onClick={() => handleGameClick("RPS")}
         >
           <h2 className="text-white text-2xl mb-4">Rock Paper Scissors</h2>
           <p className="text-gray-400">
@@ -26,7 +39,7 @@ function Games() {
         </div>
         <div
           className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-          onClick={() => handleGameClick("TTT", "Tic Tac Toe")}
+          onClick={() => handleGameClick("TTT")}
         >
           <h2 className="text-white text-2xl mb-4">Tic Tac Toe</h2>
           <p className="text-gray-400">A simple game of Xs and Os.</p>
@@ -42,10 +55,7 @@ function Games() {
             >
               &times;
             </button>
-            <h2 className="text-white text-5xl mb-4 font-bold tracking-wider flex justify-center">
-              {selectedGame}
-            </h2>
-            {selectedGame === "Rock Paper Scissors" ? <RPS /> : ""}
+            {renderGameBoard()}
           </div>
         </div>
       )}
