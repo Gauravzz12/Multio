@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import RPS from "../components/GameBoards/RPS";
 import TTT from "../components/GameBoards/TTT";
-
 function Games() {
   const [selectedGame, setSelectedGame] = useState(null);
   const handleGameClick = (game) => {

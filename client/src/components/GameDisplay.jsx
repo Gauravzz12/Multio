@@ -1,5 +1,4 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 import rockIcon from "../assets/images/RPS/rock.svg";
 import paperIcon from "../assets/images/RPS/paper.svg";
 import scissorsIcon from "../assets/images/RPS/scissors.svg";
@@ -10,11 +9,13 @@ const choiceIcons = {
   Scissors: scissorsIcon,
 };
 
-const GameDisplay = ({ userChoice, opponentChoice, result, onPlayAgain }) => {
-  const dispatch = useDispatch();
+const GameDisplay = ({ userChoice, opponentChoice, result }) => {
 
   return (
     <div className="flex flex-col items-center mt-8">
+      
+    
+
       <div className="flex justify-around w-full max-w-md">
         <div className="flex flex-col items-center">
           <h2 className="text-2xl mb-4">You</h2>
@@ -36,12 +37,6 @@ const GameDisplay = ({ userChoice, opponentChoice, result, onPlayAgain }) => {
           {result}
         </h1>
       )}
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded mt-6"
-        onClick={onPlayAgain}
-      >
-        Play Again
-      </button>
     </div>
   );
 };

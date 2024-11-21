@@ -118,7 +118,6 @@ module.exports = {
         "INSERT INTO users (id,username,email, password) VALUES ($1, $2, $3,$4) RETURNING *;",
         [id, userName, email, hashedPassword]
       );
-      console.log(newUser);
       res.status(201).json({ message: "User Registered Successfully" });
     } catch (err) {
       return res
@@ -198,7 +197,6 @@ module.exports = {
   refreshToken: async (req, res) => {
     try {
       const refreshToken = req.cookies.refreshToken;
-      console.log(refreshToken)
       if (!refreshToken) {
         return res.status(401).json({ message: "Unauthorized" });
       }

@@ -7,6 +7,7 @@ const rpsSlice = createSlice({
     gameMode: null,
     roomName: "",
     opponentChoice: null,
+    scores: {},
   },
   reducers: {
     setResult: (state, action) => {
@@ -25,6 +26,12 @@ const rpsSlice = createSlice({
       state.result = null;
       state.opponentChoice = null;
     },
+    setScores: (state, action) => {
+      state.scores = action.payload;
+    },
+    resetScores: (state) => {
+      state.scores = {};
+    },
     setOpponentDisconnected: (state) => {
       state.result = null;
       state.opponentChoice = null;
@@ -41,6 +48,8 @@ export const {
   setOpponentChoice,
   resetGame,
   setOpponentDisconnected,
+  setScores,
+  resetScores,
 } = rpsSlice.actions;
 
 export default rpsSlice.reducer;
