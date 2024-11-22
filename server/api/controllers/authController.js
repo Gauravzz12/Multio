@@ -249,7 +249,10 @@ module.exports = {
     try {
       const accessToken = generateToken(req.user, "15m");
       const refreshToken = generateToken(req.user, "7d");
-
+      const user= pool.query("Select * from  users SET refreshtoken = $1 WHERE id = $2", [
+        refreshToken,
+        req.user.id,
+      ]);
       await pool.query("UPDATE users SET refreshtoken = $1 WHERE id = $2", [
         refreshToken,
         req.user.id,

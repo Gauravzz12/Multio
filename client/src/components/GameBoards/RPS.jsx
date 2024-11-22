@@ -30,7 +30,7 @@ const RPS = () => {
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5000/rps");
+    const newSocket = io(import.meta.env.MODE === "development" ? "http://localhost:5000/rps" : "/rps",);
     setSocket(newSocket);
 
     newSocket.on("startGame", (data) => {

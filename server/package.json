@@ -7,13 +7,26 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "multio": "file:..",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "pg": "^8.13.1",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/pg": "^8.11.10",
     "nodemon": "^3.1.7"
   }
 }
