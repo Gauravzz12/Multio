@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useSelector, useDispatch } from "react-redux";
-import { setGameMode, setRoomName } from "../../features/games/rpsSlice";
+import {
+  setGameMode,
+  setRoomName,
+  setResult,
+  setOpponentChoice,
+  setScores,
+  resetScores,
+} from "../../features/games/rpsSlice";
 import rockIcon from "../../assets/images/RPS/rock.svg";
 import paperIcon from "../../assets/images/RPS/paper.svg";
 import scissorsIcon from "../../assets/images/RPS/scissors.svg";
@@ -11,6 +18,7 @@ import RoomManager from "../RoomManager";
 import OpponentLoader from "../OpponentLoader";
 import { FaCopy } from "react-icons/fa";
 import useSocket from "../../hooks/useSocket";
+import { selectCurrentUser } from "../../features/auth/authSlice";
 
 const RPS = () => {
   const dispatch = useDispatch();
@@ -19,24 +27,54 @@ const RPS = () => {
   );
   const [socket, setSocket] = useState(null);
   const [userChoice, setUserChoice] = useState(null);
-  const [gameStarted, setGameStarted] = useState(false);
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
 
   useEffect(() => {
     const newSocket = io("http://localhost:5000/rps");
     setSocket(newSocket);
 
+    newSocket.on("startGame", (data) => {
+      setWaitingForOpponent(false);
+      setUserChoice(null);
+      dispatch(setOpponentChoice(null));
+      dispatch(setResult(null));
+      dispatch(setScores(data.scores));
+    });
+
+    newSocket.on("gameResult", (data) => {
+      dispatch(setResult(data.result));
+      dispatch(setOpponentChoice(data.opponentChoice));
+      dispatch(setScores(data.scores));
+      setWaitingForOpponent(false);
+    });
+
+    newSocket.on("startNextRound", (data) => {
+      setUserChoice(null);
+      dispatch(setOpponentChoice(null));
+      dispatch(setResult(null));
+      if (data.scores) {
+        dispatch(setScores(data.scores));
+      }
+    });
+
+    newSocket.on("scoresReset", () => {
+      dispatch(resetScores());
+    });
+
     return () => {
       if (newSocket) newSocket.disconnect();
       dispatch(setGameMode(null));
       dispatch(setRoomName(""));
       setUserChoice(null);
-      setGameStarted(false);
       setWaitingForOpponent(false);
+      newSocket.off("startGame");
+      newSocket.off("gameResult");
+      newSocket.off("startNextRound");
+      newSocket.off("scoresReset");
     };
   }, []);
 
-  useSocket(socket, setGameStarted, setWaitingForOpponent, setUserChoice);
+  useSocket(socket,setWaitingForOpponent);
 
   useEffect(() => {
     if (socket && gameMode === "online" && !roomName) {
@@ -103,6 +141,7 @@ const RPS = () => {
 
   const ScoreDisplay = () => {
     const { scores } = useSelector((state) => state.rps);
+    const user=useSelector(selectCurrentUser)
     const playerId = socket?.id;
 
     if (!scores || Object.keys(scores).length === 0) return null;
@@ -111,7 +150,7 @@ const RPS = () => {
       <div className="bg-gray-800 p-4 rounded-lg mb-4 w-full max-w-md">
         <div className="flex justify-between">
           <div className="text-center">
-            <p className="font-bold text-green-500">You</p>
+            <p className="font-bold text-green-500">{user}</p>
             <p className="text-2xl">{scores[playerId] || 0}</p>
           </div>
           <div className="text-center">
