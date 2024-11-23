@@ -28,6 +28,7 @@ const RPS = () => {
   const [socket, setSocket] = useState(null);
   const [userChoice, setUserChoice] = useState(null);
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
+
   useEffect(() => {
     const newSocket = io(import.meta.env.MODE === "development" ? "http://localhost:5000/rps" : "https://multio.netlify.app/rps",);
     setSocket(newSocket);
