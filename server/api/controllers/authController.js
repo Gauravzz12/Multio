@@ -272,10 +272,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `https://multio.netlify.app/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio-backend.up.railway.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio.netlify.app/");
+      res.redirect("https://multio-backend.up.railway.app/");
     }
   },
 
@@ -296,10 +296,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `https://multio.netlify.app/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio-backend.up.railway.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio.netlify.app/");
+      res.redirect("https://multio-backend.up.railway.app/");
     }
   },
 };
