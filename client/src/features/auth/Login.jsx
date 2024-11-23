@@ -68,11 +68,11 @@ export const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/auth/google";
+    window.location.href = import.meta.env.MODE === "development" ? "http://localhost:5000/auth/google" : "/auth/google";
   };
 
   const handleGithubLogin = () => {
-    window.location.href = "http://localhost:5000/auth/github";
+    window.location.href = import.meta.env.MODE === "development" ? "http://localhost:5000/auth/github" : "/auth/github";
   };
 
   return isLoading ? (
