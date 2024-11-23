@@ -19,7 +19,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.nextTick.NODE_ENV === "development" ? "/auth/google/callback" : "http://localhost:5000/auth/google/callback",
+      callbackURL: process.nextTick.NODE_ENV === "production" ? "https://multio.netlify.app/auth/google/callback" : "http://localhost:5000/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -56,7 +56,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: process.nextTick.NODE_ENV === "development" ? "/auth/github/callback" : "http://localhost:5000/auth/github/callback",
+      callbackURL: process.nextTick.NODE_ENV === "production" ? "https://multio.netlify.app/auth/github/callback" : "http://localhost:5000/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -265,10 +265,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `http://localhost:5173/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio.netlify.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("http://localhost:5173/");
+      res.redirect("https://multio.netlify.app/");
     }
   },
 
@@ -289,10 +289,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `http://localhost:5173/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio.netlify.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("http://localhost:5173/");
+      res.redirect("https://multio.netlify.app/");
     }
   },
 };
