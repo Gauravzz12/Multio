@@ -19,7 +19,10 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.nextTick.NODE_ENV === "production" ? "https://multio.netlify.app/auth/google/callback" : "http://localhost:5000/auth/google/callback",
+      callbackURL:
+        process.env.NODE_ENV === "production"
+          ? "https://your-frontend.netlify.app/auth/google/callback"
+          : "http://localhost:5000/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -56,7 +59,10 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: process.nextTick.NODE_ENV === "production" ? "https://multio.netlify.app/auth/github/callback" : "http://localhost:5000/auth/github/callback",
+      callbackURL:
+        process.env.NODE_ENV === "production"
+          ? "https://your-frontend.netlify.app/auth/github/callback"
+          : "http://localhost:5000/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -147,9 +153,9 @@ module.exports = {
 
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: false,
-            sameSite:'Lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000, 
+            secure: process.env.NODE_ENV === "development",
+            sameSite: "Lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
           });
           return res
             .status(200)
@@ -181,10 +187,11 @@ module.exports = {
           found.rows[0].id,
         ]);
       }
-      res.clearCookie("refreshToken", {
+      res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === "development",
         sameSite: "Lax",
-        secure: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       return res.sendStatus(204);
     } catch (err) {
@@ -225,11 +232,11 @@ module.exports = {
           user.id,
         ]);
 
-        res.cookie("refreshToken", newRefreshToken, {
+        res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
-          secure: false,
+          secure: process.env.NODE_ENV === "development",
           sameSite: "Lax",
-          maxAge: 7 * 24 * 60 * 60 * 1000, 
+          maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
         res.json({
@@ -249,10 +256,10 @@ module.exports = {
     try {
       const accessToken = generateToken(req.user, "15m");
       const refreshToken = generateToken(req.user, "7d");
-      const user= pool.query("Select * from  users SET refreshtoken = $1 WHERE id = $2", [
-        refreshToken,
-        req.user.id,
-      ]);
+      const user = pool.query(
+        "Select * from  users SET refreshtoken = $1 WHERE id = $2",
+        [refreshToken, req.user.id]
+      );
       await pool.query("UPDATE users SET refreshtoken = $1 WHERE id = $2", [
         refreshToken,
         req.user.id,
@@ -260,7 +267,7 @@ module.exports = {
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NODE_ENV === "development",
         sameSite: "Lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
@@ -284,7 +291,7 @@ module.exports = {
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NODE_ENV === "development",
         sameSite: "Lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });

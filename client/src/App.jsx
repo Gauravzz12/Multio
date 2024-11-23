@@ -24,7 +24,7 @@ function App() {
   const { isLoading, isError } = useRefreshQuery(undefined, {
     skip: user === "Guest",
   });
-
+console.log(import.meta.env.MODE)
   const router = createBrowserRouter([
     {
       path: "/",
