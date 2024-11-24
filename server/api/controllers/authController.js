@@ -154,7 +154,7 @@ module.exports = {
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "Lax",
+            sameSite: "None",
             maxAge: 7 * 24 * 60 * 60 * 1000,
           });
           return res
@@ -191,7 +191,7 @@ module.exports = {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       return res.sendStatus(204);
@@ -236,7 +236,7 @@ module.exports = {
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
-          sameSite: "Lax",
+          sameSite: "None",
           maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
@@ -269,7 +269,7 @@ module.exports = {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
@@ -293,7 +293,7 @@ module.exports = {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
