@@ -68,11 +68,11 @@ export const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = import.meta.env.MODE === "development" ? "http://localhost:5000/auth/google" : "https://multio-backend.up.railway.app/auth/google";
+    window.location.href = import.meta.env.MODE !== "development" ? "http://localhost:5000/auth/google" : "https://multio-backend.up.railway.app/auth/google";
   };
 
   const handleGithubLogin = () => {
-    window.location.href = import.meta.env.MODE === "development" ? "http://localhost:5000/auth/github" : "https://multio-backend.up.railway.app/auth/github";
+    window.location.href = import.meta.env.MODE !== "development" ? "http://localhost:5000/auth/github" : "https://multio-backend.up.railway.app/auth/github";
   };
 
   return isLoading ? (

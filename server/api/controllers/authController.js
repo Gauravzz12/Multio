@@ -20,8 +20,8 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
-        process.env.NODE_ENV === "production"
-          ? "https://your-frontend.netlify.app/auth/google/callback"
+        process.env.NODE_ENV !== "production"
+          ? "https://multio-backend.up.railway.app/auth/google/callback"
           : "http://localhost:5000/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -60,8 +60,8 @@ passport.use(
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL:
-        process.env.NODE_ENV === "production"
-          ? "https://your-frontend.netlify.app/auth/github/callback"
+        process.env.NODE_ENV !== "production"
+          ? "https://multio-backend.up.railway.app/auth/github/callback"
           : "http://localhost:5000/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -272,10 +272,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `https://multio-backend.up.railway.app/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `http://localhost:5173/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio-backend.up.railway.app/");
+      res.redirect("http://localhost:5173/");
     }
   },
 
@@ -296,10 +296,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `https://multio-backend.up.railway.app/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `http://localhost:5173/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio-backend.up.railway.app/");
+      res.redirect("http://localhost:5173/");
     }
   },
 };

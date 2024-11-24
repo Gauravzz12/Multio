@@ -18,7 +18,7 @@ const TTT = () => {
   const [waitingForRematch, setWaitingForRematch] = useState(false);
 
   useEffect(() => {
-    const newSocket = io(import.meta.env.MODE === "development" ? "http://localhost:5000/ttt" : "https://multio-backend.up.railway.app/ttt",);
+    const newSocket = io(import.meta.env.MODE !== "development" ? "http://localhost:5000/ttt" : "https://multio-backend.up.railway.app/ttt",);
     setSocket(newSocket);
 
     newSocket.on('waitingForOpponent', () => {
