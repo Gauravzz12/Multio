@@ -2,6 +2,15 @@ import React from "react";
 import img from "../assets/images/hero.png";
 import feature from "../assets/images/Features/features.png";
 import Popular from "../assets/images/Popular.jpg";
+import featureImage1 from '../assets/images/Features/1.png';
+import featureImage2 from '../assets/images/Features/2.png';
+import featureImage3 from '../assets/images/Features/3.png';
+import featureImage4 from '../assets/images/Features/4.png';
+import rpsImage from '../assets/images/GameLogo/RPS.jpg';
+import tttImage from '../assets/images/GameLogo/TTT.jpg';
+import cardImage from '../assets/images/GameLogo/Card.jpg';
+
+const featureImages = [featureImage1, featureImage2, featureImage3, featureImage4];
 function Home() {
   const textGroups = [
     [
@@ -73,9 +82,8 @@ function Home() {
                 <div
                   className="absolute inset-0 bg-contain bg-no-repeat duration-500 group-hover:blur-sm group-hover:scale-110"
                   style={{
-                    backgroundImage: `url('../src/assets/images/Features/${
-                      index + 1
-                    }.png')`,
+                    backgroundImage: `url(${featureImages[index]})`,
+
                   }}
                 ></div>
 
@@ -133,19 +141,19 @@ function Home() {
           <div
             className="  size-64  border-2  rounded-xl bg-no-repeat bg-top bg-cover hover:scale-110 duration-300"
             style={{
-              backgroundImage: `url('../src/assets/images/GameLogo/RPS.jpg')`,
+              backgroundImage: `url(${rpsImage})`,
             }}
           ></div>
           <div
             className="  size-64  border-2  rounded-xl bg-no-repeat bg-center bg-cover hover:scale-110 duration-300"
             style={{
-              backgroundImage: `url('../src/assets/images/GameLogo/TTT.jpg')`,
+              backgroundImage: `url(${tttImage})`,
             }}
           ></div>
           <div
             className="  size-64 border-2 rounded-xl bg-no-repeat bg-center bg-cover hover:scale-110 duration-300"
             style={{
-              backgroundImage: `url('../src/assets/images/GameLogo/Card.jpg')`,
+              backgroundImage: `url(${cardImage})`,
             }}
           ></div>
         </div>

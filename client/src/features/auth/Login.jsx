@@ -11,6 +11,7 @@ import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
 import { useLogoutMutation } from "./authApiSlice";
 import { logOut } from "./authSlice";
+import AuthLogo from "../../assets/images/Auth/Logo.png";
 export const Login = () => {
   const dispatch = useDispatch();
   const [logout] = useLogoutMutation();
@@ -88,7 +89,7 @@ export const Login = () => {
       >
         <header className="heading flex items-center justify-start mb-6 font-mono">
           <img
-            src="../src/assets/images/Auth/Logo.png"
+            src={AuthLogo}
             className="w-16 bg-contain"
             alt="Multio Logo"
           />

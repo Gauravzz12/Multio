@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  AiOutlineMail,
-  AiOutlineLock,
-  AiOutlineUser,
-  AiOutlineGithub,
-  AiOutlineInfoCircle,
-} from "react-icons/ai";
-import { FcGoogle } from "react-icons/fc";
+import { AiOutlineMail, AiOutlineLock, AiOutlineUser } from "react-icons/ai";
 import { PiEyeClosedBold, PiEyeBold } from "react-icons/pi";
 import { toast } from "react-toastify";
 import { useRegisterMutation } from "./authApiSlice";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader";
+import AuthLogo from "../../assets/images/Auth/Logo.png";
 
 const Register = () => {
   const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -79,7 +73,7 @@ const Register = () => {
       >
         <header className="heading flex items-center justify-start mb-3 font-mono">
           <img
-            src="../src/assets/images/Auth/Logo.png"
+            src={AuthLogo}
             className="w-16 bg-contain"
             alt="Multio Logo"
           />
@@ -216,7 +210,7 @@ const Register = () => {
                 className="text-[#D0517E] cursor-pointer"
                 onClick={() => navigate("/Login")}
               >
-              Sign in
+                Sign in
               </span>
             </p>
           </div>

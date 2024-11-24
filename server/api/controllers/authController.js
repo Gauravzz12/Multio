@@ -175,6 +175,7 @@ module.exports = {
   },
   logOut: async (req, res) => {
     try {
+      console.log('LOGGIN oUT')
       const cookies = req.cookies;
       if (!cookies?.refreshToken) return res.sendStatus(204);
       const refreshToken = cookies.refreshToken;

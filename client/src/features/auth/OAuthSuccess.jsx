@@ -12,7 +12,6 @@ const OAuthSuccess = () => {
   useEffect(() => {
     const token = searchParams.get('token');
     const user = searchParams.get('user');
-    console.log("Helloasdasdasd")
     if (token && user) {
       dispatch(logIn({ accessToken: token, user }));
       navigate('/Home');
