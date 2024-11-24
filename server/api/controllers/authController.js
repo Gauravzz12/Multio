@@ -21,8 +21,8 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
         process.env.NODE_ENV === "production"
-          ? "https://multio-six.vercel.app/auth/google/callback"
-          : "http://localhost:5000/auth/google/callback",
+        ? "https://multio-backend.up.railway.app/auth/google/callback"
+        : "http://localhost:5000/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -61,8 +61,8 @@ passport.use(
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL:
         process.env.NODE_ENV === "production"
-          ? "https://multio-six.vercel.app/auth/github/callback"
-          : "http://localhost:5000/auth/github/callback",
+        ? "https://multio-backend.up.railway.app/auth/github/callback"
+        : "http://localhost:5000/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
