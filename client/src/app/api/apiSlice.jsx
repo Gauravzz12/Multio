@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { logIn, logOut } from '../../features/auth/authSlice';
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: import.meta.env.MODE !== "development" ? "http://localhost:5000" : "https://multio-backend.up.railway.app/",
+    baseUrl: import.meta.env.MODE === "development" ? "http://localhost:5000" : "https://multio-backend.up.railway.app",
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = getState().auth.token;
