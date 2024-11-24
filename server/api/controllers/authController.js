@@ -272,10 +272,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `https://multio-six.vercel.app//oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio-six.vercel.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio-six.vercel.app//");
+      res.redirect("https://multio-six.vercel.app/");
     }
   },
 
@@ -296,10 +296,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `https://multio-six.vercel.app//oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio-six.vercel.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio-six.vercel.app//");
+      res.redirect("https://multio-six.vercel.app/");
     }
   },
 };
