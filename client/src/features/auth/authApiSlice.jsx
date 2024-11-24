@@ -1,5 +1,5 @@
 import { apiSlice } from "../../app/api/apiSlice";
-import { logIn } from "./authSlice";
+import { logIn,logOut } from "./authSlice";
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -31,7 +31,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
       },
     }),
     logout: builder.mutation({
-      query: () => ({
+      query: () => ({ 
         url: "/auth/logout",
         method: "POST",
       }),
