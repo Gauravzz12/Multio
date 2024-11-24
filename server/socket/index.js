@@ -5,7 +5,7 @@ const tttController = require("./controllers/tttController");
 const startSocketServer = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: ["http://localhost:5173", "https://multio.netlify.app/"],
+      origin: ["http://localhost:5173/", "https://multio.netlify.app/","https://multio-six.vercel.app/"],
       methods: ["GET", "POST"],
     },
   });

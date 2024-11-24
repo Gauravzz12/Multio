@@ -20,7 +20,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
-        process.env.NODE_ENV !== "production"
+        process.env.NODE_ENV === "production"
           ? "https://multio-backend.up.railway.app/auth/google/callback"
           : "http://localhost:5000/auth/google/callback",
     },
@@ -60,7 +60,7 @@ passport.use(
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL:
-        process.env.NODE_ENV !== "production"
+        process.env.NODE_ENV === "production"
           ? "https://multio-backend.up.railway.app/auth/github/callback"
           : "http://localhost:5000/auth/github/callback",
     },
@@ -272,10 +272,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `http://localhost:5173/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio-six.vercel.app//oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("http://localhost:5173/");
+      res.redirect("https://multio-six.vercel.app//");
     }
   },
 
@@ -296,10 +296,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `http://localhost:5173/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio-six.vercel.app//oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("http://localhost:5173/");
+      res.redirect("https://multio-six.vercel.app//");
     }
   },
 };
