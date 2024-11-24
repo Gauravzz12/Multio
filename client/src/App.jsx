@@ -1,34 +1,40 @@
-import React, { useEffect } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
 } from "react-router-dom";
-import Home from "./pages/Home";
-import Layout from "./components/Layout";
-import LoginPage from "./pages/Login";
-import Register from "./pages/Registration";
-import Games from "./pages/Games";
-import Profile from "./pages/Profile";
 import { Bounce, ToastContainer } from "react-toastify";
-import RequireAuth from "./features/auth/RequireAuth";
-import "react-toastify/dist/ReactToastify.css";
 import { selectCurrentUser } from "./features/auth/authSlice";
 import { useSelector } from "react-redux";
 import { useRefreshQuery } from "./features/auth/authApiSlice";
-import OAuthSuccess from "./features/auth/OAuthSuccess";
+import "react-toastify/dist/ReactToastify.css";
+import Loader from "./components/Loader";
+
+const Home = lazy(() => import("./pages/Home"));
+const Layout = lazy(() => import("./components/Layout"));
+const LoginPage = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Registration"));
+const Games = lazy(() => import("./pages/Games"));
+const Profile = lazy(() => import("./pages/Profile"));
+const RequireAuth = lazy(() => import("./features/auth/RequireAuth"));
+const OAuthSuccess = lazy(() => import("./features/auth/OAuthSuccess"));
 
 function App() {
-  useEffect(()=>{})
+  useEffect(() => {});
   const user = useSelector(selectCurrentUser);
   const { isLoading, isError } = useRefreshQuery(undefined, {
     skip: user === "Guest",
   });
-console.log(import.meta.env.MODE)
+  console.log(import.meta.env.MODE);
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Layout />,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Layout />
+        </Suspense>
+      ),
       children: [
         {
           path: "/",
@@ -39,19 +45,35 @@ console.log(import.meta.env.MODE)
           ),
         },
         {
-          element: <RequireAuth />,
+          element: (
+            <Suspense fallback={<Loader />}>
+              <RequireAuth />
+            </Suspense>
+          ),
           children: [
             {
               path: "/Profile",
-              element: <Profile />,
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <Profile />
+                </Suspense>
+              ),
             },
             {
               path: "/Home",
-              element: <Home />,
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <Home />
+                </Suspense>
+              ),
             },
             {
               path: "/Games",
-              element: <Games />,
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <Games />
+                </Suspense>
+              ),
             },
           ],
         },
@@ -59,15 +81,27 @@ console.log(import.meta.env.MODE)
     },
     {
       path: "/Register",
-      element: <Register />,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <Register />
+        </Suspense>
+      ),
     },
     {
       path: "/Login",
-      element: <LoginPage />,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <LoginPage />
+        </Suspense>
+      ),
     },
     {
       path: "/oauth/success",
-      element: <OAuthSuccess />,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <OAuthSuccess />
+        </Suspense>
+      ),
     },
   ]);
 

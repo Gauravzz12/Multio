@@ -67,7 +67,7 @@ function Home() {
         </article>
 
         <picture className="relative flex items-center h-96 w-96 mr-32 drop-shadow-3xl shrink-0">
-          <img src={img} alt="Hero" className="object-cover rounded-lg" />
+          <img src={img} alt="Hero" className="object-cover rounded-lg" loading="lazy" />
         </picture>
       </section>
 
@@ -115,6 +115,7 @@ function Home() {
               src={feature}
               alt="Hero"
               className="object-cover rounded-lg "
+              loading="lazy"
             />
           </picture>
         </div>
@@ -134,6 +135,7 @@ function Home() {
               src={Popular}
               alt="Hero"
               className="object-cover rounded-lg "
+              loading="lazy"
             />
           </picture>
         </div>

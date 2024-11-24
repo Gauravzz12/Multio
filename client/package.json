@@ -20,7 +20,8 @@
     "react-router-dom": "^6.26.2",
     "react-toastify": "^10.0.6",
     "socket.io-client": "^4.8.1",
-    "tailwind-merge": "^2.5.2"
+    "tailwind-merge": "^2.5.2",
+    "vite-plugin-imagemin": "^0.6.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.5",

@@ -5,13 +5,14 @@ import React, { useState, useCallback, useEffect } from "react";
 import { AiOutlineMail, AiOutlineLock, AiOutlineGithub } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { PiEyeClosedBold } from "react-icons/pi";
-import { useNavigate, Navigate, replace } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PiEyeBold } from "react-icons/pi";
 import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
 import { useLogoutMutation } from "./authApiSlice";
 import { logOut } from "./authSlice";
 import AuthLogo from "../../assets/images/Auth/Logo.png";
+import AuthBg from "../../assets/images/Auth/Authbg.png";
 export const Login = () => {
   const dispatch = useDispatch();
   const [logout] = useLogoutMutation();
@@ -40,7 +41,7 @@ export const Login = () => {
   };
   const handleGuest = () => {
     dispatch(guest());
-    navigate('/Home')
+    navigate("/Home");
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,18 +70,29 @@ export const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = import.meta.env.MODE === "development" ? "http://localhost:5000/auth/google" : "https://multio-backend.up.railway.app/auth/google";
+    window.location.href =
+      import.meta.env.MODE === "development"
+        ? "http://localhost:5000/auth/google"
+        : "https://multio-backend.up.railway.app/auth/google";
   };
 
   const handleGithubLogin = () => {
-    window.location.href = import.meta.env.MODE === "development" ? "http://localhost:5000/auth/github" : "https://multio-backend.up.railway.app/auth/github";
+    window.location.href =
+      import.meta.env.MODE === "development"
+        ? "http://localhost:5000/auth/github"
+        : "https://multio-backend.up.railway.app/auth/github";
   };
 
   return isLoading ? (
     <Loader />
   ) : (
     <div className="Container h-screen w-screen flex justify-center items-center relative">
-      <div className=" inset-0 absolute bg-center h-screen w-screen brightness-[0.3] bg-[url('../src/assets/images/Auth/Authbg.png')] bg-no-repeat bg-cover "></div>
+      <div
+        className={` inset-0 absolute bg-center h-screen w-screen brightness-[0.3] bg-no-repeat bg-cover `}
+        style={{
+          backgroundImage: `url(${AuthBg})`,
+        }}
+      ></div>
 
       <form
         className="login-form w-fit h-fit bg-[#30303059]/65 backdrop-blur-lg rounded-xl flex flex-col p-6 gap-1 border-[#4C4C4C40] border-2 bg-center"
@@ -88,11 +100,7 @@ export const Login = () => {
         onSubmit={handleSubmit}
       >
         <header className="heading flex items-center justify-start mb-6 font-mono">
-          <img
-            src={AuthLogo}
-            className="w-16 bg-contain"
-            alt="Multio Logo"
-          />
+          <img src={AuthLogo} className="w-16 bg-contain" alt="Multio Logo" />
           <h1 className="text-white ml-2 text-3xl font-semibold tracking-wider font-Outfit">
             MULTIO
           </h1>
