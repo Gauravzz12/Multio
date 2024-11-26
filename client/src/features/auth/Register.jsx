@@ -65,18 +65,19 @@ const Register = () => {
     <Loader />
   ) : (
     <div className="Container h-screen w-screen flex justify-center items-center relative">
-      <div className="absolute h-screen w-screen brightness-[0.3] bg-[url('../src/assets/images/Auth/Authbg.png')] bg-no-repeat bg-center bg-cover"></div>
+      <div
+        className="absolute h-screen w-screen brightness-[0.3] bg-no-repeat bg-center bg-cover"
+        style={{
+          backgroundImage: `url(${AuthBg})`,
+        }}
+      ></div>
 
       <main
         className="register-form w-fit h-fit bg-[#30303059]/65 backdrop-blur-lg rounded-xl flex flex-col p-6 gap-1 border-[#4C4C4C40] border-2"
         aria-label="Register Form"
       >
         <header className="heading flex items-center justify-start mb-3 font-mono">
-          <img
-            src={AuthLogo}
-            className="w-16 bg-contain"
-            alt="Multio Logo"
-          />
+          <img src={AuthLogo} className="w-16 bg-contain" alt="Multio Logo" />
           <h1 className="text-white ml-2 text-3xl font-semibold tracking-wider font-Outfit">
             MULTIO
           </h1>
@@ -87,7 +88,6 @@ const Register = () => {
           aria-labelledby="inputs"
           onSubmit={handleSubmit}
         >
-          {/* Username Input */}
           <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
             <label htmlFor="username" className="sr-only">
               Username
@@ -106,7 +106,6 @@ const Register = () => {
             </div>
           </div>
 
-          {/* Email Input */}
           <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
             <label htmlFor="email" className="sr-only">
               Email
@@ -126,7 +125,6 @@ const Register = () => {
             </div>
           </div>
 
-          {/* Password Input */}
           <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
             <label htmlFor="password" className="sr-only">
               Password
@@ -153,7 +151,6 @@ const Register = () => {
             </div>
           </div>
 
-          {/* Confirm Password Input */}
           <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
             <label htmlFor="confirm-password" className="sr-only">
               Confirm Password
@@ -179,12 +176,10 @@ const Register = () => {
             </div>
           </div>
 
-          {/* Error Message */}
           <div className={`text-center ${!isPwdSame ? "visible" : "hidden"}`}>
             <p className="text-red-400">Passwords don't match</p>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="py-2 px-6 bg-gradient-to-r from-[#D0517E] to-[#5612E1] text-base border-none text-white disabled:cursor-not-allowed disabled:grayscale"

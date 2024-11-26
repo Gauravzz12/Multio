@@ -94,6 +94,8 @@ const RPS = () => {
   };
 
   const ChoiceButtons = () => {
+    if(!roomName)
+      return 
     const choices = [
       { name: "Rock", icon: rockIcon },
       { name: "Paper", icon: paperIcon },

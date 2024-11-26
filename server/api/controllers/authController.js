@@ -292,6 +292,7 @@ module.exports = {
         sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
+      
       res.redirect(
         `https://multio-six.vercel.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
