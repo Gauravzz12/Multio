@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setRoomName } from "../features/games/rpsSlice";
+import { setRoomName } from "../features/games/gameSlice";
 import { FaCopy } from "react-icons/fa";
 
 const RoomManager = () => {

@@ -1,168 +1,150 @@
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { io } from 'socket.io-client';
+import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
+import { useSelector, useDispatch } from "react-redux";
+import { setGameMode, setRoomName } from "../../features/games/gameSlice";
+import GameModeSelector from "../GameModeSelector";
+import RoomManager from "../RoomManager";
+import OpponentLoader from "../OpponentLoader";
+import { FaCopy } from "react-icons/fa";
+import useSocket from "../../hooks/useSocket";
+import { selectCurrentUser } from "../../features/auth/authSlice";
 
 const TTT = () => {
-  const [socket, setSocket] = useState(null);
-  const [roomId, setRoomId] = useState('');
+  const dispatch = useDispatch();
+  const { gameMode, roomName } = useSelector((state) => state.game);
   const [board, setBoard] = useState([
-    ['', '', ''],
-    ['', '', ''],
-    ['', '', ''],
+    ["", "", ""],
+    ["", "", ""],
+    ["", "", ""],
   ]);
-  const [currentPlayer, setCurrentPlayer] = useState('');
-  const [symbols, setSymbols] = useState({});
-  const [waiting, setWaiting] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
-  const [winner, setWinner] = useState(null);
-  const [waitingForRematch, setWaitingForRematch] = useState(false);
-
+  const [currentPlayer, setCurrentPlayer] = useState("");
+  const [mySymbol, setMySymbol] = useState("");
+  const [socket, setSocket] = useState(null);
+  const [waitingForOpponent, setWaitingForOpponent] = useState(false);
+  const user = useSelector(selectCurrentUser);
+  const [result, setResult] = useState(null);
   useEffect(() => {
-    const newSocket = io(import.meta.env.MODE === "development" ? "http://localhost:5000/ttt" : "https://multio-backend.up.railway.app/ttt",);
+    const newSocket = io(
+      import.meta.env.MODE === "development"
+        ? "http://localhost:5000/ttt"
+        : "https://multio-backend.up.railway.app/ttt"
+    );
     setSocket(newSocket);
 
-    newSocket.on('waitingForOpponent', () => {
-      setWaiting(true);
+    newSocket.on("startGame", (data) => {
+      setWaitingForOpponent(false);
+      setBoard(data.board);
+      setCurrentPlayer(data.currentPlayer);
+      setMySymbol(data.symbols[newSocket.id]);
+      dispatch(setResult(null));
     });
 
-    newSocket.on('startGame', ({ board, currentPlayer, symbols }) => {
-      setBoard(board);
-      setCurrentPlayer(currentPlayer);
-      setSymbols(symbols);
-      setWaiting(false);
-      setGameOver(false);
-      setWinner(null);
+    newSocket.on("updateBoard", (data) => {
+      setBoard(data.board);
+      setCurrentPlayer(data.currentPlayer);
     });
 
-    newSocket.on('updateBoard', ({ board, currentPlayer, symbols }) => {
-      setBoard(board);
-      setCurrentPlayer(currentPlayer);
-      setSymbols(symbols);
+    newSocket.on("gameOver", (data) => {
+      setBoard(data.board);
+      if (data.winner) {
+        if (data.winner === socket.id) {
+          setResult("You win!");
+        } else {
+          setResult("You lose!");
+        }
+      } else {
+        setResult("It's a draw!");
+      }
     });
 
-    newSocket.on('gameOver', ({ board, winner, symbols }) => {
-      setBoard(board);
-      setGameOver(true);
-      setWinner(winner);
-      setSymbols(symbols);
-    });
-
-    newSocket.on('opponentDisconnected', () => {
-      toast.info('Opponent disconnected. Game over.');
-      resetGame();
-    });
-
-    newSocket.on('notYourTurn', () => {
-      alert("It's not your turn!");
-    });
-
-    newSocket.on('invalidMove', () => {
-      alert('Invalid move!');
-    });
-
-    newSocket.on('roomFull', () => {
-      alert('Room is full.');
-      resetGame();
-    });
-
-    newSocket.on('waitingForRematch', () => {
-      setWaitingForRematch(true);
+    newSocket.on("playerDisconnected", () => {
+      dispatch(setResult("Opponent disconnected."));
     });
 
     return () => {
-      if(newSocket)  newSocket.disconnect();
+      if (newSocket) newSocket.disconnect();
+      dispatch(setGameMode(null));
+      dispatch(setRoomName(""));
+      setWaitingForOpponent(false);
+      newSocket.off("roomAssigned");
+      newSocket.off("startGame");
+      newSocket.off("updateBoard");
+      newSocket.off("gameOver");
+      newSocket.off("playerDisconnected");
     };
-  }, []);
+  }, [dispatch]);
+
+  useSocket(socket, setWaitingForOpponent);
 
   useEffect(() => {
-    if (socket) {
-      socket.emit('joinTTTRoom', { roomId });
+    if (socket && gameMode === "online" && !roomName) {
+      socket.emit("joinRoom", {});
+    } else if (socket && gameMode === "friends" && roomName) {
+      socket.emit("joinRoom", { roomId: roomName });
     }
-  }, [socket, roomId]);
+  }, [socket, gameMode, roomName]);
+
+  const copyRoomId = () => {
+    navigator.clipboard.writeText(roomName);
+  };
 
   const handleCellClick = (x, y) => {
-    if (board[x][y] === '' && !gameOver && currentPlayer === socket.id) {
-      socket.emit('tttMove', { roomId, x, y });
-    }
+    if (currentPlayer !== socket.id) return; 
+    if (board[x][y] !== "") return; 
+    socket.emit("makeMove", { roomId: roomName, x, y });
   };
 
-  const handlePlayAgain = () => {
-    socket.emit('playAgain', { roomId });
-    setWaitingForRematch(true);
-  };
-
-  const resetGame = () => {
-    setBoard([
-      ['', '', ''],
-      ['', '', ''],
-      ['', '', ''],
-    ]);
-    setCurrentPlayer('');
-    setSymbols({});
-    setWaiting(false);
-    setGameOver(false);
-    setWinner(null);
-    setWaitingForRematch(false);
+  const renderCell = (x, y) => {
+    return (
+      <td
+        key={`${x}-${y}`}
+        onClick={() => handleCellClick(x, y)}
+        className="w-24 h-24 border-2 border-gray-400 cursor-pointer text-4xl text-center"
+      >
+        {board[x][y]}
+      </td>
+    );
   };
 
   return (
-    <div className="text-center text-white">
-      <h2 className="text-4xl mb-4">Tic Tac Toe</h2>
-      {!roomId && (
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Enter room ID or leave blank"
-            className="p-2 bg-gray-800 border border-gray-700 rounded"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-          />
-          <button
-            onClick={() => {
-              if (socket) {
-                socket.emit('joinTTTRoom', { roomId });
-              }
-            }}
-            className="ml-2 px-4 py-2 bg-blue-600 rounded"
-          >
-            Join Room
+    <div className="flex flex-col items-center text-center text-white relative">
+      <h2 className="text-white text-5xl mb-4 font-bold tracking-wider flex justify-center">
+        Tic Tac Toe
+      </h2>
+      {gameMode === "friends" && roomName && (
+        <div className="absolute top-4 right-4 flex items-center gap-2 bg-gray-800 p-2 rounded">
+          <button onClick={copyRoomId}>
+            <p className="flex">
+              Copy Room Id
+              <FaCopy className="text-xl hover:text-gray-300 ml-2" />
+            </p>
           </button>
         </div>
       )}
-      {waiting && <p>Waiting for opponent...</p>}
-      {!waiting && currentPlayer && (
+      {!gameMode ? (
+        <GameModeSelector />
+      ) : gameMode === "friends" && !roomName ? (
+        <RoomManager />
+      ) : waitingForOpponent ? (
+        <OpponentLoader />
+      ) : (
         <>
-          <p>Your Symbol: {symbols[socket.id]}</p>
-          <p>{currentPlayer === socket.id ? "Your turn" : "Opponent's turn"}</p>
-          <div className="grid grid-cols-3 gap-2 w-64 mx-auto mt-4">
-            {board.map((row, x) =>
-              row.map((cell, y) => (
-                <div
-                  key={`${x}-${y}`}
-                  className="border border-gray-500 h-16 flex items-center justify-center text-2xl cursor-pointer hover:bg-gray-700"
-                  onClick={() => handleCellClick(x, y)}
-                >
-                  {cell}
-                </div>
-              ))
-            )}
+          <div>
+            <h3>
+              You are: <span className="font-bold">{mySymbol}</span>
+            </h3>
+            <h3>
+              {currentPlayer === socket?.id ? "Your turn" : "Opponent's turn"}
+            </h3>
+            {result && <h2 className="text-3xl mt-4">{result}</h2>}
+            <table className="mt-4">
+              <tbody>
+                {board.map((row, x) => (
+                  <tr key={x}>{row.map((cell, y) => renderCell(x, y))}</tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          {gameOver && (
-            <div className="mt-4">
-              {winner ? (
-                winner === socket.id ? <p>You won!</p> : <p>You lost!</p>
-              ) : (
-                <p>It's a draw!</p>
-              )}
-              <button
-                onClick={handlePlayAgain}
-                className="mt-2 px-4 py-2 bg-green-600 rounded"
-              >
-                Play Again
-              </button>
-              {waitingForRematch && <p>Waiting for opponent to rematch...</p>}
-            </div>
-          )}
         </>
       )}
     </div>

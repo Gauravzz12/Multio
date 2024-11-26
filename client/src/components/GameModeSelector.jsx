@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { setGameMode } from "../features/games/rpsSlice";
+import { setGameMode } from "../features/games/gameSlice";
 
 const GameModeSelector = () => {
   const dispatch = useDispatch();

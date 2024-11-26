@@ -4,11 +4,9 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   setGameMode,
   setRoomName,
-  setResult,
-  setOpponentChoice,
   setScores,
   resetScores,
-} from "../../features/games/rpsSlice";
+} from "../../features/games/gameSlice"; 
 import rockIcon from "../../assets/images/RPS/rock.svg";
 import paperIcon from "../../assets/images/RPS/paper.svg";
 import scissorsIcon from "../../assets/images/RPS/scissors.svg";
@@ -18,40 +16,44 @@ import RoomManager from "../RoomManager";
 import OpponentLoader from "../OpponentLoader";
 import { FaCopy } from "react-icons/fa";
 import useSocket from "../../hooks/useSocket";
-import { selectCurrentUser } from "../../features/auth/authSlice";
+import { selectCurrentUser } from "../../features/auth/authSlice"; 
 
 const RPS = () => {
   const dispatch = useDispatch();
-  const { gameMode, roomName, result, opponentChoice } = useSelector(
-    (state) => state.rps
-  );
+  const { gameMode, roomName, scores } = useSelector((state) => state.game);
   const [socket, setSocket] = useState(null);
   const [userChoice, setUserChoice] = useState(null);
+  const [opponentChoice, setOpponentChoice] = useState(null);
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
+  const [result, setResult] = useState(null);
 
   useEffect(() => {
-    const newSocket = io(import.meta.env.MODE === "development" ? "http://localhost:5000/rps" : "https://multio-backend.up.railway.app/rps",);
+    const newSocket = io(
+      import.meta.env.MODE === "development"
+        ? "http://localhost:5000/rps"
+        : "https://multio-backend.up.railway.app/rps"
+    );
     setSocket(newSocket);
 
     newSocket.on("startGame", (data) => {
       setWaitingForOpponent(false);
       setUserChoice(null);
-      dispatch(setOpponentChoice(null));
-      dispatch(setResult(null));
+      setOpponentChoice(null); 
+      setResult(null);
       dispatch(setScores(data.scores));
     });
 
     newSocket.on("gameResult", (data) => {
-      dispatch(setResult(data.result));
-      dispatch(setOpponentChoice(data.opponentChoice));
+      setResult(data.result);
+      setOpponentChoice(data.opponentChoice); 
       dispatch(setScores(data.scores));
       setWaitingForOpponent(false);
     });
 
     newSocket.on("startNextRound", (data) => {
       setUserChoice(null);
-      dispatch(setOpponentChoice(null));
-      dispatch(setResult(null));
+      setOpponentChoice(null); 
+      setResult(null);
       if (data.scores) {
         dispatch(setScores(data.scores));
       }
@@ -74,7 +76,7 @@ const RPS = () => {
     };
   }, []);
 
-  useSocket(socket,setWaitingForOpponent);
+  useSocket(socket, setWaitingForOpponent);
 
   useEffect(() => {
     if (socket && gameMode === "online" && !roomName) {
@@ -94,8 +96,7 @@ const RPS = () => {
   };
 
   const ChoiceButtons = () => {
-    if(!roomName)
-      return 
+    if (!roomName) return;
     const choices = [
       { name: "Rock", icon: rockIcon },
       { name: "Paper", icon: paperIcon },
@@ -141,10 +142,10 @@ const RPS = () => {
     );
   };
 
-  const ScoreDisplay = () => {
-    const { scores } = useSelector((state) => state.rps);
-    const user=useSelector(selectCurrentUser)
-    const playerId = socket?.id;
+  const ScoreDisplay = ({ socketId }) => { 
+    const { scores } = useSelector((state) => state.game); 
+    const user = useSelector(selectCurrentUser);
+    const playerId = socketId;
 
     if (!scores || Object.keys(scores).length === 0) return null;
 
@@ -181,7 +182,7 @@ const RPS = () => {
           </button>
         </div>
       )}
-      {roomName ? <ScoreDisplay /> : ""}
+      {roomName ? <ScoreDisplay socketId={socket?.id} /> : ""}
 
       {!gameMode ? (
         <GameModeSelector />

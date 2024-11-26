@@ -3,9 +3,8 @@ import { useDispatch } from "react-redux";
 import {
   setGameMode,
   setRoomName,
-  resetGame,
   resetScores,
-} from "../features/games/rpsSlice";
+} from "../features/games/gameSlice";
 import { toast } from "react-toastify";
 
 const useSocket = (socket, setWaitingForOpponent) => {
@@ -16,7 +15,8 @@ const useSocket = (socket, setWaitingForOpponent) => {
 
     const resetGameState = () => {
       setWaitingForOpponent(true);
-      dispatch(resetGame());
+      dispatch(resetScores());
+      
     };
 
     socket.on("roomAssigned", ({ roomId }) => {
@@ -58,7 +58,7 @@ const useSocket = (socket, setWaitingForOpponent) => {
       socket.off("roomNotFound");
       socket.off("roomFull");
     };
-  }, [socket,setWaitingForOpponent]);
+  }, [socket, setWaitingForOpponent, dispatch]);
 };
 
 export default useSocket;

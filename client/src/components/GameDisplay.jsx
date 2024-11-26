@@ -13,9 +13,6 @@ const GameDisplay = ({ userChoice, opponentChoice, result }) => {
 
   return (
     <div className="flex flex-col items-center mt-8">
-      
-    
-
       <div className="flex justify-around w-full max-w-md">
         <div className="flex flex-col items-center">
           <h2 className="text-2xl mb-4">You</h2>
