@@ -1,134 +1,183 @@
-// server/socket/controllers/tttController.js
+const rooms = {};
 const tttController = (io, socket) => {
-  const rooms = {}; // { roomId: { board: [...], players: [...], currentPlayer: socketId, symbols: {} } }
-
   const createEmptyBoard = () => {
     return [
-      ['', '', ''],
-      ['', '', ''],
-      ['', '', ''],
+      ["", "", ""],
+      ["", "", ""],
+      ["", "", ""],
     ];
   };
 
+  const WIN_CONDITIONS = [
+    // Rows
+    [
+      [0, 0],
+      [0, 1],
+      [0, 2],
+    ],
+    [
+      [1, 0],
+      [1, 1],
+      [1, 2],
+    ],
+    [
+      [2, 0],
+      [2, 1],
+      [2, 2],
+    ],
+    // Columns
+    [
+      [0, 0],
+      [1, 0],
+      [2, 0],
+    ],
+    [
+      [0, 1],
+      [1, 1],
+      [2, 1],
+    ],
+    [
+      [0, 2],
+      [1, 2],
+      [2, 2],
+    ],
+    // Diagonals
+    [
+      [0, 0],
+      [1, 1],
+      [2, 2],
+    ],
+    [
+      [0, 2],
+      [1, 1],
+      [2, 0],
+    ],
+  ];
+  const assignSymbols = (room) => {
+    const [player1, player2] = room.players;
+    if (Math.random() < 0.5) {
+      room.symbols[player1] = "X";
+      room.symbols[player2] = "O";
+      room.currentPlayer = player1;
+    } else {
+      room.symbols[player1] = "O";
+      room.symbols[player2] = "X";
+      room.currentPlayer = player2;
+    }
+  };
+
   const checkWin = (board, symbol) => {
-    // Check rows
-    for (let row of board) {
-      if (row.every(cell => cell === symbol)) return true;
+    for (let i = 0; i < WIN_CONDITIONS.length; i++) {
+      let won = true;
+      for (let j = 0; j < WIN_CONDITIONS[i].length; j++) {
+        const [x, y] = WIN_CONDITIONS[i][j];
+        if (board[x][y] !== symbol) {
+          won = false;
+          break;
+        }
+      }
+      if (won) return true;
     }
-
-    // Check columns
-    for (let col = 0; col < 3; col++) {
-      if (board[0][col] === symbol && board[1][col] === symbol && board[2][col] === symbol) return true;
-    }
-
-    // Check diagonals
-    if (board[0][0] === symbol && board[1][1] === symbol && board[2][2] === symbol) return true;
-    if (board[0][2] === symbol && board[1][1] === symbol && board[2][0] === symbol) return true;
-
     return false;
   };
 
   const checkDraw = (board) => {
-    return board.flat().every(cell => cell !== '');
+    return board.flat().every((cell) => cell !== "");
   };
-
-  socket.on('joinRoom', ({ roomId }) => {
+  const nextRound = (roomId) => {
+    setTimeout(() => {
+      const room = rooms[roomId];
+      room.board = createEmptyBoard();
+      assignSymbols(room);
+      io.to(roomId).emit("startGame", {
+        board: room.board,
+        currentPlayer: room.currentPlayer,
+        symbols: room.symbols,
+        scores: room.scores,
+      });
+    }, 1000);
+  };
+  socket.on("joinRoom", ({ roomId }) => {
     let assignedRoom = roomId;
-
     if (!assignedRoom) {
-      // Auto-matchmaking for online mode
       for (const [id, room] of Object.entries(rooms)) {
-        if (room.mode === 'online' && room.players.length < 2) {
+        if (room.mode === "online" && room.players.length < 2) {
           assignedRoom = id;
           break;
         }
       }
       if (!assignedRoom) {
-        // Create new room
         assignedRoom = `room_${Math.random().toString(36).substr(2, 9)}`;
         rooms[assignedRoom] = {
           board: createEmptyBoard(),
           currentPlayer: null,
           players: [],
           symbols: {},
-          mode: 'online',
+          scores: {},
+          mode: "online",
         };
       }
-      socket.emit('roomAssigned', { roomId: assignedRoom });
+      socket.emit("roomAssigned", { roomId: assignedRoom });
     } else {
-      // Friends mode with specific room
       if (!rooms[assignedRoom]) {
         rooms[assignedRoom] = {
           board: createEmptyBoard(),
           currentPlayer: null,
           players: [],
           symbols: {},
-          mode: 'friends',
+          scores: {},
+          mode: "friends",
         };
       }
     }
-
-    socket.join(assignedRoom);
     const room = rooms[assignedRoom];
+    if (room.players.length >= 2) {
+      socket.emit("roomFull");
+      return;
+    }
+    socket.join(assignedRoom);
     room.players.push(socket.id);
-
-    // Assign symbols
+    room.scores[socket.id] = 0;
     if (room.players.length === 1) {
-      room.symbols[socket.id] = 'X';
+      socket.emit("waitingForOpponent ");
     } else if (room.players.length === 2) {
-      room.symbols[socket.id] = 'O';
-      room.currentPlayer = room.players[0];
-      // Start the game
-      io.to(assignedRoom).emit('startGame', {
+      assignSymbols(room);
+      io.to(assignedRoom).emit("startGame", {
         board: room.board,
         currentPlayer: room.currentPlayer,
         symbols: room.symbols,
+        scores: room.scores,
       });
-    } else {
-      // Room is full
-      socket.emit('roomFull');
     }
   });
 
-  socket.on('makeMove', ({ roomId, x, y }) => {
+  socket.on("makeMove", ({ roomId, x, y }) => {
     const room = rooms[roomId];
     if (!room || room.players.length < 2) return;
 
-    if (socket.id !== room.currentPlayer) return; // Not your turn
+    if (socket.id !== room.currentPlayer) return;
     const symbol = room.symbols[socket.id];
-    if (room.board[x][y] === '') {
+    if (room.board[x][y] === "") {
       room.board[x][y] = symbol;
 
       if (checkWin(room.board, symbol)) {
-        io.to(roomId).emit('gameOver', {
+        room.scores[socket.id]++;
+        io.to(roomId).emit("gameOver", {
           board: room.board,
           winner: socket.id,
-          symbol,
+          scores: room.scores,
         });
-        // Reset the room
-        room.board = createEmptyBoard();
-        room.currentPlayer = null;
-        room.symbols = {};
-        room.players = [];
-        room.mode = room.mode; // Keep the mode
-        io.in(roomId).socketsLeave(roomId); // Remove all sockets from the room
-        delete rooms[roomId];
+        nextRound(roomId);
       } else if (checkDraw(room.board)) {
-        io.to(roomId).emit('gameOver', {
+        io.to(roomId).emit("gameOver", {
           board: room.board,
           winner: null,
-          symbol: null,
+          scores: room.scores,
         });
-        // Reset the board
-        room.board = createEmptyBoard();
-        io.to(roomId).emit('updateBoard', {
-          board: room.board,
-          currentPlayer: room.currentPlayer,
-        });
+        nextRound(roomId);
       } else {
-        // Switch turns
-        room.currentPlayer = room.players.find(id => id !== socket.id);
-        io.to(roomId).emit('updateBoard', {
+        room.currentPlayer = room.players.find((id) => id !== socket.id);
+        io.to(roomId).emit("updateBoard", {
           board: room.board,
           currentPlayer: room.currentPlayer,
         });
@@ -136,21 +185,21 @@ const tttController = (io, socket) => {
     }
   });
 
-  socket.on('disconnect', () => {
-    for (const [roomId, room] of Object.entries(rooms)) {
-      const idx = room.players.indexOf(socket.id);
-      if (idx !== -1) {
-        room.players.splice(idx, 1);
+  socket.on("disconnect", () => {
+    for (const roomId in rooms) {
+      const room = rooms[roomId];
+      if (room.players.includes(socket.id)) {
+        room.players = room.players.filter((id) => id !== socket.id);
         delete room.symbols[socket.id];
-        if (room.players.length === 0) {
-          delete rooms[roomId];
-        } else {
-          io.to(roomId).emit('playerDisconnected');
-          // Reset the room
-          room.board = createEmptyBoard();
-          room.currentPlayer = null;
+        if (room.players.length > 0) {
+          delete room.scores[socket.id];
+          rooms[roomId].scores = {};
+          io.to(roomId).emit("playerLeft");
+          io.to(roomId).emit("scoresReset");
+          io.to(roomId).emit("waitingForOpponent");
           room.symbols = {};
-          room.players = [];
+          room.board = createEmptyBoard();
+        } else {
           delete rooms[roomId];
         }
         break;

@@ -17,6 +17,7 @@ import OpponentLoader from "../OpponentLoader";
 import { FaCopy } from "react-icons/fa";
 import useSocket from "../../hooks/useSocket";
 import { selectCurrentUser } from "../../features/auth/authSlice"; 
+import ScoreBoard from "../ScoreBoard";
 
 const RPS = () => {
   const dispatch = useDispatch();
@@ -50,14 +51,7 @@ const RPS = () => {
       setWaitingForOpponent(false);
     });
 
-    newSocket.on("startNextRound", (data) => {
-      setUserChoice(null);
-      setOpponentChoice(null); 
-      setResult(null);
-      if (data.scores) {
-        dispatch(setScores(data.scores));
-      }
-    });
+  
 
     newSocket.on("scoresReset", () => {
       dispatch(resetScores());
@@ -142,31 +136,6 @@ const RPS = () => {
     );
   };
 
-  const ScoreDisplay = ({ socketId }) => { 
-    const { scores } = useSelector((state) => state.game); 
-    const user = useSelector(selectCurrentUser);
-    const playerId = socketId;
-
-    if (!scores || Object.keys(scores).length === 0) return null;
-
-    return (
-      <div className="bg-gray-800 p-4 rounded-lg mb-4 w-full max-w-md">
-        <div className="flex justify-between">
-          <div className="text-center">
-            <p className="font-bold text-green-500">{user}</p>
-            <p className="text-2xl">{scores[playerId] || 0}</p>
-          </div>
-          <div className="text-center">
-            <p className="font-bold text-red-500">Opponent</p>
-            <p className="text-2xl">
-              {Object.entries(scores).find(([id]) => id !== playerId)?.[1] || 0}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="flex flex-col items-center text-center text-white relative">
       <h2 className="text-white text-5xl mb-4 font-bold tracking-wider flex justify-center">
@@ -182,7 +151,7 @@ const RPS = () => {
           </button>
         </div>
       )}
-      {roomName ? <ScoreDisplay socketId={socket?.id} /> : ""}
+      {roomName ? <ScoreBoard socketId={socket?.id} /> : ""}
 
       {!gameMode ? (
         <GameModeSelector />

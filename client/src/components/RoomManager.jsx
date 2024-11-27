@@ -6,7 +6,7 @@ import { FaCopy } from "react-icons/fa";
 const RoomManager = () => {
   const dispatch = useDispatch();
   const [roomInput, setRoomInput] = useState("");
-  const roomName = useSelector((state) => state.rps.roomName);
+  const roomName = useSelector((state) => state.game.roomName);
 
   const createRoom = () => {
     const generatedRoomId = "room_" + Math.random().toString(36).substr(2, 9);
