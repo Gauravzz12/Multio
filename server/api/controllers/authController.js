@@ -21,8 +21,8 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
         process.env.NODE_ENV === "production"
-        ? "https://multio-backend.up.railway.app/auth/google/callback"
-        : "http://localhost:5000/auth/google/callback",
+          ? "https://multio-backend.up.railway.app/auth/google/callback"
+          : "http://localhost:5000/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -61,8 +61,8 @@ passport.use(
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL:
         process.env.NODE_ENV === "production"
-        ? "https://multio-backend.up.railway.app/auth/github/callback"
-        : "http://localhost:5000/auth/github/callback",
+          ? "https://multio-backend.up.railway.app/auth/github/callback"
+          : "http://localhost:5000/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -175,7 +175,6 @@ module.exports = {
   },
   logOut: async (req, res) => {
     try {
-      console.log('LOGGIN oUT')
       const cookies = req.cookies;
       if (!cookies?.refreshToken) return res.sendStatus(204);
       const refreshToken = cookies.refreshToken;
@@ -188,11 +187,10 @@ module.exports = {
           found.rows[0].id,
         ]);
       }
-      res.cookie("refreshToken", refreshToken, {
+      res.clearCookie("refreshToken", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "None",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       return res.sendStatus(204);
     } catch (err) {
@@ -292,7 +290,7 @@ module.exports = {
         sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
-      
+
       res.redirect(
         `https://multio-six.vercel.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );

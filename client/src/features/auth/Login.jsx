@@ -23,11 +23,6 @@ export const Login = () => {
     user: "",
     pwd: "",
   });
-  useEffect(() => {
-    logout();
-    dispatch(logOut());
-  }, []);
-
   const toggleShowPass = useCallback((e) => {
     e.preventDefault();
     setShowPass((prevShowPass) => !prevShowPass);

@@ -21,12 +21,10 @@ const RequireAuth = lazy(() => import("./features/auth/RequireAuth"));
 const OAuthSuccess = lazy(() => import("./features/auth/OAuthSuccess"));
 
 function App() {
-  useEffect(() => {});
   const user = useSelector(selectCurrentUser);
   const { isLoading, isError } = useRefreshQuery(undefined, {
     skip: user === "Guest",
   });
-  console.log(import.meta.env.MODE);
   const router = createBrowserRouter([
     {
       path: "/",

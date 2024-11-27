@@ -19,7 +19,10 @@ export const authApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     refresh: builder.query({
-      query: () => "/auth/refresh",
+      query: () => ({
+        url: "/auth/refresh",
+        credentials: 'include'
+      }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
