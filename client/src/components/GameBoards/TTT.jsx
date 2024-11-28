@@ -13,6 +13,7 @@ import OpponentLoader from "../OpponentLoader";
 import { FaCopy } from "react-icons/fa";
 import useSocket from "../../hooks/useSocket";
 import ScoreBoard from "../ScoreBoard";
+import { FaTimes, FaRegCircle } from "react-icons/fa";
 const TTT = () => {
   const dispatch = useDispatch();
   const { gameMode, roomName, scores } = useSelector((state) => state.game);
@@ -102,17 +103,27 @@ const TTT = () => {
   };
 
   const renderCell = (x, y) => {
+    const value = board[x][y];
+    let content = null;
+
+    if (value === "X") {
+      content = <FaTimes className="text-violet-500 w-16 h-16" />;
+    } else if (value === "O") {
+      content = <FaRegCircle className="text-blue-500 w-16 h-16" />;
+    }
+
     return (
       <td
         key={`${x}-${y}`}
         onClick={() => handleCellClick(x, y)}
-        className="w-24 h-24 border-2 border-gray-400 cursor-pointer text-4xl text-center"
+        className={`w-24 h-24 border-4 ${
+          currentPlayer === socket?.id ? "border-green-500" : "border-red-500"
+        } cursor-pointertext-4xl text-center  `}
       >
-        {board[x][y]}
+        <div className="flex items-center justify-center h-full">{content}</div>
       </td>
     );
   };
-
   return (
     <div className="flex flex-col items-center text-center text-white relative justify-center">
       <h2 className="text-white text-5xl mb-4 font-bold tracking-wider flex justify-center">
@@ -138,7 +149,7 @@ const TTT = () => {
         <OpponentLoader />
       ) : result ? (
         <h2
-          className={`text-3xl font-bold w-64 h-64 flex items-center justify-center ${
+          className={`text-4xl font-bold w-64 h-64 flex items-center justify-center ${
             result === "winner"
               ? "text-green-500"
               : result === "loser"
@@ -147,15 +158,15 @@ const TTT = () => {
           }`}
         >
           {result === "winner"
-            ? " You won!"
+            ? " You won! 😁"
             : result === "loser"
-            ? "You lost!"
-            : "It's a draw!"}
+            ? "You lost! 😔"
+            : "It's a draw! 😐"}
         </h2>
       ) : (
         <div>
-          <h3>
-            You are: <span className="font-bold">{mySymbol}</span>
+          <h3 className="text-3xl ">
+            You are : <span className="font-bold">{mySymbol}</span>
           </h3>
           <h3
             className={`${
@@ -166,9 +177,26 @@ const TTT = () => {
             {currentPlayer === socket?.id ? "Your turn" : "Opponent's turn"}
           </h3>
           <table className="mt-4">
-            <tbody>
-              {board.map((row, x) => (
-                <tr key={x}>{row.map((cell, y) => renderCell(x, y))}</tr>
+            <tbody
+              className={`mt-4 border-4 ${
+                currentPlayer === socket?.id
+                  ? "border-green-500"
+                  : "border-red-500"
+              }`}
+            >
+              {board.map((row, rowIndex) => (
+                <tr
+                  className={`border-4 ${
+                    currentPlayer === socket?.id
+                      ? "border-green-500"
+                      : "border-red-500"
+                  } `}
+                  key={rowIndex}
+                >
+                  {row.map((cell, cellIndex) =>
+                    renderCell(rowIndex, cellIndex)
+                  )}
+                </tr>
               ))}
             </tbody>
           </table>
