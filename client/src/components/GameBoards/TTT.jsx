@@ -157,7 +157,12 @@ const TTT = () => {
           <h3>
             You are: <span className="font-bold">{mySymbol}</span>
           </h3>
-          <h3>
+          <h3
+            className={`${
+              currentPlayer === socket?.id ? "text-green-500" : "text-red-500"
+            } text-3xl font-bold mt-4
+            `}
+          >
             {currentPlayer === socket?.id ? "Your turn" : "Opponent's turn"}
           </h3>
           <table className="mt-4">
