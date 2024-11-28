@@ -13,7 +13,8 @@ const generateToken = (user, expiry) => {
     { expiresIn: expiry }
   );
 };
-
+const redirect_URL = process.env.NODE_ENV === "production" ? "https://multio.netlify.app":"http://localhost:5173";
+console.log(redirect_URL)
 passport.use(
   new GoogleStrategy(
     {
@@ -24,7 +25,7 @@ passport.use(
           ? "https://multio-backend.up.railway.app/auth/google/callback"
           : "http://localhost:5000/auth/google/callback",
     },
-    async (profile, done) => {
+    async (accessToken,refreshToken,profile, done) => {
       try {
         const existingUser = await pool.query(
           "SELECT * FROM users WHERE email = $1",
@@ -35,12 +36,14 @@ passport.use(
         }
 
         const id = uuidv4();
+        const hashedPassword = bcrypt.hashSync("OauthGoogle", 10);
+
         const newUser = await pool.query(
-          "INSERT INTO users (id, username,password, email) VALUES ($1, $2, $3, $4,$5) RETURNING *",
+          "INSERT INTO users (id, username,password, email) VALUES ($1, $2, $3, $4) RETURNING *",
           [
             id,
             profile.displayName,
-            bcrypt.hashSync("OauthGoogle", 10),
+            hashedPassword,
             profile.emails[0].value,
             
           ]
@@ -64,7 +67,7 @@ passport.use(
           ? "https://multio-backend.up.railway.app/auth/github/callback"
           : "http://localhost:5000/auth/github/callback",
     },
-    async ( profile, done) => {
+    async (accessToken,refreshToken,profile, done) => {
       try {
         const existingUser = await pool.query(
           "SELECT * FROM users WHERE  email = $1",
@@ -76,12 +79,14 @@ passport.use(
         }
 
         const id = uuidv4();
+        const hashedPassword = bcrypt.hashSync("OauthGithub", 10);
+
         const newUser = await pool.query(
-          "INSERT INTO users (id, username, password,email) VALUES ($1, $2, $3, $4,$5) RETURNING *",
+          "INSERT INTO users (id, username, password,email) VALUES ($1, $2, $3, $4,) RETURNING *",
           [
             id,
             profile.username,
-            bcrypt.hashSync("OauthGithub", 10),
+            hashedPassword,
             profile.emails[0].value,
           
           ]
@@ -181,8 +186,6 @@ module.exports = {
         "SELECT * FROM users WHERE refreshtoken = $1",
         [refreshToken]
       );
-      console.log(refreshToken);
-      console.log(found.rows);
       if (found.rowCount === 1) {
         await pool.query("UPDATE users SET refreshtoken = NULL WHERE id = $1", [
           found.rows[0].id,
@@ -207,7 +210,6 @@ module.exports = {
       if (!refreshToken) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-      console.log(refreshToken);
       const userResult = await pool.query(
         "SELECT * FROM users WHERE refreshtoken = $1",
         [refreshToken]
@@ -221,7 +223,6 @@ module.exports = {
 
       jwt.verify(refreshToken, process.env.JWT_SECRET, async (err, decoded) => {
         if (err || user.id !== decoded.id) {
-          console.log("unverified");
           return res.status(403).json({ message: "Forbidden" });
         }
         const newAccessToken = generateToken(user, "15m");
@@ -254,10 +255,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `https://multio.netlify.app/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio.netlify.app/");
+      res.redirect(`${redirect_URL}/`);
     }
   },
 
@@ -265,7 +266,7 @@ module.exports = {
     try {
       const accessToken = generateToken(req.user, "15m");
       const refreshToken = generateToken(req.user, "7d");
-
+      console.log("Hello")
       await pool.query("UPDATE users SET refreshtoken = $1 WHERE id = $2", [
         refreshToken,
         req.user.id,
@@ -279,10 +280,10 @@ module.exports = {
       });
 
       res.redirect(
-        `https://multio.netlify.app/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio.netlify.app/");
+      res.redirect(`${redirect_URL}/`);
     }
   },
 };
