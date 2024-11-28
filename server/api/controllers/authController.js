@@ -24,11 +24,11 @@ passport.use(
           ? "https://multio-backend.up.railway.app/auth/google/callback"
           : "http://localhost:5000/auth/google/callback",
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (profile, done) => {
       try {
         const existingUser = await pool.query(
-          "SELECT * FROM users WHERE google_id = $1 OR email = $2",
-          [profile.id, profile.emails[0].value]
+          "SELECT * FROM users WHERE email = $1",
+          [profile.emails[0].value]
         );
         if (existingUser.rowCount > 0) {
           return done(null, existingUser.rows[0]);
@@ -36,13 +36,13 @@ passport.use(
 
         const id = uuidv4();
         const newUser = await pool.query(
-          "INSERT INTO users (id, username,password, email, google_id) VALUES ($1, $2, $3, $4,$5) RETURNING *",
+          "INSERT INTO users (id, username,password, email) VALUES ($1, $2, $3, $4,$5) RETURNING *",
           [
             id,
             profile.displayName,
-            "OauthLogin",
+            bcrypt.hashSync("OauthGoogle", 10),
             profile.emails[0].value,
-            profile.id,
+            
           ]
         );
 
@@ -64,11 +64,11 @@ passport.use(
           ? "https://multio-backend.up.railway.app/auth/github/callback"
           : "http://localhost:5000/auth/github/callback",
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async ( profile, done) => {
       try {
         const existingUser = await pool.query(
-          "SELECT * FROM users WHERE github_id = $1 OR email = $2",
-          [profile.id, profile.emails[0].value]
+          "SELECT * FROM users WHERE  email = $1",
+          [profile.emails[0].value]
         );
 
         if (existingUser.rowCount > 0) {
@@ -77,13 +77,13 @@ passport.use(
 
         const id = uuidv4();
         const newUser = await pool.query(
-          "INSERT INTO users (id, username, password,email, github_id) VALUES ($1, $2, $3, $4,$5) RETURNING *",
+          "INSERT INTO users (id, username, password,email) VALUES ($1, $2, $3, $4,$5) RETURNING *",
           [
             id,
             profile.username,
-            "OauthLogin",
+            bcrypt.hashSync("OauthGithub", 10),
             profile.emails[0].value,
-            profile.id,
+          
           ]
         );
 
@@ -254,10 +254,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `https://multio-six.vercel.app/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio.netlify.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio-six.vercel.app/");
+      res.redirect("https://multio.netlify.app/");
     }
   },
 
@@ -279,10 +279,10 @@ module.exports = {
       });
 
       res.redirect(
-        `https://multio-six.vercel.app/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio.netlify.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio-six.vercel.app/");
+      res.redirect("https://multio.netlify.app/");
     }
   },
 };
