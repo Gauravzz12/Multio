@@ -103,30 +103,30 @@ const RPS = () => {
     };
 
     return (
-      <div className="flex flex-col items-center justify-center  h-72">
+      <div className="flex flex-col items-center justify-center h-72">
         {userChoice ? (
           <div>
-            <h2 className="text-2xl">You chose:</h2>
+            <h2 className="text-2xl md:text-3xl">You chose:</h2>
             <img
               src={choiceIcons[userChoice]}
               alt={userChoice}
-              className="w-24 h-24"
+              className="w-16 h-16 md:w-24 md:h-24 mx-auto"
             />
-            <p className="text-xl mt-2">{userChoice}</p>
-            <h2 className="text-2xl mt-4">Waiting for opponent's choice...</h2>
+            <p className="text-xl md:text-2xl mt-2">{userChoice}</p>
+            <h2 className="text-2xl md:text-3xl mt-4">Waiting for opponent's choice...</h2>
           </div>
         ) : (
-          <div className="flex gap-10 justify-center items-center h-[95%]">
+          <div className="flex gap-4 md:gap-10 justify-center items-center h-full">
             {choices.map((choice) => (
               <button
                 key={choice.name}
-                className="bg-amber-500 rounded-md p-2 border-4"
+                className="bg-amber-500 rounded-md p-2 border-4 transform hover:scale-105 transition duration-300 w-16 h-16 md:w-24 md:h-24"
                 onClick={() => handleChoice(choice.name)}
               >
                 <img
                   src={choice.icon}
                   alt={choice.name}
-                  className="w-12 h-12"
+                  className="w-8 h-8 md:w-12 md:h-12 mx-auto"
                 />
               </button>
             ))}
@@ -137,16 +137,16 @@ const RPS = () => {
   };
 
   return (
-    <div className="flex flex-col items-center text-center text-white relative">
-      <h2 className="text-white text-5xl mb-4 font-bold tracking-wider flex justify-center">
+    <div className="flex flex-col items-center text-center text-white relative px-4 md:px-8">
+      <h2 className="text-white text-4xl md:text-5xl mb-4 font-bold tracking-wider flex justify-center">
         Rock Paper Scissors
       </h2>
       {gameMode === "friends" && roomName && (
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-gray-800 p-2 rounded">
           <button onClick={copyRoomId}>
-            <p className="flex">
+            <p className="flex items-center">
               Copy Room Id
-              <FaCopy className="text-xl hover:text-gray-300" />
+              <FaCopy className="text-xl hover:text-gray-300 ml-1" />
             </p>
           </button>
         </div>

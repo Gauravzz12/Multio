@@ -65,35 +65,32 @@ const Register = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="Container h-screen w-screen flex justify-center items-center relative">
+    <div className="Container min-h-screen w-full flex justify-center items-center relative px-4 py-6">
       <div
-        className="absolute h-screen w-screen brightness-[0.3] bg-no-repeat bg-center bg-cover"
-        style={{
-          backgroundImage: `url(${AuthBg})`,
-        }}
+        className="absolute inset-0 bg-center bg-no-repeat bg-cover brightness-[0.3]"
+        style={{ backgroundImage: `url(${AuthBg})` }}
       ></div>
 
       <main
-        className="register-form w-fit h-fit bg-[#30303059]/65 backdrop-blur-lg rounded-xl flex flex-col p-6 gap-1 border-[#4C4C4C40] border-2"
+        className="register-form w-full max-w-[420px] bg-[#30303059]/65 backdrop-blur-lg rounded-xl flex flex-col p-4 sm:p-6 gap-2 border-[#4C4C4C40] border-2 transition-all duration-300"
         aria-label="Register Form"
       >
-        <header className="heading flex items-center justify-start mb-3 font-mono">
-          <img src={AuthLogo} className="w-16 bg-contain" alt="Multio Logo" />
-          <h1 className="text-white ml-2 text-3xl font-semibold tracking-wider font-Outfit">
+        <header className="heading flex items-center justify-start mb-3">
+          <img src={AuthLogo} className="w-12 sm:w-16 bg-contain" alt="Multio Logo" />
+          <h1 className="text-white ml-2 text-2xl sm:text-3xl font-semibold tracking-wider font-Outfit">
             MULTIO
           </h1>
         </header>
 
         <form
-          className="inputs flex flex-col gap-4 ml-4 mt-4 mr-6"
-          aria-labelledby="inputs"
+          className="inputs flex flex-col gap-3 sm:gap-4 mx-2 sm:mx-4 mt-4"
           onSubmit={handleSubmit}
         >
-          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg hover:shadow-xl transition-all duration-300">
             <label htmlFor="username" className="sr-only">
               Username
             </label>
-            <div className="input-field w-[300px] flex items-center bg-[#212121] rounded-lg p-[12px] relative">
+            <div className="input-field w-full flex items-center bg-[#212121] rounded-lg p-3 sm:p-[12px]">
               <AiOutlineUser className="text-white mr-2" />
               <input
                 id="username"
@@ -107,11 +104,11 @@ const Register = () => {
             </div>
           </div>
 
-          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg hover:shadow-xl transition-all duration-300">
             <label htmlFor="email" className="sr-only">
               Email
             </label>
-            <div className="input-field flex items-center bg-[#212121] rounded-lg p-[12px] relative">
+            <div className="input-field flex items-center bg-[#212121] rounded-lg p-3 sm:p-[12px]">
               <AiOutlineMail className="text-white mr-2" />
               <input
                 id="email"
@@ -126,11 +123,11 @@ const Register = () => {
             </div>
           </div>
 
-          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg hover:shadow-xl transition-all duration-300">
             <label htmlFor="password" className="sr-only">
               Password
             </label>
-            <div className="input-field flex items-center bg-[#212121] rounded-lg p-[12px] relative">
+            <div className="input-field flex items-center bg-[#212121] rounded-lg p-3 sm:p-[12px]">
               <AiOutlineLock className="text-white mr-2" />
               <input
                 id="password"
@@ -152,11 +149,11 @@ const Register = () => {
             </div>
           </div>
 
-          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg hover:shadow-xl transition-all duration-300">
             <label htmlFor="confirm-password" className="sr-only">
               Confirm Password
             </label>
-            <div className="input-field flex items-center bg-[#212121] rounded-lg p-[12px] relative">
+            <div className="input-field flex items-center bg-[#212121] rounded-lg p-3 sm:p-[12px]">
               <AiOutlineLock className="text-white mr-2" />
               <input
                 id="confirm-password"
@@ -183,7 +180,7 @@ const Register = () => {
 
           <button
             type="submit"
-            className="py-2 px-6 bg-gradient-to-r from-[#D0517E] to-[#5612E1] text-base border-none text-white disabled:cursor-not-allowed disabled:grayscale"
+            className="py-2 px-6 bg-gradient-to-r from-[#D0517E] to-[#5612E1] text-base border-none text-white disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] transition-all duration-200 active:scale-[0.98]"
             style={{
               clipPath:
                 "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
@@ -193,9 +190,9 @@ const Register = () => {
           >
             SIGN UP
           </button>
-          <div className="flex items-center gap-4 justify-center">
+          <div className="flex items-center gap-4 justify-center my-2">
             <hr className="w-full bg-[#484848] h-[2px] border-none" />
-            <span className="text-[#484848]">Or</span>
+            <span className="text-[#484848] whitespace-nowrap text-sm">Or</span>
             <hr className="w-full bg-[#484848] h-[2px] border-none" />
           </div>
 

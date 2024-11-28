@@ -80,22 +80,20 @@ export const Login = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="Container h-screen w-screen flex justify-center items-center relative">
+    <div className="Container min-h-screen w-full flex justify-center items-center relative px-4 py-6">
       <div
-        className={` inset-0 absolute bg-center h-screen w-screen brightness-[0.3] bg-no-repeat bg-cover `}
-        style={{
-          backgroundImage: `url(${AuthBg})`,
-        }}
+        className="absolute inset-0 bg-center bg-no-repeat bg-cover brightness-[0.3]"
+        style={{ backgroundImage: `url(${AuthBg})` }}
       ></div>
 
-      <form
-        className="login-form w-fit h-fit bg-[#30303059]/65 backdrop-blur-lg rounded-xl flex flex-col p-6 gap-1 border-[#4C4C4C40] border-2 bg-center"
+      <form 
+        className="login-form w-full max-w-[420px] bg-[#30303059]/65 backdrop-blur-lg rounded-xl flex flex-col p-4 sm:p-6 gap-2 border-[#4C4C4C40] border-2 transition-all duration-300"
         aria-label="Login Form"
         onSubmit={handleSubmit}
       >
-        <header className="heading flex items-center justify-start mb-6 font-mono">
-          <img src={AuthLogo} className="w-16 bg-contain" alt="Multio Logo" />
-          <h1 className="text-white ml-2 text-3xl font-semibold tracking-wider font-Outfit">
+        <header className="heading flex items-center justify-start mb-4 sm:mb-6">
+          <img src={AuthLogo} className="w-12 sm:w-16 bg-contain" alt="Multio Logo" />
+          <h1 className="text-white ml-2 text-2xl sm:text-3xl font-semibold tracking-wider font-Outfit">
             MULTIO
           </h1>
         </header>
@@ -112,15 +110,12 @@ export const Login = () => {
           </p>
         </section>
 
-        <section
-          className="inputs flex flex-col gap-4 ml-4 mt-4 mr-6"
-          aria-labelledby="inputs-section"
-        >
-          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
+        <section className="inputs flex flex-col gap-3 sm:gap-4 mx-2 sm:mx-4 mt-4">
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg hover:shadow-xl transition-shadow duration-300">
             <label htmlFor="username-email" className="sr-only">
               Username or Email
             </label>
-            <div className="input-field w-[320px] flex items-center bg-[#212121] rounded-lg p-[12px]">
+            <div className="input-field w-full flex items-center bg-[#212121] rounded-lg p-3 sm:p-[12px]">
               <AiOutlineMail className="text-white mr-2" />
               <input
                 id="username-email"
@@ -133,11 +128,11 @@ export const Login = () => {
               />
             </div>
           </div>
-          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg">
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80]/20 to-[#5612E180]/20 p-[0.8px] shadow-lg hover:shadow-xl transition-shadow duration-300">
             <label htmlFor="password" className="sr-only">
               Password
             </label>
-            <div className="input-field flex items-center bg-[#212121] rounded-lg p-[12px]">
+            <div className="input-field flex items-center bg-[#212121] rounded-lg p-3 sm:p-[12px]">
               <AiOutlineLock className="text-white mr-2" />
               <input
                 id="password"
@@ -162,7 +157,7 @@ export const Login = () => {
           </div>
 
           <button
-            className="py-2 px-6 bg-gradient-to-r from-[#D0517E] to-[#5612E1] text-base border-none text-white"
+            className="py-2 px-6 bg-gradient-to-r from-[#D0517E] to-[#5612E1] text-base border-none text-white transform hover:scale-[1.02] transition-transform duration-200 active:scale-[0.98]"
             style={{
               clipPath:
                 "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
@@ -200,9 +195,9 @@ export const Login = () => {
             </p>
           </div>
 
-          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80] to-[#5612E180] p-[0.8px] shadow-lg">
+          <div className="relative rounded-lg bg-gradient-to-tr from-[#D0517E80] to-[#5612E180] p-[0.8px] shadow-lg hover:shadow-xl transition-all duration-300">
             <button
-              className="h-full w-full bg-gradient-to-b from-[#393838]/100 to-[#3a3939]/80 text-white text-sm rounded-lg py-2 px-6 text-center font-semibold tracking-wide"
+              className="h-full w-full bg-gradient-to-b from-[#393838]/100 to-[#3a3939]/80 text-white text-sm rounded-lg py-2 px-6 text-center font-semibold tracking-wide hover:brightness-110 transition-all duration-300"
               aria-label="Continue as guest"
               onClick={handleGuest}
             >
