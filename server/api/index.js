@@ -7,7 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const startApiServer = (app) => {
   app.use(
     cors({
-      origin: ["http://localhost:5173","https://multio-six.vercel.app"],
+      origin: ["http://localhost:5173","https://multio.netlify.app"],
       credentials: true,
     })
   );

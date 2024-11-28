@@ -150,7 +150,6 @@ module.exports = {
             refreshToken,
             checkUser.rows[0].id,
           ]);
-
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -182,6 +181,8 @@ module.exports = {
         "SELECT * FROM users WHERE refreshtoken = $1",
         [refreshToken]
       );
+      console.log(refreshToken);
+      console.log(found.rows);
       if (found.rowCount === 1) {
         await pool.query("UPDATE users SET refreshtoken = NULL WHERE id = $1", [
           found.rows[0].id,
@@ -206,7 +207,7 @@ module.exports = {
       if (!refreshToken) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-
+      console.log(refreshToken);
       const userResult = await pool.query(
         "SELECT * FROM users WHERE refreshtoken = $1",
         [refreshToken]
@@ -220,24 +221,10 @@ module.exports = {
 
       jwt.verify(refreshToken, process.env.JWT_SECRET, async (err, decoded) => {
         if (err || user.id !== decoded.id) {
+          console.log("unverified");
           return res.status(403).json({ message: "Forbidden" });
         }
-
         const newAccessToken = generateToken(user, "15m");
-        const newRefreshToken = generateToken(user, "7d");
-
-        await pool.query("UPDATE users SET refreshtoken = $1 WHERE id = $2", [
-          newRefreshToken,
-          user.id,
-        ]);
-
-        res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "None",
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
-
         res.json({
           accessToken: newAccessToken,
           user: user.username,
@@ -267,10 +254,10 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `https://multio-six.vercel.app/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio.netlify.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio-six.vercel.app/");
+      res.redirect("https://multio.netlify.app/");
     }
   },
 
@@ -292,10 +279,10 @@ module.exports = {
       });
 
       res.redirect(
-        `https://multio-six.vercel.app/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `https://multio.netlify.app/oauth/success?token=${accessToken}&user=${req.user.username}`
       );
     } catch (err) {
-      res.redirect("https://multio-six.vercel.app/");
+      res.redirect("https://multio.netlify.app/");
     }
   },
 };
