@@ -10,7 +10,6 @@ import { PiEyeBold } from "react-icons/pi";
 import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
 import { useLogoutMutation } from "./authApiSlice";
-import { logOut } from "./authSlice";
 import AuthLogo from "../../assets/images/Auth/Logo.png";
 import AuthBg from "../../assets/images/Auth/Authbg.png";
 export const Login = () => {

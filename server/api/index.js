@@ -18,9 +18,7 @@ const startApiServer = (app) => {
   app.use(passport.initialize());
 
   app.use("/auth", authRoutes);
-  app.get("/haha", (req, res) => {
-    res.send("Server running");
-  });
+  
 };
 
 module.exports = startApiServer;

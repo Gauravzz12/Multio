@@ -6,6 +6,7 @@ import { useRegisterMutation } from "./authApiSlice";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader";
 import AuthLogo from "../../assets/images/Auth/Logo.png";
+import AuthBg from "../../assets/images/Auth/Authbg.png";
 
 const Register = () => {
   const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
