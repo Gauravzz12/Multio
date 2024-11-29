@@ -10,7 +10,7 @@ const ScoreBoard = ({ socketId }) => {
 
   return (
     <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-6 rounded-xl
-      shadow-2xl mb-6 w-full max-w-md transform hover:scale-102 transition-all duration-300">
+      shadow-2xl mb-6 w-full max-w-md transform hover:scale-102 transition-all duration-300 ">
       <div className="flex justify-between items-center">
         {[
           { label: user, score: scores[playerId] || 0, color: "green" },

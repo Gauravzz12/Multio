@@ -7,6 +7,7 @@ const gameSlice = createSlice({
     gameMode: null,
     roomName: "",
     scores: {},
+    matchInfo: {},
   },
   reducers: {
     setGameMode: (state, action) => {
@@ -21,7 +22,12 @@ const gameSlice = createSlice({
     resetScores: (state) => {
       state.scores = {};
     },
-   
+    setMatchInfo: (state, action) => {
+      state.matchInfo = action.payload;
+    },
+    resetMatchInfo: (state) => {
+      state.matchInfo = {};
+    },
   },
 });
 

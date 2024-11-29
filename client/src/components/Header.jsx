@@ -43,10 +43,10 @@ function Header() {
   return (
     <>
       {isLoading && <Loader />}
-      <header className="sticky top-0 z-50 bg-gradient-to-r from-[#020530] to-[#13063e] text-white">
-        <nav className="container mx-auto p-3">
-          <div className="flex justify-between items-center relative">
-            <h1 className="title italic font-extrabold text-3xl md:text-4xl text-[#f508ff] font-reggae-one">
+      <header className="sticky top-0 z-50 bg-gradient-to-r from-[#020530] to-[#13063e] text-white ">
+        <nav className="container mx-auto p-3 ">
+          <div className="flex justify-between items-center relative mx-8">
+            <h1 className="title italic font-extrabold text-3xl md:text-4xl text-[#f508ff] font-reggae-one cursor-pointer" onClick={()=>navigate('/Home')}>
               Multio
             </h1>
 

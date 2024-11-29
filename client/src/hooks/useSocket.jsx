@@ -25,9 +25,6 @@ const useSocket = (socket, setWaitingForOpponent) => {
       setWaitingForOpponent(true);
     });
 
-    socket.on("startGame", () => {
-      setWaitingForOpponent(false);
-    });
 
     socket.on("waitingForOpponent", () => {
       setWaitingForOpponent(true);

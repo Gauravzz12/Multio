@@ -26,10 +26,10 @@ const rpsController = (io, socket) => {
         rooms[assignedRoom] = {
           players: [],
           choices: {},
-          mode: "friends",
+          mode: "custom",
           scores: {},
         };
-      } else if (rooms[assignedRoom].mode !== "friends") {
+      } else if (rooms[assignedRoom].mode !== "custom") {
         socket.emit("roomNotFound");
         return;
       }

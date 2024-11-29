@@ -126,7 +126,7 @@ const tttController = (io, socket) => {
           players: [],
           symbols: {},
           scores: {},
-          mode: "friends",
+          mode: "custom",
         };
       }
     }
@@ -139,7 +139,7 @@ const tttController = (io, socket) => {
     room.players.push(socket.id);
     room.scores[socket.id] = 0;
     if (room.players.length === 1) {
-      socket.emit("waitingForOpponent ");
+      socket.emit("waitingForOpponent");
     } else if (room.players.length === 2) {
       assignSymbols(room);
       io.to(assignedRoom).emit("startGame", {

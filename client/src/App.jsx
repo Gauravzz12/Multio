@@ -19,6 +19,8 @@ const Games = lazy(() => import("./pages/Games"));
 const Profile = lazy(() => import("./pages/Profile"));
 const RequireAuth = lazy(() => import("./features/auth/RequireAuth"));
 const OAuthSuccess = lazy(() => import("./features/auth/OAuthSuccess"));
+const RPS = lazy(() => import("./components/GameBoards/RPS"));
+const TTT = lazy(() => import("./components/GameBoards/TTT"));
 
 function App() {
   const user = useSelector(selectCurrentUser);
@@ -73,6 +75,22 @@ function App() {
                 </Suspense>
               ),
             },
+            {
+              path: "/Games/RPS",
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <RPS />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/Games/TTT",
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <TTT />
+                </Suspense>
+              ),
+            },
           ],
         },
       ],
@@ -111,7 +129,7 @@ function App() {
     <div className="w-full overflow-hidden">
       <ToastContainer
         position="top-right"
-        autoClose={2000}
+        autoClose={1000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

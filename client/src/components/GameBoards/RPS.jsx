@@ -6,18 +6,17 @@ import {
   setRoomName,
   setScores,
   resetScores,
-} from "../../features/games/gameSlice"; 
+} from "../../features/games/gameSlice";
 import rockIcon from "../../assets/images/RPS/rock.svg";
 import paperIcon from "../../assets/images/RPS/paper.svg";
 import scissorsIcon from "../../assets/images/RPS/scissors.svg";
 import GameModeSelector from "../GameModeSelector";
 import GameDisplay from "../GameDisplay";
-import RoomManager from "../RoomManager";
 import OpponentLoader from "../OpponentLoader";
-import { FaCopy } from "react-icons/fa";
+import { FaCopy, FaTimes } from "react-icons/fa";
 import useSocket from "../../hooks/useSocket";
-import { selectCurrentUser } from "../../features/auth/authSlice"; 
 import ScoreBoard from "../ScoreBoard";
+import { useNavigate } from "react-router-dom";
 
 const RPS = () => {
   const dispatch = useDispatch();
@@ -27,6 +26,7 @@ const RPS = () => {
   const [opponentChoice, setOpponentChoice] = useState(null);
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
   const [result, setResult] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const newSocket = io(
@@ -39,19 +39,17 @@ const RPS = () => {
     newSocket.on("startGame", (data) => {
       setWaitingForOpponent(false);
       setUserChoice(null);
-      setOpponentChoice(null); 
+      setOpponentChoice(null);
       setResult(null);
       dispatch(setScores(data.scores));
     });
 
     newSocket.on("gameResult", (data) => {
       setResult(data.result);
-      setOpponentChoice(data.opponentChoice); 
+      setOpponentChoice(data.opponentChoice);
       dispatch(setScores(data.scores));
       setWaitingForOpponent(false);
     });
-
-  
 
     newSocket.on("scoresReset", () => {
       dispatch(resetScores());
@@ -75,10 +73,11 @@ const RPS = () => {
   useEffect(() => {
     if (socket && gameMode === "online" && !roomName) {
       socket.emit("joinRoom", {});
-    } else if (socket && gameMode === "friends" && roomName) {
+    } else if (socket && gameMode === "custom" && roomName) {
       socket.emit("joinRoom", { roomId: roomName });
     }
   }, [socket, gameMode, roomName]);
+
 
   const handleChoice = (choice) => {
     setUserChoice(choice);
@@ -87,6 +86,11 @@ const RPS = () => {
 
   const copyRoomId = () => {
     navigator.clipboard.writeText(roomName);
+  };
+
+  const closeGameBoard = () => {
+    if (socket) socket.disconnect();
+    navigate("/Games");
   };
 
   const ChoiceButtons = () => {
@@ -137,12 +141,18 @@ const RPS = () => {
   };
 
   return (
-    <div className="flex flex-col items-center text-center text-white relative px-4 md:px-8">
+    <div className="flex flex-col items-center text-center text-white relative px-4 md:px-8 w-full max-w-6xl h-[90vh] bg-gray-900 rounded-xl shadow-2xl  overflow-hidden border border-gray-700">
+      <button
+        onClick={closeGameBoard}
+        className="absolute top-4 right-4 text-white hover:text-gray-300"
+      >
+        <FaTimes size={24} />
+      </button>
       <h2 className="text-white text-4xl md:text-5xl mb-4 font-bold tracking-wider flex justify-center">
         Rock Paper Scissors
       </h2>
-      {gameMode === "friends" && roomName && (
-        <div className="absolute top-4 right-4 flex items-center gap-2 bg-gray-800 p-2 rounded">
+      {gameMode === "custom" && roomName && (
+        <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-gray-800 p-2 rounded">
           <button onClick={copyRoomId}>
             <p className="flex items-center">
               Copy Room Id
@@ -155,11 +165,9 @@ const RPS = () => {
 
       {!gameMode ? (
         <GameModeSelector />
-      ) : gameMode === "friends" && !roomName ? (
-        <RoomManager />
       ) : waitingForOpponent ? (
         <OpponentLoader />
-      ) : userChoice && opponentChoice && result ? (
+      ) : result ? (
         <GameDisplay
           userChoice={userChoice}
           opponentChoice={opponentChoice}
