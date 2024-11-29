@@ -14,9 +14,10 @@ import useSocket from "../../hooks/useSocket";
 import ScoreBoard from "../ScoreBoard";
 import { FaTimes, FaRegCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { selectCurrentUser } from "../../features/auth/authSlice";
 const TTT = () => {
   const dispatch = useDispatch();
-  const { gameMode, roomName, scores } = useSelector((state) => state.game);
+  const { gameMode, roomName,matchInfo } = useSelector((state) => state.game);
   const [board, setBoard] = useState([
     ["", "", ""],
     ["", "", ""],
@@ -28,6 +29,7 @@ const TTT = () => {
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
   const [result, setResult] = useState(null);
   const navigate = useNavigate();
+  const user=useSelector(selectCurrentUser);
   useEffect(() => {
     const newSocket = io(
       import.meta.env.MODE === "development"
@@ -50,8 +52,7 @@ const TTT = () => {
       setCurrentPlayer(data.currentPlayer);
     });
 
-    newSocket.on("gameOver", (data) => {
-      console.log(data);
+    newSocket.on("roundOver", (data) => {
       setBoard(data.board);
       dispatch(setScores(data.scores));
       if (data.winner) {
@@ -76,17 +77,16 @@ const TTT = () => {
       newSocket.off("roomAssigned");
       newSocket.off("startGame");
       newSocket.off("updateBoard");
-      newSocket.off("gameOver");
+      newSocket.off("roundOver");
     };
   }, [dispatch]);
 
   useSocket(socket, setWaitingForOpponent);
-
   useEffect(() => {
     if (socket && gameMode === "online" && !roomName) {
-      socket.emit("joinRoom", {});
+      socket.emit("joinRoom", { roomId: null, user: user, rounds: matchInfo.rounds });
     } else if (socket && gameMode === "custom" && roomName) {
-      socket.emit("joinRoom", { roomId: roomName });
+      socket.emit("joinRoom", { roomId: roomName, user: user, rounds: matchInfo.rounds });
     }
   }, [socket, gameMode, roomName]);
 
@@ -128,7 +128,7 @@ const TTT = () => {
   };
 
   return (
-    <div className="flex flex-col items-center text-center text-white relative min-h-screen p-4 max-w-7xl mx-auto w-full  h-[90vh] bg-gray-900 rounded-xl shadow-2xl  overflow-hidden border border-gray-700">
+    <div className="flex flex-col items-center mt-4 text-center text-white relative min-h-screen p-4 max-w-8xl mx-auto w-full  h-[90vh] bg-gray-900 rounded-xl shadow-2xl  overflow-hidden border border-gray-700">
       <button
         onClick={closeGameBoard}
         className="absolute top-4 right-4 text-white hover:text-gray-300"

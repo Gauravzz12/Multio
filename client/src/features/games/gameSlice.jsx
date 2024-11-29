@@ -7,7 +7,8 @@ const gameSlice = createSlice({
     gameMode: null,
     roomName: "",
     scores: {},
-    matchInfo: {},
+    matchInfo: {rounds:5},
+
   },
   reducers: {
     setGameMode: (state, action) => {
@@ -23,7 +24,9 @@ const gameSlice = createSlice({
       state.scores = {};
     },
     setMatchInfo: (state, action) => {
-      state.matchInfo = action.payload;
+      const { rounds } = action.payload;
+      console.log(action.payload);
+      state.matchInfo.rounds=rounds;
     },
     resetMatchInfo: (state) => {
       state.matchInfo = {};
@@ -36,6 +39,8 @@ export const {
   setRoomName,
   setScores,
   resetScores,
+  setMatchInfo,
+  resetMatchInfo,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

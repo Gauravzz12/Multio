@@ -11,23 +11,22 @@ import rockIcon from "../../assets/images/RPS/rock.svg";
 import paperIcon from "../../assets/images/RPS/paper.svg";
 import scissorsIcon from "../../assets/images/RPS/scissors.svg";
 import GameModeSelector from "../GameModeSelector";
-import GameDisplay from "../GameDisplay";
 import OpponentLoader from "../OpponentLoader";
 import { FaCopy, FaTimes } from "react-icons/fa";
 import useSocket from "../../hooks/useSocket";
 import ScoreBoard from "../ScoreBoard";
 import { useNavigate } from "react-router-dom";
-
+import { selectCurrentUser } from "../../features/auth/authSlice";
 const RPS = () => {
   const dispatch = useDispatch();
-  const { gameMode, roomName, scores } = useSelector((state) => state.game);
+  const { gameMode, roomName,matchInfo } = useSelector((state) => state.game);
   const [socket, setSocket] = useState(null);
   const [userChoice, setUserChoice] = useState(null);
   const [opponentChoice, setOpponentChoice] = useState(null);
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
   const [result, setResult] = useState(null);
   const navigate = useNavigate();
-
+  const user = useSelector(selectCurrentUser);
   useEffect(() => {
     const newSocket = io(
       import.meta.env.MODE === "development"
@@ -44,7 +43,7 @@ const RPS = () => {
       dispatch(setScores(data.scores));
     });
 
-    newSocket.on("gameResult", (data) => {
+    newSocket.on("roundOver", (data) => {
       setResult(data.result);
       setOpponentChoice(data.opponentChoice);
       dispatch(setScores(data.scores));
@@ -62,19 +61,18 @@ const RPS = () => {
       setUserChoice(null);
       setWaitingForOpponent(false);
       newSocket.off("startGame");
-      newSocket.off("gameResult");
+      newSocket.off("roundOver");
       newSocket.off("startNextRound");
       newSocket.off("scoresReset");
     };
   }, []);
 
   useSocket(socket, setWaitingForOpponent);
-
   useEffect(() => {
     if (socket && gameMode === "online" && !roomName) {
-      socket.emit("joinRoom", {});
+      socket.emit("joinRoom", { roomId: null, user: user, rounds: matchInfo.rounds });
     } else if (socket && gameMode === "custom" && roomName) {
-      socket.emit("joinRoom", { roomId: roomName });
+      socket.emit("joinRoom", { roomId: roomName, user: user, rounds: matchInfo.rounds });
     }
   }, [socket, gameMode, roomName]);
 
@@ -92,7 +90,11 @@ const RPS = () => {
     if (socket) socket.disconnect();
     navigate("/Games");
   };
-
+  const choiceIcons = {
+    Rock: rockIcon,
+    Paper: paperIcon,
+    Scissors: scissorsIcon,
+  };
   const ChoiceButtons = () => {
     if (!roomName) return;
     const choices = [
@@ -100,11 +102,7 @@ const RPS = () => {
       { name: "Paper", icon: paperIcon },
       { name: "Scissors", icon: scissorsIcon },
     ];
-    const choiceIcons = {
-      Rock: rockIcon,
-      Paper: paperIcon,
-      Scissors: scissorsIcon,
-    };
+
 
     return (
       <div className="flex flex-col items-center justify-center h-72">
@@ -141,7 +139,7 @@ const RPS = () => {
   };
 
   return (
-    <div className="flex flex-col items-center text-center text-white relative px-4 md:px-8 w-full max-w-6xl h-[90vh] bg-gray-900 rounded-xl shadow-2xl  overflow-hidden border border-gray-700">
+    <div className="flex flex-col items-center mt-4 text-center text-white relative min-h-screen p-4 max-w-8xl mx-auto w-full  h-[90vh] bg-gray-900 rounded-xl shadow-2xl  overflow-hidden border border-gray-700">
       <button
         onClick={closeGameBoard}
         className="absolute top-4 right-4 text-white hover:text-gray-300"
@@ -167,14 +165,33 @@ const RPS = () => {
         <GameModeSelector />
       ) : waitingForOpponent ? (
         <OpponentLoader />
-      ) : result ? (
-        <GameDisplay
-          userChoice={userChoice}
-          opponentChoice={opponentChoice}
-          result={result}
-        />
-      ) : (
+      ) : !result ? (
         <ChoiceButtons />
+
+      ) : (
+        <div className="flex flex-col items-center mt-8">
+          <div className="flex justify-around w-full max-w-md">
+            <div className="flex flex-col items-center">
+              <h2 className="text-2xl mb-4">You</h2>
+              <img src={choiceIcons[userChoice]} alt={userChoice} className="w-32 h-32 animate-pulse" />
+              <p className="text-xl mt-2">{userChoice}</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <h2 className="text-2xl mb-4">Opponent</h2>
+              <img
+                src={choiceIcons[opponentChoice]}
+                alt={opponentChoice}
+                className="w-32 h-32 animate-pulse"
+              />
+              <p className="text-xl mt-2">{opponentChoice}</p>
+            </div>
+          </div>
+          {userChoice && opponentChoice && (
+            <h1 className={`text-5xl mt-8 font-bold ${result === "You win!" ? "text-green-500" : result === "You lose!" ? "text-red-500" : "text-yellow-500"}`}>
+              {result}
+            </h1>
+          )}
+        </div>
       )}
     </div>
   );

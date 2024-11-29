@@ -1,4 +1,5 @@
 const rooms = {};
+
 const tttController = (io, socket) => {
   const createEmptyBoard = () => {
     return [
@@ -18,7 +19,7 @@ const tttController = (io, socket) => {
     [
       [1, 0],
       [1, 1],
-      [1, 2],
+      [1, 2], 
     ],
     [
       [2, 0],
@@ -97,7 +98,7 @@ const tttController = (io, socket) => {
       });
     }, 1000);
   };
-  socket.on("joinRoom", ({ roomId }) => {
+  socket.on("joinRoom", ({ roomId,user,rounds }) => {
     let assignedRoom = roomId;
     if (!assignedRoom) {
       for (const [id, room] of Object.entries(rooms)) {
@@ -114,6 +115,7 @@ const tttController = (io, socket) => {
           players: [],
           symbols: {},
           scores: {},
+          rounds:rounds,
           mode: "online",
         };
       }
@@ -126,6 +128,7 @@ const tttController = (io, socket) => {
           players: [],
           symbols: {},
           scores: {},
+          rounds:rounds,
           mode: "custom",
         };
       }
@@ -162,14 +165,21 @@ const tttController = (io, socket) => {
 
       if (checkWin(room.board, symbol)) {
         room.scores[socket.id]++;
-        io.to(roomId).emit("gameOver", {
+        io.to(roomId).emit("roundOver", {
           board: room.board,
           winner: socket.id,
           scores: room.scores,
         });
+        if (room.scores[socket.id] === room.rounds) {
+          io.to(roomId).emit("gameOver", {
+            winner: socket.id,
+          });
+          delete rooms[roomId];
+        }
+
         nextRound(roomId);
       } else if (checkDraw(room.board)) {
-        io.to(roomId).emit("gameOver", {
+        io.to(roomId).emit("roundOver", {
           board: room.board,
           winner: null,
           scores: room.scores,

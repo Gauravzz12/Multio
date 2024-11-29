@@ -1,7 +1,7 @@
 const rooms = {};
 
 const rpsController = (io, socket) => {
-  socket.on("joinRoom", ({ roomId }) => {
+  socket.on("joinRoom", ({ roomId,user,rounds }) => {
     let assignedRoom = roomId;
 
     if (!assignedRoom) {
@@ -17,6 +17,7 @@ const rpsController = (io, socket) => {
           players: [],
           choices: {},
           mode: "online",
+          rounds:rounds,
           scores: {},
         };
       }
@@ -26,6 +27,7 @@ const rpsController = (io, socket) => {
         rooms[assignedRoom] = {
           players: [],
           choices: {},
+          rounds:rounds,
           mode: "custom",
           scores: {},
         };
@@ -56,41 +58,45 @@ const rpsController = (io, socket) => {
   });
 
   socket.on("makeChoice", ({ roomId, choice }) => {
-    if (!rooms[roomId] || !rooms[roomId].players.includes(socket.id)) return;
+    const room=rooms[roomId];
+    if (!room || !room.players.includes(socket.id)) return;
 
-    rooms[roomId].choices[socket.id] = choice;
+    room.choices[socket.id] = choice;
 
-    if (Object.keys(rooms[roomId].choices).length === 2) {
-      const result = determineWinner(rooms[roomId].choices);
+    if (Object.keys(room.choices).length === 2) {
+      const result = determineWinner(room.choices);
 
-      rooms[roomId].players.forEach((playerId) => {
+      room.players.forEach((playerId) => {
         if (result[playerId] === "You win!") {
-          rooms[roomId].scores[playerId] += 1;
+          room.scores[playerId] += 1;
         }
       });
-
-      rooms[roomId].players.forEach((playerId) => {
-        const opponentId = rooms[roomId].players.find((id) => id !== playerId);
-        io.to(playerId).emit("gameResult", {
+      if (room.scores[socket.id] === room.rounds) {
+        io.to(roomId).emit("gameOver", {
+          winner: socket.id,
+        });
+        delete room;
+      }
+      room.players.forEach((playerId) => {
+        const opponentId = room.players.find((id) => id !== playerId);
+        io.to(playerId).emit("roundOver", {
           result: result[playerId],
-          opponentChoice: rooms[roomId].choices[opponentId],
-          scores: rooms[roomId].scores,
+          opponentChoice: room.choices[opponentId],
+          scores: room.scores,
         });
       });
 
-      rooms[roomId].choices = {};
+      room.choices = {};
 
       setTimeout(() => {
         io.to(roomId).emit("startGame", {
-          scores: rooms[roomId].scores,
+          scores: room.scores,
         });
       }, 1000);
     }
-  });
+  });  
 
   socket.on("disconnect", () => {
-    console.log("User Disconnected:", socket.id);
-
     for (const roomId in rooms) {
       const room = rooms[roomId];
       if (room.players.includes(socket.id)) {

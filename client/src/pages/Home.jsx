@@ -9,7 +9,7 @@ import featureImage4 from '../assets/images/Features/4.png';
 import rpsImage from '../assets/images/GameLogo/RPS.jpg';
 import tttImage from '../assets/images/GameLogo/TTT.jpg';
 import cardImage from '../assets/images/GameLogo/Card.jpg';
-
+import { useNavigate } from "react-router-dom";
 const featureImages = [featureImage1, featureImage2, featureImage3, featureImage4];
 function Home() {
   const textGroups = [
@@ -45,7 +45,7 @@ function Home() {
       description: "View your game history and statistics.",
     },
   ];
-
+  const navigate=useNavigate();
   return (
     <main className="m-0 bg-black text-white font-bold flex flex-col scroll-smooth">
       <section className="motto rounded px-4 md:px-12 lg:px-24 text-3xl md:text-5xl flex flex-col md:flex-row justify-between items-center bg-gradient-to-r from-[#020530] to-[#13063e] py-8 md:py-12 gap-8">
@@ -142,6 +142,7 @@ function Home() {
                   backgroundSize: 'cover',
                   backgroundPosition: 'center'
                 }}
+                onClick={()=>{navigate(`/Games/${index===0?"RPS":index===1?"TTT":""}`)}}
               />
             ))}
           </div>

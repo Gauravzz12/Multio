@@ -6,33 +6,30 @@ import {
   resetScores,
 } from "../features/games/gameSlice";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const useSocket = (socket, setWaitingForOpponent) => {
   const dispatch = useDispatch();
-
+  const navigate=useNavigate();
   useEffect(() => {
     if (!socket) return;
-
-    const resetGameState = () => {
-      setWaitingForOpponent(true);
-      dispatch(resetScores());
-      
-    };
-
     socket.on("roomAssigned", ({ roomId }) => {
       dispatch(resetScores());
       dispatch(setRoomName(roomId));
       setWaitingForOpponent(true);
     });
 
-
+    socket.on('gameOver',()=>{
+      navigate('/Games');
+    })
     socket.on("waitingForOpponent", () => {
       setWaitingForOpponent(true);
     });
 
     socket.on("playerLeft", () => {
       toast.info("Opponent left The Game");
-      resetGameState();
+      setWaitingForOpponent(true);
+      dispatch(resetScores());
     });
 
     socket.on("roomNotFound", () => {

@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { setGameMode, setRoomName } from "../features/games/gameSlice";
+import { setGameMode, setRoomName,setMatchInfo} from "../features/games/gameSlice";
 
 const GameModeSelector = () => {
   const dispatch = useDispatch();
   const [roomInput, setRoomInput] = useState("");
-
+  const [rounds, setRounds] = useState(5);
   const handleJoinRoom = () => {
     if (roomInput.trim()) {
-      dispatch(setGameMode("custom"));
+      dispatch(setGameMode('custom'));
       dispatch(setRoomName(roomInput.trim()));
+      dispatch(setMatchInfo({rounds:rounds}));
     }
   };
 
@@ -25,7 +26,8 @@ const GameModeSelector = () => {
             text-white font-bold py-4 px-6 rounded-lg text-lg md:text-xl
             transform hover:scale-105 transition-all duration-300
             shadow-lg hover:shadow-xl"
-          onClick={() => dispatch(setGameMode("online"))}
+            name="online"
+          onClick={()=>dispatch(setGameMode('online'))}
         >
           Play Online
         </button>
@@ -45,10 +47,33 @@ const GameModeSelector = () => {
               text-white font-bold py-4 px-6 rounded-lg text-lg
               transform hover:scale-105 transition-all duration-300
               shadow-lg hover:shadow-xl whitespace-nowrap"
+              name="custom"
             onClick={handleJoinRoom}
           >
-            Join Custom Room
+            Join Room
           </button>
+        </div>
+
+        <div className="mt-4 w-full">
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-white text-sm">Number of Rounds:</label>
+            <span className="text-purple-400 font-bold">{rounds}</span>
+          </div>
+          <div className="relative">
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value={rounds}
+              onChange={(e) => setRounds(parseInt(e.target.value))}
+              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer
+              "
+            />
+          </div>
+          <div className="flex justify-between mt-1">
+            <span className="text-xs text-gray-400">1</span>
+            <span className="text-xs text-gray-400">10</span>
+          </div>
         </div>
       </div>
     </div>
