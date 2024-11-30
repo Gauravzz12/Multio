@@ -15,8 +15,9 @@ import useSocket from "../../hooks/useSocket";
 import ScoreBoard from "../ScoreBoard";
 import { FaTimes, FaRegCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { selectCurrentUser } from "../../features/auth/authSlice";
+import { selectCurrentUser, selectCurrentAvatar } from "../../features/auth/authSlice";
 import GameResultDisplay from "../GameResultDisplay";
+import defaultAvatar from '../../assets/images/default-avatar.png';
 
 const TTT = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ const TTT = () => {
   const navigate = useNavigate();
   const user = useSelector(selectCurrentUser);
   const [gameOver, setGameOver] = useState(false);
+  const userAvatar = useSelector(selectCurrentAvatar) === 'Guest' ? defaultAvatar : useSelector(selectCurrentAvatar);
 
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const TTT = () => {
       setCurrentPlayer(data.currentPlayer);
       setMySymbol(data.symbols[newSocket.id]);
       dispatch(setScores(data.scores));
-      dispatch(setMatchInfo({rounds:data.rounds}));
+      dispatch(setMatchInfo({ rounds: data.rounds }));
       setResult(null);
     });
 
@@ -86,13 +88,13 @@ const TTT = () => {
     };
   }, [dispatch]);
 
-  useSocket(socket, setWaitingForOpponent,setGameOver);
+  useSocket(socket, setWaitingForOpponent, setGameOver);
 
   useEffect(() => {
     if (socket && gameMode === "online" && !roomName) {
-      socket.emit("joinRoom", { roomId: null, user: user });
+      socket.emit("joinRoom", { roomId: null, userInfo: { userName: user, userAvatar: userAvatar, socketID: socket.id } });
     } else if (socket && gameMode === "custom" && roomName) {
-      socket.emit("joinRoom", { roomId: roomName, user: user, rounds: matchInfo.rounds });
+      socket.emit("joinRoom", { roomId: roomName, userInfo: { userName: user, userAvatar: userAvatar, socketID: socket.id }, rounds: matchInfo.rounds });
     }
   }, [socket, gameMode, roomName]);
 
@@ -161,27 +163,25 @@ const TTT = () => {
         </div>
       )}
 
-   
+
 
       {roomName && <ScoreBoard socketId={socket?.id} />}
       {!gameMode ? (
         <GameModeSelector socket={socket} />
       ) : waitingForOpponent ? (
         <OpponentLoader />
-      ) : result ? gameOver ? (<GameResultDisplay socket={socket}/>) :(
-        <div className={`p-8 rounded-xl backdrop-blur-sm ${
-          result === "winner" ? "bg-green-500/10" :
+      ) : result ? gameOver ? (<GameResultDisplay socket={socket} />) : (
+        <div className={`p-8 rounded-xl backdrop-blur-sm ${result === "winner" ? "bg-green-500/10" :
           result === "loser" ? "bg-red-500/10" : "bg-yellow-500/10"
-        }`}>
+          }`}>
           <div className="flex flex-col items-center space-y-4">
-            <h2 className={`text-3xl md:text-5xl font-bold ${
-              result === "winner" ? "text-green-500" :
+            <h2 className={`text-3xl md:text-5xl font-bold ${result === "winner" ? "text-green-500" :
               result === "loser" ? "text-red-500" : "text-yellow-500"
-            }`}>
+              }`}>
               {result === "winner" ? "You won! 🎉" :
-               result === "loser" ? "You lost! 😔" : "It's a draw! 🤝"}
+                result === "loser" ? "You lost! 😔" : "It's a draw! 🤝"}
             </h2>
-           
+
           </div>
         </div>
       ) : (

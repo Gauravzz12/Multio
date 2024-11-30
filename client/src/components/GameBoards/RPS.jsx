@@ -7,7 +7,6 @@ import {
   setScores,
   resetScores,
   setMatchInfo,
-
 } from "../../features/games/gameSlice";
 import rockIcon from "../../assets/images/RPS/rock.svg";
 import paperIcon from "../../assets/images/RPS/paper.svg";
@@ -18,8 +17,10 @@ import { FaCopy, FaTimes } from "react-icons/fa";
 import useSocket from "../../hooks/useSocket";
 import ScoreBoard from "../ScoreBoard";
 import { useNavigate } from "react-router-dom";
-import { selectCurrentUser } from "../../features/auth/authSlice";
+import { selectCurrentUser,selectCurrentAvatar } from "../../features/auth/authSlice";
 import GameResultDisplay from "../GameResultDisplay";
+import defaultAvatar from '../../assets/images/default-avatar.png';
+
 const RPS = () => {
   const dispatch = useDispatch();
   const { gameMode, roomName, matchInfo } = useSelector((state) => state.game);
@@ -31,7 +32,8 @@ const RPS = () => {
   const [gameOver, setGameOver] = useState(false);
   const navigate = useNavigate();
   const user = useSelector(selectCurrentUser);
-
+  const userAvatar = useSelector(selectCurrentAvatar)==='Guest'?defaultAvatar:useSelector(selectCurrentAvatar);
+  
   useEffect(() => {
     const newSocket = io(
       import.meta.env.MODE === "development"
@@ -77,9 +79,9 @@ const RPS = () => {
 
   useEffect(() => {
     if (socket && gameMode === "online" && !roomName) {
-      socket.emit("joinRoom", { roomId: null, user: user });
+      socket.emit("joinRoom", { roomId: null,  userInfo: {userName:user,userAvatar:userAvatar,socketID:socket.id}});
     } else if (socket && gameMode === "custom" && roomName) {
-      socket.emit("joinRoom", { roomId: roomName, user: user, rounds: matchInfo.rounds });
+      socket.emit("joinRoom", { roomId: roomName, userInfo: {userName:user,userAvatar:userAvatar,socketID:socket.id}, rounds: matchInfo.rounds });
     }
   }, [socket, gameMode, roomName]);
 

@@ -13,7 +13,10 @@ const generateToken = (user, expiry) => {
     { expiresIn: expiry }
   );
 };
-const redirect_URL = process.env.NODE_ENV === "production" ? "https://multio.netlify.app":"http://localhost:5173";
+const redirect_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://multio.netlify.app"
+    : "http://localhost:5173";
 passport.use(
   new GoogleStrategy(
     {
@@ -24,7 +27,7 @@ passport.use(
           ? "https://multio-backend.up.railway.app/auth/google/callback"
           : "http://localhost:5000/auth/google/callback",
     },
-    async (accessToken,refreshToken,profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       try {
         const existingUser = await pool.query(
           "SELECT * FROM users WHERE email = $1",
@@ -36,16 +39,11 @@ passport.use(
 
         const id = uuidv4();
         const hashedPassword = bcrypt.hashSync("OauthGoogle", 10);
+        const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${profile.displayName}`;
 
         const newUser = await pool.query(
-          "INSERT INTO users (id, username,password, email) VALUES ($1, $2, $3, $4) RETURNING *",
-          [
-            id,
-            profile.displayName,
-            hashedPassword,
-            profile.emails[0].value,
-            
-          ]
+          "INSERT INTO users (id, username,password, email,avatar_url) VALUES ($1, $2, $3, $4,$5) RETURNING *",
+          [id, profile.displayName, hashedPassword, profile.emails[0].value, avatarUrl]
         );
 
         return done(null, newUser.rows[0]);
@@ -66,7 +64,7 @@ passport.use(
           ? "https://multio-backend.up.railway.app/auth/github/callback"
           : "http://localhost:5000/auth/github/callback",
     },
-    async (accessToken,refreshToken,profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       try {
         const existingUser = await pool.query(
           "SELECT * FROM users WHERE  email = $1",
@@ -79,16 +77,10 @@ passport.use(
 
         const id = uuidv4();
         const hashedPassword = bcrypt.hashSync("OauthGithub", 10);
-
+        const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${profile.displayName}`;
         const newUser = await pool.query(
-          "INSERT INTO users (id, username, password,email) VALUES ($1, $2, $3, $4,) RETURNING *",
-          [
-            id,
-            profile.username,
-            hashedPassword,
-            profile.emails[0].value,
-          
-          ]
+          "INSERT INTO users (id, username, password,email,avatar_url) VALUES ($1, $2, $3, $4,$5) RETURNING *",
+          [id, profile.username, hashedPassword, profile.emails[0].value,avatarUrl]
         );
 
         return done(null, newUser.rows[0]);
@@ -124,9 +116,11 @@ module.exports = {
       }
       const hashedPassword = bcrypt.hashSync(pwd, 10);
       const id = uuidv4();
+      const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${userName}`;
+
       const newUser = await pool.query(
-        "INSERT INTO users (id,username,email, password) VALUES ($1, $2, $3,$4) RETURNING *;",
-        [id, userName, email, hashedPassword]
+        "INSERT INTO users (id, username, email, password, avatar_url) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+        [id, userName, email, hashedPassword, avatarUrl]
       );
       res.status(201).json({ message: "User Registered Successfully" });
     } catch (err) {
@@ -254,7 +248,7 @@ module.exports = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       res.redirect(
-        `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}&avatar=${encodeURIComponent(req.user.avatar_url)}`
       );
     } catch (err) {
       res.redirect(`${redirect_URL}/`);
@@ -278,7 +272,7 @@ module.exports = {
       });
 
       res.redirect(
-        `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}`
+        `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}&avatar=${encodeURIComponent(req.user.avatar_url)}`
       );
     } catch (err) {
       res.redirect(`${redirect_URL}/`);

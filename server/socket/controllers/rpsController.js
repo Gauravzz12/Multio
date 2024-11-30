@@ -12,9 +12,8 @@ const rpsController = (io, socket) => {
     }
   });
 
-  socket.on("joinRoom", ({ roomId, user, rounds = 3 }) => {
+  socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
     let assignedRoom = roomId;
-
     if (!assignedRoom) {
       for (const [id, room] of Object.entries(rooms)) {
         if (room.mode === "online" && room.players.length < 2) {
@@ -47,23 +46,23 @@ const rpsController = (io, socket) => {
         return;
       }
     }
-
-    if (rooms[assignedRoom].players.length >= 2) {
+    let room=rooms[assignedRoom];
+    if (room.players.length >= 2) {
       socket.emit("roomFull");
       return;
     }
 
     socket.join(assignedRoom);
 
-    if (!rooms[assignedRoom].players.includes(socket.id)) {
-      rooms[assignedRoom].players.push(socket.id);
-      rooms[assignedRoom].scores[socket.id] = 0;
+    if (!room.players.includes(socket.id)) {
+      room.players.push(socket.id);
+      room.scores[socket.id] = 0;
     }
 
-    if (rooms[assignedRoom].players.length === 2) {
+    if (room.players.length === 2) {
       io.to(assignedRoom).emit("startGame", {
-        scores: rooms[assignedRoom].scores,
-        rounds: rooms[assignedRoom].rounds,
+        scores: room.scores,
+        rounds: room.rounds,
       });
     } else {
       socket.emit("waitingForOpponent");

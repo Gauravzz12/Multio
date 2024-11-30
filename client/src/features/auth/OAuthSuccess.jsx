@@ -13,8 +13,9 @@ const OAuthSuccess = () => {
   useEffect(() => {
     const token = searchParams.get('token');
     const user = searchParams.get('user');
+    const avatar= searchParams.get('avatar');
     if (token && user) {
-      dispatch(logIn({ accessToken: token, user }));
+      dispatch(logIn({ accessToken: token, user,avatar }));
       toast.success("Login successful");
       navigate('/Home');
     } else {
