@@ -4,13 +4,14 @@ import {
   setGameMode,
   setRoomName,
   resetScores,
+  setMatchInfo,
 } from "../features/games/gameSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const useSocket = (socket, setWaitingForOpponent) => {
+const useSocket = (socket, setWaitingForOpponent, setGameOver) => {
   const dispatch = useDispatch();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     if (!socket) return;
     socket.on("roomAssigned", ({ roomId }) => {
@@ -19,8 +20,12 @@ const useSocket = (socket, setWaitingForOpponent) => {
       setWaitingForOpponent(true);
     });
 
-    socket.on('gameOver',()=>{
-      navigate('/Games');
+    socket.on('gameOver', (data) => {
+      setGameOver(true);
+      dispatch(setMatchInfo({winner: data.winnerID, loser: data.loserID}));
+      setTimeout(() => {
+        navigate('/Games');
+      }, 3000);
     })
     socket.on("waitingForOpponent", () => {
       setWaitingForOpponent(true);

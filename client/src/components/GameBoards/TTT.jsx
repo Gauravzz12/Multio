@@ -6,6 +6,7 @@ import {
   setRoomName,
   setScores,
   resetScores,
+  setMatchInfo
 } from "../../features/games/gameSlice";
 import GameModeSelector from "../GameModeSelector";
 import OpponentLoader from "../OpponentLoader";
@@ -15,9 +16,11 @@ import ScoreBoard from "../ScoreBoard";
 import { FaTimes, FaRegCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { selectCurrentUser } from "../../features/auth/authSlice";
+import GameResultDisplay from "../GameResultDisplay";
+
 const TTT = () => {
   const dispatch = useDispatch();
-  const { gameMode, roomName,matchInfo } = useSelector((state) => state.game);
+  const { gameMode, roomName, matchInfo } = useSelector((state) => state.game);
   const [board, setBoard] = useState([
     ["", "", ""],
     ["", "", ""],
@@ -29,7 +32,10 @@ const TTT = () => {
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
   const [result, setResult] = useState(null);
   const navigate = useNavigate();
-  const user=useSelector(selectCurrentUser);
+  const user = useSelector(selectCurrentUser);
+  const [gameOver, setGameOver] = useState(false);
+
+
   useEffect(() => {
     const newSocket = io(
       import.meta.env.MODE === "development"
@@ -44,6 +50,7 @@ const TTT = () => {
       setCurrentPlayer(data.currentPlayer);
       setMySymbol(data.symbols[newSocket.id]);
       dispatch(setScores(data.scores));
+      dispatch(setMatchInfo({rounds:data.rounds}));
       setResult(null);
     });
 
@@ -66,8 +73,6 @@ const TTT = () => {
       }
     });
 
-   
-
     return () => {
       if (newSocket) newSocket.disconnect();
       dispatch(setGameMode(null));
@@ -81,10 +86,11 @@ const TTT = () => {
     };
   }, [dispatch]);
 
-  useSocket(socket, setWaitingForOpponent);
+  useSocket(socket, setWaitingForOpponent,setGameOver);
+
   useEffect(() => {
     if (socket && gameMode === "online" && !roomName) {
-      socket.emit("joinRoom", { roomId: null, user: user, rounds: matchInfo.rounds });
+      socket.emit("joinRoom", { roomId: null, user: user });
     } else if (socket && gameMode === "custom" && roomName) {
       socket.emit("joinRoom", { roomId: roomName, user: user, rounds: matchInfo.rounds });
     }
@@ -99,10 +105,12 @@ const TTT = () => {
     if (board[x][y] !== "") return;
     socket.emit("makeMove", { roomId: roomName, x, y });
   };
+
   const closeGameBoard = () => {
     if (socket) socket.disconnect();
     navigate("/Games");
   };
+
   const renderCell = (x, y) => {
     const value = board[x][y];
     let content = null;
@@ -153,21 +161,28 @@ const TTT = () => {
         </div>
       )}
 
+   
+
       {roomName && <ScoreBoard socketId={socket?.id} />}
       {!gameMode ? (
-        <GameModeSelector />
+        <GameModeSelector socket={socket} />
       ) : waitingForOpponent ? (
         <OpponentLoader />
-      ) : result ? (
-        <div className={`p-6 rounded-xl backdrop-blur-sm ${result === "winner" ? "bg-green-500/10" :
+      ) : result ? gameOver ? (<GameResultDisplay socket={socket}/>) :(
+        <div className={`p-8 rounded-xl backdrop-blur-sm ${
+          result === "winner" ? "bg-green-500/10" :
           result === "loser" ? "bg-red-500/10" : "bg-yellow-500/10"
-          }`}>
-          <h2 className={`text-2xl md:text-4xl font-bold flex items-center justify-center min-h-[12rem] ${result === "winner" ? "text-green-500" :
-            result === "loser" ? "text-red-500" : "text-yellow-500"
+        }`}>
+          <div className="flex flex-col items-center space-y-4">
+            <h2 className={`text-3xl md:text-5xl font-bold ${
+              result === "winner" ? "text-green-500" :
+              result === "loser" ? "text-red-500" : "text-yellow-500"
             }`}>
-            {result === "winner" ? "You won! 😁" :
-              result === "loser" ? "You lost! 😔" : "It's a draw! 😐"}
-          </h2>
+              {result === "winner" ? "You won! 🎉" :
+               result === "loser" ? "You lost! 😔" : "It's a draw! 🤝"}
+            </h2>
+           
+          </div>
         </div>
       ) : (
         <div className="flex flex-col items-center space-y-6">

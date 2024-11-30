@@ -2,8 +2,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../features/auth/authSlice';
 
-const ScoreBoard = ({ socketId }) => { 
-  const { scores } = useSelector((state) => state.game); 
+const ScoreBoard = ({ socketId }) => {
+  const { scores,matchInfo } = useSelector((state) => state.game);
   const user = useSelector(selectCurrentUser);
   const playerId = socketId;
   if (!scores || Object.keys(scores).length === 0) return null;
@@ -25,6 +25,13 @@ const ScoreBoard = ({ socketId }) => {
             </p>
           </div>
         ))}
+      </div>
+      <div className="flex justify-center mt-4">
+      <span className="bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 
+          hover:to-gray-500 text-white px-6 py-3 rounded-lg font-medium tracking-wide
+          transform transition-all duration-300 hover:shadow-lg">
+          First to {matchInfo.rounds} wins!
+        </span>
       </div>
     </div>
   );

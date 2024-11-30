@@ -1,7 +1,18 @@
 const rooms = {};
 
 const rpsController = (io, socket) => {
-  socket.on("joinRoom", ({ roomId,user,rounds }) => {
+  socket.on("checkRoom", ({ roomId }) => {
+    const room = rooms[roomId];
+    if (!room) {
+      socket.emit("roomStatus", { status: "notFound" });
+    } else if (room.players.length >= 2) {
+      socket.emit("roomStatus", { status: "full" });
+    } else {
+      socket.emit("roomStatus", { status: "available" });
+    }
+  });
+
+  socket.on("joinRoom", ({ roomId, user, rounds = 3 }) => {
     let assignedRoom = roomId;
 
     if (!assignedRoom) {
@@ -17,7 +28,7 @@ const rpsController = (io, socket) => {
           players: [],
           choices: {},
           mode: "online",
-          rounds:rounds,
+          rounds: rounds,
           scores: {},
         };
       }
@@ -27,7 +38,7 @@ const rpsController = (io, socket) => {
         rooms[assignedRoom] = {
           players: [],
           choices: {},
-          rounds:rounds,
+          rounds: rounds,
           mode: "custom",
           scores: {},
         };
@@ -43,6 +54,7 @@ const rpsController = (io, socket) => {
     }
 
     socket.join(assignedRoom);
+
     if (!rooms[assignedRoom].players.includes(socket.id)) {
       rooms[assignedRoom].players.push(socket.id);
       rooms[assignedRoom].scores[socket.id] = 0;
@@ -51,6 +63,7 @@ const rpsController = (io, socket) => {
     if (rooms[assignedRoom].players.length === 2) {
       io.to(assignedRoom).emit("startGame", {
         scores: rooms[assignedRoom].scores,
+        rounds: rooms[assignedRoom].rounds,
       });
     } else {
       socket.emit("waitingForOpponent");
@@ -58,7 +71,7 @@ const rpsController = (io, socket) => {
   });
 
   socket.on("makeChoice", ({ roomId, choice }) => {
-    const room=rooms[roomId];
+    const room = rooms[roomId];
     if (!room || !room.players.includes(socket.id)) return;
 
     room.choices[socket.id] = choice;
@@ -71,12 +84,7 @@ const rpsController = (io, socket) => {
           room.scores[playerId] += 1;
         }
       });
-      if (room.scores[socket.id] === room.rounds) {
-        io.to(roomId).emit("gameOver", {
-          winner: socket.id,
-        });
-        delete room;
-      }
+
       room.players.forEach((playerId) => {
         const opponentId = room.players.find((id) => id !== playerId);
         io.to(playerId).emit("roundOver", {
@@ -85,16 +93,32 @@ const rpsController = (io, socket) => {
           scores: room.scores,
         });
       });
+      const maxScore = Math.max(...Object.values(room.scores));
+      if (maxScore === room.rounds) {
+        const winner = Object.keys(room.scores).find(
+          (key) => room.scores[key] === maxScore
+        );
+        const loser = Object.keys(room.scores).find(
+          (key) => room.scores[key] !== maxScore
+        );
+        setTimeout(() => {
+          io.to(roomId).emit("gameOver", { winnerID: winner, loserID: loser });
+          delete rooms[roomId];
+        }, 1000);
+        return;
+      }
 
       room.choices = {};
 
       setTimeout(() => {
         io.to(roomId).emit("startGame", {
           scores: room.scores,
+          rounds: room.rounds,
+
         });
       }, 1000);
     }
-  });  
+  });
 
   socket.on("disconnect", () => {
     for (const roomId in rooms) {

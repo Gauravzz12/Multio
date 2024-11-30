@@ -18,7 +18,7 @@ function Games() {
           {[
             {
               title: "Rock Paper Scissors",
-              description: "A classic hand game of strategy and luck.",
+              description: "A classic game of strategy and luck.",
               game: "RPS",
               icon: "✌️",
             },

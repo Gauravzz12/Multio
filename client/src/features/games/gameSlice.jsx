@@ -7,7 +7,7 @@ const gameSlice = createSlice({
     gameMode: null,
     roomName: "",
     scores: {},
-    matchInfo: {rounds:5},
+    matchInfo: {rounds:null,winner:null,loser:null},
 
   },
   reducers: {
@@ -24,9 +24,10 @@ const gameSlice = createSlice({
       state.scores = {};
     },
     setMatchInfo: (state, action) => {
-      const { rounds } = action.payload;
-      console.log(action.payload);
+      const { rounds,winner,loser } = action.payload;
       state.matchInfo.rounds=rounds;
+      state.matchInfo.winner=winner;
+      state.matchInfo.loser=loser;
     },
     resetMatchInfo: (state) => {
       state.matchInfo = {};

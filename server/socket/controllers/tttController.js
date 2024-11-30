@@ -95,10 +95,23 @@ const tttController = (io, socket) => {
         currentPlayer: room.currentPlayer,
         symbols: room.symbols,
         scores: room.scores,
+        rounds:room.rounds,
       });
     }, 1000);
   };
-  socket.on("joinRoom", ({ roomId,user,rounds }) => {
+
+  socket.on("checkRoom", ({ roomId }) => {
+    const room = rooms[roomId];
+    if (!room) {
+      socket.emit("roomStatus", { status: "notFound" });
+    } else if (room.players.length >= 2) {
+      socket.emit("roomStatus", { status: "full" });
+    } else {
+      socket.emit("roomStatus", { status: "available" });
+    }
+  });
+
+  socket.on("joinRoom", ({ roomId, user, rounds = 3 }) => {
     let assignedRoom = roomId;
     if (!assignedRoom) {
       for (const [id, room] of Object.entries(rooms)) {
@@ -115,7 +128,7 @@ const tttController = (io, socket) => {
           players: [],
           symbols: {},
           scores: {},
-          rounds:rounds,
+          rounds: 3,
           mode: "online",
         };
       }
@@ -128,7 +141,7 @@ const tttController = (io, socket) => {
           players: [],
           symbols: {},
           scores: {},
-          rounds:rounds,
+          rounds: rounds,
           mode: "custom",
         };
       }
@@ -141,6 +154,7 @@ const tttController = (io, socket) => {
     socket.join(assignedRoom);
     room.players.push(socket.id);
     room.scores[socket.id] = 0;
+
     if (room.players.length === 1) {
       socket.emit("waitingForOpponent");
     } else if (room.players.length === 2) {
@@ -150,6 +164,8 @@ const tttController = (io, socket) => {
         currentPlayer: room.currentPlayer,
         symbols: room.symbols,
         scores: room.scores,
+        rounds:room.rounds,
+
       });
     }
   });
@@ -170,12 +186,20 @@ const tttController = (io, socket) => {
           winner: socket.id,
           scores: room.scores,
         });
-        if (room.scores[socket.id] === room.rounds) {
-          io.to(roomId).emit("gameOver", {
-            winner: socket.id,
-          });
+        const maxScore = Math.max(...Object.values(room.scores));
+      if (maxScore === room.rounds) {
+        const winner = Object.keys(room.scores).find(
+          (key) => room.scores[key] === maxScore
+        );
+        const loser = Object.keys(room.scores).find(
+          (key) => room.scores[key] !== maxScore
+        );
+        setTimeout(() => {
+          io.to(roomId).emit("gameOver", { winnerID: winner, loserID: loser });
           delete rooms[roomId];
-        }
+        }, 1000);
+        return;
+      }
 
         nextRound(roomId);
       } else if (checkDraw(room.board)) {
