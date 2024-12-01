@@ -1,20 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { selectCurrentUser, selectCurrentAvatar } from '../features/auth/authSlice';
 import defaultAvatar from '../assets/images/default-avatar.png';
-const ScoreBoard = ({ socketId }) => {
+
+const ScoreBoard = React.memo(({ socketId }) => {
   const { scores, matchInfo } = useSelector((state) => state.game);
-  const user = useSelector(selectCurrentUser);
-  const userAvatar = useSelector(selectCurrentAvatar)==='Guest'?defaultAvatar:useSelector(selectCurrentAvatar);
+
+  const playersArray = matchInfo?.playersInfo ? Object.values(matchInfo.playersInfo) : [];
+  const userInfo = playersArray.find(player => player.socketID === socketId) || { userName: 'User', userAvatar: defaultAvatar };
+  const opponentInfo = playersArray.find(player => player.socketID !== socketId) || { userName: 'Opponent', userAvatar: defaultAvatar };
   const playerId = socketId;
+
+  
   if (!scores || Object.keys(scores).length === 0) return null;
   return (
     <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-6 rounded-xl
       shadow-2xl mb-6 w-full max-w-md transform hover:scale-102 transition-all duration-300">
       <div className="flex justify-between items-center">
         {[
-          { label: user, score: scores[playerId] || 0, color: "green", avatar: userAvatar },
-          { label: "Opponent", score: Object.entries(scores).find(([id]) => id !== playerId)?.[1] || 0, color: "red", avatar: defaultAvatar }
+          { label: userInfo.userName, score: scores[playerId] || 0, color: "green", avatar: userInfo.userAvatar || defaultAvatar },
+          { label: opponentInfo.userName, score: Object.entries(scores).find(([id]) => id !== playerId)?.[1] || 0, color: "red", avatar: opponentInfo.userAvatar || defaultAvatar }
         ].map((player, index) => (
           <div key={index} className="text-center flex-1 px-4">
             <div className="mb-3">
@@ -45,6 +49,6 @@ const ScoreBoard = ({ socketId }) => {
       </div>
     </div>
   );
-};
+});
 
 export default ScoreBoard;

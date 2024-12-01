@@ -5,7 +5,7 @@ const rpsController = (io, socket) => {
     const room = rooms[roomId];
     if (!room) {
       socket.emit("roomStatus", { status: "notFound" });
-    } else if (room.players.length >= 2) {
+    } else if (Object.keys(room.playersInfo).length >= 2) {
       socket.emit("roomStatus", { status: "full" });
     } else {
       socket.emit("roomStatus", { status: "available" });
@@ -14,55 +14,54 @@ const rpsController = (io, socket) => {
 
   socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
     let assignedRoom = roomId;
+    
     if (!assignedRoom) {
-      for (const [id, room] of Object.entries(rooms)) {
-        if (room.mode === "online" && room.players.length < 2) {
-          assignedRoom = id;
-          break;
-        }
-      }
-      if (!assignedRoom) {
+      const availableRoom = Object.entries(rooms).find(([_, room]) => 
+        room.mode === "online" && 
+        Object.keys(room.playersInfo).length < 2
+      );
+      
+      if (availableRoom) {
+        assignedRoom = availableRoom[0];
+        socket.emit("roomAssigned", { roomId: assignedRoom });
+      } else {
         assignedRoom = `room_${Math.random().toString(36).substr(2, 9)}`;
         rooms[assignedRoom] = {
-          players: [],
+          playersInfo: {},
           choices: {},
-          mode: "online",
           rounds: rounds,
-          scores: {},
+          mode: "online",
+          scores: {}
         };
+        socket.emit("roomAssigned", { roomId: assignedRoom });
       }
-      socket.emit("roomAssigned", { roomId: assignedRoom });
     } else {
       if (!rooms[assignedRoom]) {
         rooms[assignedRoom] = {
-          players: [],
+          playersInfo: {},
           choices: {},
           rounds: rounds,
           mode: "custom",
-          scores: {},
+          scores: {}
         };
-      } else if (rooms[assignedRoom].mode !== "custom") {
-        socket.emit("roomNotFound");
-        return;
       }
     }
-    let room=rooms[assignedRoom];
-    if (room.players.length >= 2) {
+
+    let room = rooms[assignedRoom];
+    if (Object.keys(room.playersInfo).length >= 2) {
       socket.emit("roomFull");
       return;
     }
 
     socket.join(assignedRoom);
-
-    if (!room.players.includes(socket.id)) {
-      room.players.push(socket.id);
-      room.scores[socket.id] = 0;
-    }
-
-    if (room.players.length === 2) {
+    room.playersInfo[socket.id] = userInfo;
+    room.scores[socket.id] = 0;
+    
+    if (Object.keys(room.playersInfo).length === 2) {
       io.to(assignedRoom).emit("startGame", {
         scores: room.scores,
         rounds: room.rounds,
+        playersInfo:room.playersInfo,
       });
     } else {
       socket.emit("waitingForOpponent");
@@ -71,21 +70,23 @@ const rpsController = (io, socket) => {
 
   socket.on("makeChoice", ({ roomId, choice }) => {
     const room = rooms[roomId];
-    if (!room || !room.players.includes(socket.id)) return;
+    if (!room || !room.playersInfo[socket.id]) return;
 
     room.choices[socket.id] = choice;
 
     if (Object.keys(room.choices).length === 2) {
       const result = determineWinner(room.choices);
 
-      room.players.forEach((playerId) => {
+      Object.keys(room.playersInfo).forEach((playerId) => {
         if (result[playerId] === "You win!") {
           room.scores[playerId] += 1;
         }
       });
 
-      room.players.forEach((playerId) => {
-        const opponentId = room.players.find((id) => id !== playerId);
+      Object.keys(room.playersInfo).forEach((playerId) => {
+        const opponentId = Object.keys(room.playersInfo).find(
+          (id) => id !== playerId
+        );
         io.to(playerId).emit("roundOver", {
           result: result[playerId],
           opponentChoice: room.choices[opponentId],
@@ -113,7 +114,7 @@ const rpsController = (io, socket) => {
         io.to(roomId).emit("startGame", {
           scores: room.scores,
           rounds: room.rounds,
-
+          playersInfo:room.playersInfo,
         });
       }, 1000);
     }
@@ -122,17 +123,13 @@ const rpsController = (io, socket) => {
   socket.on("disconnect", () => {
     for (const roomId in rooms) {
       const room = rooms[roomId];
-      if (room.players.includes(socket.id)) {
-        room.players = room.players.filter((id) => id !== socket.id);
-
+      if (room.playersInfo[socket.id]) {
+        delete room.playersInfo[socket.id];
         delete room.choices[socket.id];
+        delete room.scores[socket.id];
 
-        if (room.players.length > 0) {
-          delete room.scores[socket.id];
+        if (Object.keys(room.playersInfo).length > 0) {
           rooms[roomId].scores = {};
-          room.players.forEach((playerId) => {
-            rooms[roomId].scores[playerId] = 0;
-          });
           io.to(roomId).emit("playerLeft");
           io.to(roomId).emit("scoresReset");
           io.to(roomId).emit("waitingForOpponent");
@@ -144,27 +141,25 @@ const rpsController = (io, socket) => {
     }
   });
 
+  // Simplify winner determination
   const determineWinner = (choices) => {
     const [user1, user2] = Object.keys(choices);
+    const winningCombos = {
+      'Rock': 'Scissors',
+      'Paper': 'Rock',
+      'Scissors': 'Paper'
+    };
+    
     const choice1 = choices[user1];
     const choice2 = choices[user2];
 
-    let results = {};
-    if (choice1 === choice2) {
-      results[user1] = "It's a tie!";
-      results[user2] = "It's a tie!";
-    } else if (
-      (choice1 === "Rock" && choice2 === "Scissors") ||
-      (choice1 === "Paper" && choice2 === "Rock") ||
-      (choice1 === "Scissors" && choice2 === "Paper")
-    ) {
-      results[user1] = "You win!";
-      results[user2] = "You lose!";
-    } else {
-      results[user1] = "You lose!";
-      results[user2] = "You win!";
-    }
-    return results;
+    if (choice1 === choice2) return { [user1]: "It's a tie!", [user2]: "It's a tie!" };
+    
+    const user1Wins = winningCombos[choice1] === choice2;
+    return {
+      [user1]: user1Wins ? "You win!" : "You lose!",
+      [user2]: user1Wins ? "You lose!" : "You win!"
+    };
   };
 };
 

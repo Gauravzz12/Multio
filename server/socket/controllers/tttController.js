@@ -54,8 +54,9 @@ const tttController = (io, socket) => {
       [2, 0],
     ],
   ];
+
   const assignSymbols = (room) => {
-    const [player1, player2] = room.players;
+    const [player1, player2] = Object.keys(room.playersInfo);
     if (Math.random() < 0.5) {
       room.symbols[player1] = "X";
       room.symbols[player2] = "O";
@@ -96,6 +97,8 @@ const tttController = (io, socket) => {
         symbols: room.symbols,
         scores: room.scores,
         rounds:room.rounds,
+        playersInfo:room.playersInfo,
+
       });
     }, 1000);
   };
@@ -104,60 +107,64 @@ const tttController = (io, socket) => {
     const room = rooms[roomId];
     if (!room) {
       socket.emit("roomStatus", { status: "notFound" });
-    } else if (room.players.length >= 2) {
+    } else if (Object.keys(room.playersInfo).length >= 2) {
       socket.emit("roomStatus", { status: "full" });
     } else {
       socket.emit("roomStatus", { status: "available" });
     }
   });
 
-  socket.on("joinRoom", ({ roomId, user, rounds = 3 }) => {
+  socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
     let assignedRoom = roomId;
+    
     if (!assignedRoom) {
-      for (const [id, room] of Object.entries(rooms)) {
-        if (room.mode === "online" && room.players.length < 2) {
-          assignedRoom = id;
-          break;
-        }
-      }
-      if (!assignedRoom) {
+      const availableRoom = Object.entries(rooms).find(([_, room]) => 
+        room.mode === "online" && 
+        Object.keys(room.playersInfo).length < 2
+      );
+      
+      if (availableRoom) {
+        assignedRoom = availableRoom[0];
+        socket.emit("roomAssigned", { roomId: assignedRoom });
+      } else {
         assignedRoom = `room_${Math.random().toString(36).substr(2, 9)}`;
         rooms[assignedRoom] = {
           board: createEmptyBoard(),
           currentPlayer: null,
-          players: [],
+          playersInfo: {},
           symbols: {},
           scores: {},
-          rounds: 3,
-          mode: "online",
+          rounds: rounds,
+          mode: "online"
         };
+        socket.emit("roomAssigned", { roomId: assignedRoom });
       }
-      socket.emit("roomAssigned", { roomId: assignedRoom });
     } else {
       if (!rooms[assignedRoom]) {
         rooms[assignedRoom] = {
           board: createEmptyBoard(),
           currentPlayer: null,
-          players: [],
+          playersInfo: {},
           symbols: {},
           scores: {},
           rounds: rounds,
-          mode: "custom",
+          mode: "custom"
         };
       }
     }
+  
     const room = rooms[assignedRoom];
-    if (room.players.length >= 2) {
+    if (Object.keys(room.playersInfo).length >= 2) {
       socket.emit("roomFull");
       return;
     }
     socket.join(assignedRoom);
-    room.players.push(socket.id);
+    room.playersInfo[socket.id] = userInfo;  
     room.scores[socket.id] = 0;
-
-    if (room.players.length === 1) {
+  
+    if (Object.keys(room.playersInfo).length === 1) {
       socket.emit("waitingForOpponent");
-    } else if (room.players.length === 2) {
+    } else if (Object.keys(room.playersInfo).length === 2) {
       assignSymbols(room);
       io.to(assignedRoom).emit("startGame", {
         board: room.board,
@@ -165,14 +172,14 @@ const tttController = (io, socket) => {
         symbols: room.symbols,
         scores: room.scores,
         rounds:room.rounds,
-
+        playersInfo:room.playersInfo,
       });
     }
   });
 
   socket.on("makeMove", ({ roomId, x, y }) => {
     const room = rooms[roomId];
-    if (!room || room.players.length < 2) return;
+    if (!room || Object.keys(room.playersInfo).length < 2) return;
 
     if (socket.id !== room.currentPlayer) return;
     const symbol = room.symbols[socket.id];
@@ -210,7 +217,7 @@ const tttController = (io, socket) => {
         });
         nextRound(roomId);
       } else {
-        room.currentPlayer = room.players.find((id) => id !== socket.id);
+        room.currentPlayer = Object.keys(room.playersInfo).find((id) => id !== socket.id);
         io.to(roomId).emit("updateBoard", {
           board: room.board,
           currentPlayer: room.currentPlayer,
@@ -222,11 +229,12 @@ const tttController = (io, socket) => {
   socket.on("disconnect", () => {
     for (const roomId in rooms) {
       const room = rooms[roomId];
-      if (room.players.includes(socket.id)) {
-        room.players = room.players.filter((id) => id !== socket.id);
+      if (room.playersInfo[socket.id]) {
+        delete room.playersInfo[socket.id];
         delete room.symbols[socket.id];
-        if (room.players.length > 0) {
-          delete room.scores[socket.id];
+        delete room.scores[socket.id];
+
+        if (Object.keys(room.playersInfo).length > 0) {
           rooms[roomId].scores = {};
           io.to(roomId).emit("playerLeft");
           io.to(roomId).emit("scoresReset");

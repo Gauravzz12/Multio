@@ -222,6 +222,7 @@ module.exports = {
         res.json({
           accessToken: newAccessToken,
           user: user.username,
+          avatar: user.avatar_url,
         });
       });
     } catch (err) {

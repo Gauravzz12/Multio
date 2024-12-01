@@ -4,8 +4,6 @@ import { useSelector } from 'react-redux';
 const GameResultDisplay = ({socket}) => {
   const { matchInfo } = useSelector(state => state.game);
   const playerId=socket.id;
-  console.log(socket.id);
-  console.log(playerId);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 animate-fadeIn">

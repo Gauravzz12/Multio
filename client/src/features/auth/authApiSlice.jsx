@@ -26,7 +26,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(logIn({ user: data.user, accessToken: data.accessToken }));
+          dispatch(logIn({ user: data.user, accessToken: data.accessToken, avatar: data.avatar }));
         } catch (err) {
           console.error("Token refresh failed:", err);
            dispatch(logOut());

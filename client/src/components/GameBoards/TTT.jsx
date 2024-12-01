@@ -52,7 +52,7 @@ const TTT = () => {
       setCurrentPlayer(data.currentPlayer);
       setMySymbol(data.symbols[newSocket.id]);
       dispatch(setScores(data.scores));
-      dispatch(setMatchInfo({ rounds: data.rounds }));
+      dispatch(setMatchInfo({ rounds: data.rounds,playersInfo:data.playersInfo }));
       setResult(null);
     });
 

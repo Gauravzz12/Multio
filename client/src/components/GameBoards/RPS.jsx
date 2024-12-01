@@ -48,7 +48,7 @@ const RPS = () => {
       setOpponentChoice(null);
       setResult(null);
       dispatch(setScores(data.scores));
-      dispatch(setMatchInfo({ rounds: data.rounds }));
+      dispatch(setMatchInfo({ rounds: data.rounds,playersInfo:data.playersInfo }));
     });
 
     newSocket.on("roundOver", (data) => {
