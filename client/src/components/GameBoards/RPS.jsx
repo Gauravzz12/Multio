@@ -114,30 +114,30 @@ const RPS = () => {
     ];
 
     return (
-      <div className="flex flex-col items-center justify-center h-72">
+      <div className="flex flex-col items-center justify-center h-48">
         {userChoice ? (
           <div>
-            <h2 className="text-2xl md:text-3xl">You chose:</h2>
+            <h2 className="text-xl md:text-2xl">You chose:</h2>
             <img
               src={choiceIcons[userChoice]}
               alt={userChoice}
-              className="w-16 h-16 md:w-24 md:h-24 mx-auto"
+              className="w-12 h-12 md:w-16 md:h-16 mx-auto"
             />
-            <p className="text-xl md:text-2xl mt-2">{userChoice}</p>
-            <h2 className="text-2xl md:text-3xl mt-4">Waiting for opponent's choice...</h2>
+            <p className="text-lg md:text-xl mt-2">{userChoice}</p>
+            <h2 className="text-xl md:text-2xl mt-3">Waiting for opponent's choice...</h2>
           </div>
         ) : (
-          <div className="flex gap-4 md:gap-10 justify-center items-center h-full">
+          <div className="flex gap-3 md:gap-6 justify-center items-center h-full">
             {choices.map((choice) => (
               <button
                 key={choice.name}
-                className="bg-amber-500 rounded-md p-2 border-4 transform hover:scale-105 transition duration-300 w-16 h-16 md:w-24 md:h-24"
+                className="bg-amber-500 rounded-md p-2 border-2 transform hover:scale-105 transition duration-300 w-12 h-12 md:w-16 md:h-16"
                 onClick={() => handleChoice(choice.name)}
               >
                 <img
                   src={choice.icon}
                   alt={choice.name}
-                  className="w-8 h-8 md:w-12 md:h-12 mx-auto"
+                  className="w-6 h-6 md:w-8 md:h-8 mx-auto"
                 />
               </button>
             ))}
@@ -176,29 +176,30 @@ const RPS = () => {
       ) : !result ? (
         <ChoiceButtons />
       ) : gameOver ? (<GameResultDisplay socket={socket}/>) : (
-        <div className={`flex flex-col items-center mt-8 p-8 rounded-xl backdrop-blur-sm ${result === "You win!" ? "bg-green-500/10" :
-            result === "You lose!" ? "bg-red-500/10" : "bg-yellow-500/10"
-          }`}>
-          <div className="flex justify-around w-full max-w-md mb-8">
+        <div className={`flex flex-col items-center mt-4 p-4 rounded-xl backdrop-blur-sm ${
+          result === "You win!" ? "bg-green-500/10" :
+          result === "You lose!" ? "bg-red-500/10" : "bg-yellow-500/10"
+        }`}>
+          <div className="flex justify-around w-full max-w-sm mb-4">
             <div className="flex flex-col items-center">
-              <h2 className="text-2xl mb-4">You</h2>
+              <h2 className="text-xl mb-2">You</h2>
               <img src={choiceIcons[userChoice]} alt={userChoice}
-                className="w-24 h-24 md:w-32 md:h-32 animate-pulse" />
-              <p className="text-xl mt-2">{userChoice}</p>
+                className="w-16 h-16 md:w-20 md:h-20 animate-pulse" />
+              <p className="text-base mt-1">{userChoice}</p>
             </div>
             <div className="flex flex-col items-center">
-              <h2 className="text-2xl mb-4">Opponent</h2>
+              <h2 className="text-xl mb-2">Opponent</h2>
               <img src={choiceIcons[opponentChoice]} alt={opponentChoice}
-                className="w-24 h-24 md:w-32 md:h-32 animate-pulse" />
-              <p className="text-xl mt-2">{opponentChoice}</p>
+                className="w-16 h-16 md:w-20 md:h-20 animate-pulse" />
+              <p className="text-base mt-1">{opponentChoice}</p>
             </div>
           </div>
-          <h1 className={`text-4xl md:text-5xl font-bold ${result === "You win!" ? "text-green-500" :
-              result === "You lose!" ? "text-red-500" : "text-yellow-500"
-            }`}>
+          <h1 className={`text-2xl md:text-3xl font-bold ${
+            result === "You win!" ? "text-green-500" :
+            result === "You lose!" ? "text-red-500" : "text-yellow-500"
+          }`}>
             {result}
           </h1>
-
         </div>
       )}
     </div>
