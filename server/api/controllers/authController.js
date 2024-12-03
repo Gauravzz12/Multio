@@ -13,6 +13,23 @@ const generateToken = (user, expiry) => {
     { expiresIn: expiry }
   );
 };
+
+const generateUniqueUsername = async (baseUsername) => {
+  let username = baseUsername;
+  let counter = 1;
+  while (true) {
+    const existingUser = await pool.query(
+      "SELECT username FROM users WHERE username = $1",
+      [username]
+    );
+    if (existingUser.rowCount === 0) {
+      return username;
+    }
+    username = `${baseUsername}${counter}`;
+    counter++;
+  }
+};
+
 const redirect_URL =
   process.env.NODE_ENV === "production"
     ? "https://multio.netlify.app"
@@ -37,13 +54,14 @@ passport.use(
           return done(null, existingUser.rows[0]);
         }
 
+        const uniqueUsername = await generateUniqueUsername(profile.displayName);
         const id = uuidv4();
         const hashedPassword = bcrypt.hashSync("OauthGoogle", 10);
-        const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${profile.displayName}`;
+        const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${uniqueUsername}`;
 
         const newUser = await pool.query(
           "INSERT INTO users (id, username,password, email,avatar_url) VALUES ($1, $2, $3, $4,$5) RETURNING *",
-          [id, profile.displayName, hashedPassword, profile.emails[0].value, avatarUrl]
+          [id, uniqueUsername, hashedPassword, profile.emails[0].value, avatarUrl]
         );
 
         return done(null, newUser.rows[0]);
@@ -75,12 +93,13 @@ passport.use(
           return done(null, existingUser.rows[0]);
         }
 
+        const uniqueUsername = await generateUniqueUsername(profile.username);
         const id = uuidv4();
         const hashedPassword = bcrypt.hashSync("OauthGithub", 10);
-        const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${profile.displayName}`;
+        const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${uniqueUsername}`;
         const newUser = await pool.query(
           "INSERT INTO users (id, username, password,email,avatar_url) VALUES ($1, $2, $3, $4,$5) RETURNING *",
-          [id, profile.username, hashedPassword, profile.emails[0].value,avatarUrl]
+          [id, uniqueUsername, hashedPassword, profile.emails[0].value, avatarUrl]
         );
 
         return done(null, newUser.rows[0]);
