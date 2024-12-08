@@ -156,6 +156,7 @@ module.exports = {
         "SELECT * FROM users WHERE email = $1 OR username = $1",
         [user]
       );
+      const userInfo = checkUser.rows[0];
 
       if (checkUser.rowCount > 0) {
         const passMatch = bcrypt.compareSync(pwd, checkUser.rows[0].password);
@@ -175,7 +176,7 @@ module.exports = {
           });
           return res
             .status(200)
-            .json({ message: "Log in Successful", accessToken });
+            .json({ message: "Log in Successful", accessToken, avatar:userInfo.avatar_url});
         } else {
           return res.status(401).json({ message: "Incorrect Password" });
         }

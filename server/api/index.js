@@ -3,7 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const authRoutes = require("./routes/authRoutes");
-
+const userRoutes = require("./routes/userRoutes");
 const startApiServer = (app) => {
   app.use(
     cors({
@@ -18,7 +18,8 @@ const startApiServer = (app) => {
   app.use(passport.initialize());
 
   app.use("/auth", authRoutes);
-  
+  app.use("/user",userRoutes); 
+   
 };
 
 module.exports = startApiServer;

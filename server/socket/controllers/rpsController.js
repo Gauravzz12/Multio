@@ -13,8 +13,7 @@ const rpsController = (io, socket) => {
   });
 
   socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
-    let assignedRoom = roomId;
-    
+    let assignedRoom = roomId; 
     if (!assignedRoom) {
       const availableRoom = Object.entries(rooms).find(([_, room]) => 
         room.mode === "online" && 
