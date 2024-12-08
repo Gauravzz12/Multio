@@ -21,11 +21,6 @@ const PlayerCard = ({ name, score, color, avatar }) => (
 
 const ScoreBoard = React.memo(({ socketId }) => {
   const { scores, matchInfo } = useSelector((state) => state.game);
-  
-  if (!scores || !matchInfo?.playersInfo || Object.keys(matchInfo.playersInfo).length < 2) {
-    return null;
-  }
-
   const playersInfo = matchInfo.playersInfo;
   const currentPlayer = playersInfo[socketId];
   const opponent = Object.values(playersInfo).find(player => player.socketID !== socketId);
