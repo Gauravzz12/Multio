@@ -35,6 +35,7 @@ const useSocket = (socket, setWaitingForOpponent, setGameOver) => {
       toast.info("Opponent left The Game");
       setWaitingForOpponent(true);
       dispatch(resetScores());
+      dispatch(setMatchInfo({ rounds: null, winner: null, loser: null, playersInfo: null }));
     });
 
     socket.on("roomNotFound", () => {

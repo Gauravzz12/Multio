@@ -110,7 +110,6 @@ const TTT = () => {
   };
 
   const closeGameBoard = () => {
-    if (socket) socket.disconnect();
     navigate("/Games");
   };
 

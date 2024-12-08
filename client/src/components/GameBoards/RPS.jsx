@@ -94,7 +94,6 @@ const RPS = () => {
   };
 
   const closeGameBoard = () => {
-    if (socket) socket.disconnect();
     navigate("/Games");
   };
 
