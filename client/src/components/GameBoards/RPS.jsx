@@ -78,6 +78,7 @@ const RPS = () => {
   useSocket(socket, setWaitingForOpponent, setGameOver);
 
   useEffect(() => {
+    if (!socket) return;
     if (socket && gameMode === "online" && !roomName) {
       socket.emit("joinRoom", { roomId: null,  userInfo: {userName:user,userAvatar:userAvatar,socketID:socket.id}});
     } else if (socket && gameMode === "custom" && roomName) {

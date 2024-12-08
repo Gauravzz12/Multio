@@ -91,10 +91,11 @@ const TTT = () => {
   useSocket(socket, setWaitingForOpponent, setGameOver);
 
   useEffect(() => {
+    if (!socket) return;
     if (socket && gameMode === "online" && !roomName) {
-      socket.emit("joinRoom", { roomId: null, userInfo: { userName: user, userAvatar: userAvatar, socketID: socket.id } });
+      socket.emit("joinRoom", { roomId: null,  userInfo: {userName:user,userAvatar:userAvatar,socketID:socket.id}});
     } else if (socket && gameMode === "custom" && roomName) {
-      socket.emit("joinRoom", { roomId: roomName, userInfo: { userName: user, userAvatar: userAvatar, socketID: socket.id }, rounds: matchInfo.rounds });
+      socket.emit("joinRoom", { roomId: roomName, userInfo: {userName:user,userAvatar:userAvatar,socketID:socket.id}, rounds: matchInfo.rounds });
     }
   }, [socket, gameMode, roomName]);
 
