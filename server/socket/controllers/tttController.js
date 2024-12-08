@@ -116,11 +116,7 @@ const tttController = (io, socket) => {
   socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
     let assignedRoom = roomId;
 
-    if (!userInfo || !userInfo.userName || !userInfo.socketID) {
-      return;
-    }
-
-    userInfo.socketID = socket.id;
+   
 
     if (!assignedRoom) {
       const availableRoom = Object.entries(rooms).find(

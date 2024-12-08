@@ -13,12 +13,7 @@ const rpsController = (io, socket) => {
   });
 
   socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
-    if (!userInfo || !userInfo.userName || !userInfo.socketID) {
-      return;
-    }
-
-    userInfo.socketID = socket.id;
-
+  
     let assignedRoom = roomId; 
     if (!assignedRoom) {
       const availableRoom = Object.entries(rooms).find(([_, room]) => 
