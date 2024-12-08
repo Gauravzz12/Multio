@@ -17,7 +17,7 @@ import { FaCopy, FaTimes } from "react-icons/fa";
 import useSocket from "../../hooks/useSocket";
 import ScoreBoard from "../ScoreBoard";
 import { useNavigate } from "react-router-dom";
-import { selectCurrentUser,selectCurrentAvatar } from "../../features/auth/authSlice";
+import { selectCurrentUser, selectCurrentAvatar } from "../../features/auth/authSlice";
 import GameResultDisplay from "../GameResultDisplay";
 import defaultAvatar from '../../assets/images/default-avatar.png';
 
@@ -33,8 +33,8 @@ const RPS = () => {
   const [showScore, setShowScore] = useState(false);
   const navigate = useNavigate();
   const user = useSelector(selectCurrentUser);
-  const userAvatar = useSelector(selectCurrentAvatar)==='Guest'?defaultAvatar:useSelector(selectCurrentAvatar);
-  
+  const userAvatar = useSelector(selectCurrentAvatar) === 'Guest' ? defaultAvatar : useSelector(selectCurrentAvatar);
+
   useEffect(() => {
     const newSocket = io(
       import.meta.env.MODE === "development"
@@ -49,7 +49,7 @@ const RPS = () => {
       setOpponentChoice(null);
       setResult(null);
       dispatch(setScores(data.scores));
-      dispatch(setMatchInfo({ rounds: data.rounds,playersInfo:data.playersInfo }));
+      dispatch(setMatchInfo({ rounds: data.rounds, playersInfo: data.playersInfo }));
       setShowScore(true);
     });
 
@@ -86,9 +86,9 @@ const RPS = () => {
   useEffect(() => {
     if (!socket) return;
     if (socket && gameMode === "online" && !roomName) {
-      socket.emit("joinRoom", { roomId: null,  userInfo: {userName:user,userAvatar:userAvatar,socketID:socket.id}});
+      socket.emit("joinRoom", { roomId: null, userInfo: { userName: user, userAvatar: userAvatar, socketID: socket.id } });
     } else if (socket && gameMode === "custom" && roomName) {
-      socket.emit("joinRoom", { roomId: roomName, userInfo: {userName:user,userAvatar:userAvatar,socketID:socket.id}, rounds: matchInfo.rounds });
+      socket.emit("joinRoom", { roomId: roomName, userInfo: { userName: user, userAvatar: userAvatar, socketID: socket.id }, rounds: matchInfo.rounds });
     }
   }, [socket, gameMode, roomName]);
 
@@ -181,11 +181,10 @@ const RPS = () => {
         <OpponentLoader />
       ) : !result ? (
         <ChoiceButtons />
-      ) : gameOver ? (<GameResultDisplay socket={socket}/>) : (
-        <div className={`flex flex-col items-center mt-4 p-4 rounded-xl backdrop-blur-sm ${
-          result === "You win!" ? "bg-green-500/10" :
+      ) : gameOver ? (<GameResultDisplay socket={socket} />) : (
+        <div className={`flex flex-col items-center mt-4 p-4 rounded-xl backdrop-blur-sm ${result === "You win!" ? "bg-green-500/10" :
           result === "You lose!" ? "bg-red-500/10" : "bg-yellow-500/10"
-        }`}>
+          }`}>
           <div className="flex justify-around w-full max-w-sm mb-4">
             <div className="flex flex-col items-center">
               <h2 className="text-xl mb-2">You</h2>
@@ -200,10 +199,9 @@ const RPS = () => {
               <p className="text-base mt-1">{opponentChoice}</p>
             </div>
           </div>
-          <h1 className={`text-2xl md:text-3xl font-bold ${
-            result === "You win!" ? "text-green-500" :
+          <h1 className={`text-2xl md:text-3xl font-bold ${result === "You win!" ? "text-green-500" :
             result === "You lose!" ? "text-red-500" : "text-yellow-500"
-          }`}>
+            }`}>
             {result}
           </h1>
         </div>
