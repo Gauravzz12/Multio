@@ -21,34 +21,35 @@ const PlayerCard = ({ name, score, color, avatar }) => (
 
 const ScoreBoard = React.memo(({ socketId }) => {
   const { scores, matchInfo } = useSelector((state) => state.game);
-  if (!scores || Object.keys(scores).length === 0) return null;
+  
+  if (!scores || !matchInfo?.playersInfo || Object.keys(matchInfo.playersInfo).length < 2) {
+    return null;
+  }
 
-  const playersArray = matchInfo?.playersInfo ? Object.values(matchInfo.playersInfo) : [];
-  const userInfo = playersArray.find(player => player.socketID === socketId) || 
-    { userName: 'Guest', userAvatar: defaultAvatar };
-  const opponentInfo = playersArray.find(player => player.socketID !== socketId) || 
-    { userName: 'Guest', userAvatar: defaultAvatar };
-
-  const userScore = scores[socketId] || 0;
-  const opponentScore = Object.entries(scores).find(([id]) => id !== socketId)?.[1] || 0;
-console.log("UserInfo", userInfo);
-console.log("opponentInfo", opponentInfo);
+  const playersInfo = matchInfo.playersInfo;
+  const currentPlayer = playersInfo[socketId];
+  const opponent = Object.values(playersInfo).find(player => player.socketID !== socketId);
+  console.log("User", currentPlayer);
+  console.log("oppoennt", opponent);
+  if (!currentPlayer || !opponent) {
+    return null;
+  }
 
   return (
     <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4 rounded-xl
       shadow-2xl mb-4 w-full max-w-sm transform hover:scale-102 transition-all duration-300">
       <div className="flex justify-between items-center">
         <PlayerCard
-          name={userInfo.userName}
-          score={userScore}
+          name={currentPlayer.userName}
+          score={scores[socketId] || 0}
           color="green"
-          avatar={userInfo.userAvatar || defaultAvatar}
+          avatar={currentPlayer.userAvatar || defaultAvatar}
         />
         <PlayerCard
-          name={opponentInfo.userName}
-          score={opponentScore}
+          name={opponent.userName}
+          score={scores[opponent.socketID] || 0}
           color="red"
-          avatar={opponentInfo.userAvatar || defaultAvatar}
+          avatar={opponent.userAvatar || defaultAvatar}
         />
       </div>
       <div className="flex justify-center mt-3">

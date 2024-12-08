@@ -13,6 +13,12 @@ const rpsController = (io, socket) => {
   });
 
   socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
+    if (!userInfo || !userInfo.userName || !userInfo.socketID) {
+      return;
+    }
+
+    userInfo.socketID = socket.id;
+
     let assignedRoom = roomId; 
     if (!assignedRoom) {
       const availableRoom = Object.entries(rooms).find(([_, room]) => 
@@ -55,6 +61,8 @@ const rpsController = (io, socket) => {
     socket.join(assignedRoom);
     room.playersInfo[socket.id] = userInfo;
     room.scores[socket.id] = 0; 
+
+
     if (Object.keys(room.playersInfo).length === 2) {
       Object.keys(room.scores).forEach(key => room.scores[key] = 0);
       io.to(assignedRoom).emit("startGame", {

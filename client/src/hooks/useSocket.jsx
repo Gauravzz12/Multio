@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 const useSocket = (socket, setWaitingForOpponent, setGameOver) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!socket) return;
     socket.on("roomAssigned", ({ roomId }) => {
