@@ -20,12 +20,16 @@ const PlayerCard = ({ name, score, color, avatar }) => (
 );
 
 const ScoreBoard = React.memo(({ socketId }) => {
-  const { scores, matchInfo } = useSelector((state) => state.game);
-  const playersInfo = matchInfo.playersInfo;
+  const { scores = {}, matchInfo = {} } = useSelector((state) => state.game);
+  const playersInfo = matchInfo?.playersInfo || {};
+  
+  if (!socketId || !playersInfo || Object.keys(playersInfo).length < 2) {
+    return null;
+  }
+
   const currentPlayer = playersInfo[socketId];
-  const opponent = Object.values(playersInfo).find(player => player.socketID !== socketId);
-  console.log("User", currentPlayer);
-  console.log("oppoennt", opponent);
+  const opponent = Object.values(playersInfo).find(player => player?.socketID !== socketId);
+
   if (!currentPlayer || !opponent) {
     return null;
   }
@@ -35,13 +39,13 @@ const ScoreBoard = React.memo(({ socketId }) => {
       shadow-2xl mb-4 w-full max-w-sm transform hover:scale-102 transition-all duration-300">
       <div className="flex justify-between items-center">
         <PlayerCard
-          name={currentPlayer.userName}
+          name={currentPlayer.userName || 'Player'}
           score={scores[socketId] || 0}
           color="green"
           avatar={currentPlayer.userAvatar || defaultAvatar}
         />
         <PlayerCard
-          name={opponent.userName}
+          name={opponent.userName || 'Opponent'}
           score={scores[opponent.socketID] || 0}
           color="red"
           avatar={opponent.userAvatar || defaultAvatar}
@@ -51,7 +55,7 @@ const ScoreBoard = React.memo(({ socketId }) => {
         <span className="bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 
           hover:to-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium tracking-wide
           transform transition-all duration-300 hover:shadow-lg">
-          First to {matchInfo.rounds} wins!
+          First to {matchInfo.rounds || 0} wins!
         </span>
       </div>
     </div>
