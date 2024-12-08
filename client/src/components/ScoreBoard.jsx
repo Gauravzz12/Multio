@@ -29,7 +29,8 @@ const ScoreBoard = React.memo(({ socketId }) => {
 
   const currentPlayer = playersInfo[socketId];
   const opponent = Object.values(playersInfo).find(player => player?.socketID !== socketId);
-
+  console.log("player", currentPlayer);
+  console.log("opponent", opponent);
   if (!currentPlayer || !opponent) {
     return null;
   }
