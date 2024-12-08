@@ -58,9 +58,7 @@ const RPS = () => {
       setWaitingForOpponent(false);
     });
 
-    newSocket.on("scoresReset", () => {
-      dispatch(resetScores());
-    });
+    
 
     return () => {
       if (newSocket) newSocket.disconnect();

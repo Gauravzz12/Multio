@@ -54,13 +54,13 @@ const rpsController = (io, socket) => {
 
     socket.join(assignedRoom);
     room.playersInfo[socket.id] = userInfo;
-    room.scores[socket.id] = 0;
-    
+    room.scores[socket.id] = 0; 
     if (Object.keys(room.playersInfo).length === 2) {
+      Object.keys(room.scores).forEach(key => room.scores[key] = 0);
       io.to(assignedRoom).emit("startGame", {
         scores: room.scores,
         rounds: room.rounds,
-        playersInfo:room.playersInfo,
+        playersInfo: room.playersInfo,
       });
     } else {
       socket.emit("waitingForOpponent");
@@ -128,9 +128,10 @@ const rpsController = (io, socket) => {
         delete room.scores[socket.id];
 
         if (Object.keys(room.playersInfo).length > 0) {
-          rooms[roomId].scores = {};
+          room.choices = {};
+          room.scores = {};
+          Object.keys(room.playersInfo).forEach(id => room.scores[id] = 0);
           io.to(roomId).emit("playerLeft");
-          io.to(roomId).emit("scoresReset");
           io.to(roomId).emit("waitingForOpponent");
         } else {
           delete rooms[roomId];
@@ -140,7 +141,6 @@ const rpsController = (io, socket) => {
     }
   });
 
-  // Simplify winner determination
   const determineWinner = (choices) => {
     const [user1, user2] = Object.keys(choices);
     const winningCombos = {

@@ -162,18 +162,19 @@ const tttController = (io, socket) => {
     room.playersInfo[socket.id] = userInfo;  
     room.scores[socket.id] = 0;
   
-    if (Object.keys(room.playersInfo).length === 1) {
-      socket.emit("waitingForOpponent");
-    } else if (Object.keys(room.playersInfo).length === 2) {
+    if (Object.keys(room.playersInfo).length === 2) {
+      Object.keys(room.scores).forEach(key => room.scores[key] = 0);
       assignSymbols(room);
       io.to(assignedRoom).emit("startGame", {
         board: room.board,
         currentPlayer: room.currentPlayer,
         symbols: room.symbols,
         scores: room.scores,
-        rounds:room.rounds,
-        playersInfo:room.playersInfo,
+        rounds: room.rounds,
+        playersInfo: room.playersInfo,
       });
+    } else {
+      socket.emit("waitingForOpponent");
     }
   });
 
@@ -235,12 +236,12 @@ const tttController = (io, socket) => {
         delete room.scores[socket.id];
 
         if (Object.keys(room.playersInfo).length > 0) {
-          rooms[roomId].scores = {};
-          io.to(roomId).emit("playerLeft");
-          io.to(roomId).emit("scoresReset");
-          io.to(roomId).emit("waitingForOpponent");
-          room.symbols = {};
           room.board = createEmptyBoard();
+          room.symbols = {};
+          room.scores = {};
+          Object.keys(room.playersInfo).forEach(id => room.scores[id] = 0);
+          io.to(roomId).emit("playerLeft");
+          io.to(roomId).emit("waitingForOpponent");
         } else {
           delete rooms[roomId];
         }

@@ -21,7 +21,7 @@ const PlayerCard = ({ name, score, color, avatar }) => (
 
 const ScoreBoard = React.memo(({ socketId }) => {
   const { scores, matchInfo } = useSelector((state) => state.game);
-
+console.log(scores, matchInfo);
   if (!scores || Object.keys(scores).length === 0) return null;
 
   const playersArray = matchInfo?.playersInfo ? Object.values(matchInfo.playersInfo) : [];
@@ -33,7 +33,6 @@ const ScoreBoard = React.memo(({ socketId }) => {
   const userScore = scores[socketId] || 0;
   const opponentScore = Object.entries(scores).find(([id]) => id !== socketId)?.[1] || 0;
 
-  console.log(playersArray);
   return (
     <div className="bg-gradient-to-r from-gray-900 to-gray-800 p-4 rounded-xl
       shadow-2xl mb-4 w-full max-w-sm transform hover:scale-102 transition-all duration-300">
