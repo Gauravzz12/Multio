@@ -32,6 +32,7 @@ const TTT = () => {
   const [socket, setSocket] = useState(null);
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
   const [result, setResult] = useState(null);
+  const [showScore, setShowScore] = useState(false);
   const navigate = useNavigate();
   const user = useSelector(selectCurrentUser);
   const [gameOver, setGameOver] = useState(false);
@@ -54,6 +55,8 @@ const TTT = () => {
       dispatch(setScores(data.scores));
       dispatch(setMatchInfo({ rounds: data.rounds,playersInfo:data.playersInfo }));
       setResult(null);
+      setShowScore(true);
+
     });
 
     newSocket.on("updateBoard", (data) => {
@@ -75,12 +78,20 @@ const TTT = () => {
       }
     });
 
+    newSocket.on("playerLeft", () => {
+      setShowScore(false);  
+      setWaitingForOpponent(true);
+      dispatch(resetScores());
+      dispatch(setMatchInfo({ rounds: null, winner: null, loser: null, playersInfo: null }));
+    });
+
     return () => {
       if (newSocket) newSocket.disconnect();
       dispatch(setGameMode(null));
       dispatch(setRoomName(""));
       dispatch(resetScores());
       setWaitingForOpponent(false);
+      setShowScore(false);  
       newSocket.off("roomAssigned");
       newSocket.off("startGame");
       newSocket.off("updateBoard");
@@ -165,7 +176,7 @@ const TTT = () => {
 
 
 
-      {roomName && <ScoreBoard socketId={socket?.id} />}
+      {showScore && <ScoreBoard socketId={socket?.id} />}
       {!gameMode ? (
         <GameModeSelector socket={socket} />
       ) : waitingForOpponent ? (

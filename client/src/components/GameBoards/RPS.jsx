@@ -30,6 +30,7 @@ const RPS = () => {
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
   const [result, setResult] = useState(null);
   const [gameOver, setGameOver] = useState(false);
+  const [showScore, setShowScore] = useState(false);
   const navigate = useNavigate();
   const user = useSelector(selectCurrentUser);
   const userAvatar = useSelector(selectCurrentAvatar)==='Guest'?defaultAvatar:useSelector(selectCurrentAvatar);
@@ -49,6 +50,7 @@ const RPS = () => {
       setResult(null);
       dispatch(setScores(data.scores));
       dispatch(setMatchInfo({ rounds: data.rounds,playersInfo:data.playersInfo }));
+      setShowScore(true);
     });
 
     newSocket.on("roundOver", (data) => {
@@ -58,7 +60,12 @@ const RPS = () => {
       setWaitingForOpponent(false);
     });
 
-    
+    newSocket.on("playerLeft", () => {
+      setShowScore(false);
+      setWaitingForOpponent(true);
+      dispatch(resetScores());
+      dispatch(setMatchInfo({ rounds: null, winner: null, loser: null, playersInfo: null }));
+    });
 
     return () => {
       if (newSocket) newSocket.disconnect();
@@ -66,6 +73,7 @@ const RPS = () => {
       dispatch(setRoomName(""));
       setUserChoice(null);
       setWaitingForOpponent(false);
+      setShowScore(false);
       newSocket.off("startGame");
       newSocket.off("roundOver");
       newSocket.off("startNextRound");
@@ -166,7 +174,7 @@ const RPS = () => {
           </button>
         </div>
       )}
-      {roomName ? <ScoreBoard socketId={socket?.id} /> : ""}
+      {showScore ? <ScoreBoard socketId={socket?.id} /> : ""}
       {!gameMode ? (
         <GameModeSelector socket={socket} />
       ) : waitingForOpponent ? (
