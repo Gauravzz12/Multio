@@ -110,6 +110,13 @@ passport.use(
   )
 );
 
+const cookieConfig = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 module.exports = {
   register: async (req, res) => {
     try {
@@ -168,12 +175,7 @@ module.exports = {
             refreshToken,
             checkUser.rows[0].id,
           ]);
-          res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "None",
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-          });
+          res.cookie("refreshToken", refreshToken, cookieConfig);
           return res
             .status(200)
             .json({ message: "Log in Successful", accessToken, avatar:userInfo.avatar_url});
@@ -262,12 +264,7 @@ module.exports = {
         req.user.id,
       ]);
 
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
+      res.cookie("refreshToken", refreshToken, cookieConfig);
       res.redirect(
         `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}&avatar=${encodeURIComponent(req.user.avatar_url)}`
       );
@@ -285,13 +282,7 @@ module.exports = {
         req.user.id,
       ]);
 
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
+      res.cookie("refreshToken", refreshToken, cookieConfig);
       res.redirect(
         `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}&avatar=${encodeURIComponent(req.user.avatar_url)}`
       );
