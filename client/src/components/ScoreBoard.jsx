@@ -19,7 +19,7 @@ const PlayerCard = ({ name, score, color, avatar }) => (
   </div>
 );
 
-const ScoreBoard = React.memo(({ socketId }) => {
+const ScoreBoard = ({ socketId }) => {
   const { scores = {}, matchInfo = {} } = useSelector((state) => state.game);
   const playersInfo = matchInfo?.playersInfo || {};
   
@@ -61,6 +61,6 @@ const ScoreBoard = React.memo(({ socketId }) => {
       </div>
     </div>
   );
-});
+};
 
 export default ScoreBoard;
