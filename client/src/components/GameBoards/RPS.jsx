@@ -42,7 +42,6 @@ const RPS = () => {
         ? "http://localhost:5000/rps"
         : "https://multio-backend.up.railway.app/rps"
     );
-    console.log(newSocket);
     setSocket(newSocket);
 
     newSocket.on("startGame", (data) => {
@@ -88,14 +87,41 @@ const RPS = () => {
   useSocket(socket, setWaitingForOpponent, setGameOver);
 
   useEffect(() => {
-    if (!socket?.id) return;
-    if (socket && gameMode === "online" && !roomName) {
-      console.log(socket.id);
-      socket.emit("joinRoom", { roomId: null, userInfo: { userName: user, userAvatar: userAvatar, socketID: socket.id } });
-    } else if (socket && gameMode === "custom" && roomName) {
-      socket.emit("joinRoom", { roomId: roomName, userInfo: { userName: user, userAvatar: userAvatar, socketID: socket.id }, rounds: matchInfo.rounds });
+    if (!socket) return;
+
+    const handleConnect = () => {
+      if (gameMode === "online" && !roomName) {
+        socket.emit("joinRoom", {
+          roomId: null,
+          userInfo: {
+            userName: user,
+            userAvatar: userAvatar,
+            socketID: socket.id
+          }
+        });
+      } else if (gameMode === "custom" && roomName) {
+        socket.emit("joinRoom", {
+          roomId: roomName,
+          userInfo: {
+            userName: user,
+            userAvatar: userAvatar,
+            socketID: socket.id
+          },
+          rounds: matchInfo.rounds
+        });
+      }
+    };
+
+    if (socket.connected) {
+      handleConnect();
+    } else {
+      socket.on('connect', handleConnect);
     }
-  }, [socket, gameMode, roomName]);
+
+    return () => {
+      socket.off('connect', handleConnect);
+    };
+  }, [socket, gameMode, roomName, user, userAvatar, matchInfo.rounds]);
 
   const handleChoice = (choice) => {
     setUserChoice(choice);

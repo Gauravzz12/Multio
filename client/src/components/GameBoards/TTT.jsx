@@ -46,7 +46,6 @@ const TTT = () => {
         ? "http://localhost:5000/ttt"
         : "https://multio-backend.up.railway.app/ttt"
     );
-    console.log(newSocket);
     setSocket(newSocket);
 
     newSocket.on("startGame", (data) => {
@@ -55,7 +54,7 @@ const TTT = () => {
       setCurrentPlayer(data.currentPlayer);
       setMySymbol(data.symbols[newSocket.id]);
       dispatch(setScores(data.scores));
-      dispatch(setMatchInfo({ rounds: data.rounds,playersInfo:data.playersInfo }));
+      dispatch(setMatchInfo({ rounds: data.rounds, playersInfo: data.playersInfo }));
       setResult(null);
       setShowScore(true);
 
@@ -81,7 +80,7 @@ const TTT = () => {
     });
 
     newSocket.on("playerLeft", () => {
-      setShowScore(false);  
+      setShowScore(false);
       setWaitingForOpponent(true);
       dispatch(resetScores());
       dispatch(resetMatchInfo());
@@ -93,7 +92,7 @@ const TTT = () => {
       dispatch(setRoomName(""));
       dispatch(resetScores());
       setWaitingForOpponent(false);
-      setShowScore(false);  
+      setShowScore(false);
       setSocket(null);
       dispatch(resetMatchInfo());
       newSocket.off("roomAssigned");
@@ -106,13 +105,41 @@ const TTT = () => {
   useSocket(socket, setWaitingForOpponent, setGameOver);
 
   useEffect(() => {
-    if (!socket?.id) return;
-    if (socket && gameMode === "online" && !roomName) {
-      socket.emit("joinRoom", { roomId: null,  userInfo: {userName:user,userAvatar:userAvatar,socketID:socket.id}});
-    } else if (socket && gameMode === "custom" && roomName) {
-      socket.emit("joinRoom", { roomId: roomName, userInfo: {userName:user,userAvatar:userAvatar,socketID:socket.id}, rounds: matchInfo.rounds });
+    if (!socket) return;
+
+    const handleConnect = () => {
+      if (gameMode === "online" && !roomName) {
+        socket.emit("joinRoom", {
+          roomId: null,
+          userInfo: {
+            userName: user,
+            userAvatar: userAvatar,
+            socketID: socket.id
+          }
+        });
+      } else if (gameMode === "custom" && roomName) {
+        socket.emit("joinRoom", {
+          roomId: roomName,
+          userInfo: {
+            userName: user,
+            userAvatar: userAvatar,
+            socketID: socket.id
+          },
+          rounds: matchInfo.rounds
+        });
+      }
+    };
+
+    if (socket.connected) {
+      handleConnect();
+    } else {
+      socket.on('connect', handleConnect);
     }
-  }, [socket, gameMode, roomName]);
+
+    return () => {
+      socket.off('connect', handleConnect);
+    };
+  }, [socket, gameMode, roomName, user, userAvatar, matchInfo.rounds]);
 
   const copyRoomId = () => {
     navigator.clipboard.writeText(roomName);
