@@ -21,11 +21,11 @@ const PlayerCard = ({ name, score, color, avatar }) => (
 
 const ScoreBoard = React.memo(({ socket }) => {
   const socketId = socket.id;
-  console.log(socketId);
-  console.log(playersInfo);
+
   const { scores = {}, matchInfo = {} } = useSelector((state) => state.game);
   const playersInfo = matchInfo?.playersInfo || {};
-  
+    console.log(socketId);
+  console.log(playersInfo);
   if (!socketId || !playersInfo || Object.keys(playersInfo).length < 2) {
     return null;
   }

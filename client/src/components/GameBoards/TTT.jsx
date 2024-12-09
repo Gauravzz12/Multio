@@ -83,7 +83,7 @@ const TTT = () => {
       setShowScore(false);  
       setWaitingForOpponent(true);
       dispatch(resetScores());
-      dispatch(setMatchInfo({ rounds: null, winner: null, loser: null, playersInfo: null }));
+      dispatch(resetMatchInfo());
     });
 
     return () => {
