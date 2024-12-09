@@ -7,6 +7,7 @@ import {
   setScores,
   resetScores,
   setMatchInfo,
+  resetMatchInfo
 } from "../../features/games/gameSlice";
 import rockIcon from "../../assets/images/RPS/rock.svg";
 import paperIcon from "../../assets/images/RPS/paper.svg";
@@ -74,6 +75,8 @@ const RPS = () => {
       setUserChoice(null);
       setWaitingForOpponent(false);
       setShowScore(false);
+      setSocket(null)
+      dispatch(resetMatchInfo());
       newSocket.off("startGame");
       newSocket.off("roundOver");
       newSocket.off("startNextRound");

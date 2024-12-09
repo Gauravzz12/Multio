@@ -6,7 +6,8 @@ import {
   setRoomName,
   setScores,
   resetScores,
-  setMatchInfo
+  setMatchInfo,
+  resetMatchInfo
 } from "../../features/games/gameSlice";
 import GameModeSelector from "../GameModeSelector";
 import OpponentLoader from "../OpponentLoader";
@@ -92,6 +93,8 @@ const TTT = () => {
       dispatch(resetScores());
       setWaitingForOpponent(false);
       setShowScore(false);  
+      setSocket(null);
+      dispatch(resetMatchInfo());
       newSocket.off("roomAssigned");
       newSocket.off("startGame");
       newSocket.off("updateBoard");
