@@ -65,7 +65,7 @@ const RPS = () => {
       setShowScore(false);
       setWaitingForOpponent(true);
       dispatch(resetScores());
-      dispatch(setMatchInfo({ rounds: null, winner: null, loser: null, playersInfo: null }));
+      dispatch(resetMatchInfo());
     });
 
     return () => {
@@ -177,7 +177,7 @@ const RPS = () => {
           </button>
         </div>
       )}
-      {showScore ? <ScoreBoard socketId={socket?.id} /> : ""}
+      {showScore ? <ScoreBoard socketId={socket} /> : ""}
       {!gameMode ? (
         <GameModeSelector socket={socket} />
       ) : waitingForOpponent ? (
