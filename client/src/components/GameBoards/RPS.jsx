@@ -45,6 +45,7 @@ const RPS = () => {
     setSocket(newSocket);
 
     newSocket.on("startGame", (data) => {
+      console.log(data)
       setWaitingForOpponent(false);
       setUserChoice(null);
       setOpponentChoice(null);
