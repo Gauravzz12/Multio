@@ -177,7 +177,7 @@ const RPS = () => {
           </button>
         </div>
       )}
-      {showScore ? <ScoreBoard socketId={socket} /> : ""}
+      {showScore ? <ScoreBoard socket={socket} /> : ""}
       {!gameMode ? (
         <GameModeSelector socket={socket} />
       ) : waitingForOpponent ? (

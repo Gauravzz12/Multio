@@ -179,7 +179,7 @@ const TTT = () => {
 
 
 
-      {showScore && <ScoreBoard socketId={socket?.id} />}
+      {showScore && <ScoreBoard socket={socket} />}
       {!gameMode ? (
         <GameModeSelector socket={socket} />
       ) : waitingForOpponent ? (
