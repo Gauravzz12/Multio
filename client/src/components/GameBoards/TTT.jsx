@@ -46,6 +46,7 @@ const TTT = () => {
         ? "http://localhost:5000/ttt"
         : "https://multio-backend.up.railway.app/ttt"
     );
+    console.log(newSocket);
     setSocket(newSocket);
 
     newSocket.on("startGame", (data) => {
@@ -105,7 +106,7 @@ const TTT = () => {
   useSocket(socket, setWaitingForOpponent, setGameOver);
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket?.id) return;
     if (socket && gameMode === "online" && !roomName) {
       socket.emit("joinRoom", { roomId: null,  userInfo: {userName:user,userAvatar:userAvatar,socketID:socket.id}});
     } else if (socket && gameMode === "custom" && roomName) {

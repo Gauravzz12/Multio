@@ -42,6 +42,7 @@ const RPS = () => {
         ? "http://localhost:5000/rps"
         : "https://multio-backend.up.railway.app/rps"
     );
+    console.log(newSocket);
     setSocket(newSocket);
 
     newSocket.on("startGame", (data) => {
@@ -87,7 +88,7 @@ const RPS = () => {
   useSocket(socket, setWaitingForOpponent, setGameOver);
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket?.id) return;
     if (socket && gameMode === "online" && !roomName) {
       console.log(socket.id);
       socket.emit("joinRoom", { roomId: null, userInfo: { userName: user, userAvatar: userAvatar, socketID: socket.id } });
