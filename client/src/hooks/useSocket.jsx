@@ -24,7 +24,7 @@ const useSocket = (socket, setWaitingForOpponent, setGameOver) => {
 
     socket.on('gameOver', (data) => {
       setGameOver(true);
-      dispatch(setMatchInfo({winner: data.winnerID, loser: data.loserID}));
+      dispatch(setMatchInfo({ winner: data.winnerID, loser: data.loserID }));
       setTimeout(() => {
         navigate('/Games');
         dispatch(resetMatchInfo());
@@ -38,7 +38,7 @@ const useSocket = (socket, setWaitingForOpponent, setGameOver) => {
       toast.info("Opponent left The Game");
       setWaitingForOpponent(true);
       dispatch(resetScores());
-      dispatch(setMatchInfo({ rounds: null, winner: null, loser: null, playersInfo: null }));
+      dispatch(resetMatchInfo())
     });
 
     socket.on("roomNotFound", () => {

@@ -13,14 +13,13 @@ const rpsController = (io, socket) => {
   });
 
   socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
-  
-    let assignedRoom = roomId; 
+    let assignedRoom = roomId;
     if (!assignedRoom) {
-      const availableRoom = Object.entries(rooms).find(([_, room]) => 
-        room.mode === "online" && 
-        Object.keys(room.playersInfo).length < 2
+      const availableRoom = Object.entries(rooms).find(
+        ([_, room]) =>
+          room.mode === "online" && Object.keys(room.playersInfo).length < 2
       );
-      
+
       if (availableRoom) {
         assignedRoom = availableRoom[0];
         socket.emit("roomAssigned", { roomId: assignedRoom });
@@ -31,7 +30,7 @@ const rpsController = (io, socket) => {
           choices: {},
           rounds: rounds,
           mode: "online",
-          scores: {}
+          scores: {},
         };
         socket.emit("roomAssigned", { roomId: assignedRoom });
       }
@@ -42,7 +41,7 @@ const rpsController = (io, socket) => {
           choices: {},
           rounds: rounds,
           mode: "custom",
-          scores: {}
+          scores: {},
         };
       }
     }
@@ -55,11 +54,10 @@ const rpsController = (io, socket) => {
 
     socket.join(assignedRoom);
     room.playersInfo[socket.id] = userInfo;
-    room.scores[socket.id] = 0; 
-
+    room.scores[socket.id] = 0;
 
     if (Object.keys(room.playersInfo).length === 2) {
-      Object.keys(room.scores).forEach(key => room.scores[key] = 0);
+      Object.keys(room.scores).forEach((key) => (room.scores[key] = 0));
       io.to(assignedRoom).emit("startGame", {
         scores: room.scores,
         rounds: room.rounds,
@@ -116,7 +114,7 @@ const rpsController = (io, socket) => {
         io.to(roomId).emit("startGame", {
           scores: room.scores,
           rounds: room.rounds,
-          playersInfo:room.playersInfo,
+          playersInfo: room.playersInfo,
         });
       }, 1000);
     }
@@ -133,7 +131,7 @@ const rpsController = (io, socket) => {
         if (Object.keys(room.playersInfo).length > 0) {
           room.choices = {};
           room.scores = {};
-          Object.keys(room.playersInfo).forEach(id => room.scores[id] = 0);
+          Object.keys(room.playersInfo).forEach((id) => (room.scores[id] = 0));
           io.to(roomId).emit("playerLeft");
           io.to(roomId).emit("waitingForOpponent");
         } else {
@@ -147,20 +145,21 @@ const rpsController = (io, socket) => {
   const determineWinner = (choices) => {
     const [user1, user2] = Object.keys(choices);
     const winningCombos = {
-      'Rock': 'Scissors',
-      'Paper': 'Rock',
-      'Scissors': 'Paper'
+      Rock: "Scissors",
+      Paper: "Rock",
+      Scissors: "Paper",
     };
-    
+
     const choice1 = choices[user1];
     const choice2 = choices[user2];
 
-    if (choice1 === choice2) return { [user1]: "It's a tie!", [user2]: "It's a tie!" };
-    
+    if (choice1 === choice2)
+      return { [user1]: "It's a tie!", [user2]: "It's a tie!" };
+
     const user1Wins = winningCombos[choice1] === choice2;
     return {
       [user1]: user1Wins ? "You win!" : "You lose!",
-      [user2]: user1Wins ? "You lose!" : "You win!"
+      [user2]: user1Wins ? "You lose!" : "You win!",
     };
   };
 };

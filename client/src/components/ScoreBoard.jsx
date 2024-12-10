@@ -28,9 +28,9 @@ const ScoreBoard = React.memo(({ socket }) => {
     return null;
   }
 
-  const currentPlayer = playersInfo[socketId];
+  const user = playersInfo[socketId];
   const opponent = Object.values(playersInfo).find(player => player?.socketID !== socketId);
-  if (!currentPlayer || !opponent) {
+  if (!user || !opponent) {
     return null;
   }
 
@@ -39,10 +39,10 @@ const ScoreBoard = React.memo(({ socket }) => {
       shadow-2xl mb-4 w-full max-w-sm transform hover:scale-102 transition-all duration-300">
       <div className="flex justify-between items-center">
         <PlayerCard
-          name={currentPlayer.userName || 'Player'}
+          name={user.userName || 'User'}
           score={scores[socketId] || 0}
           color="green"
-          avatar={currentPlayer.userAvatar || defaultAvatar}
+          avatar={user.userAvatar || defaultAvatar}
         />
         <PlayerCard
           name={opponent.userName || 'Opponent'}

@@ -115,9 +115,6 @@ const tttController = (io, socket) => {
 
   socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
     let assignedRoom = roomId;
-
-   
-
     if (!assignedRoom) {
       const availableRoom = Object.entries(rooms).find(
         ([_, room]) =>
@@ -187,7 +184,6 @@ const tttController = (io, socket) => {
     const symbol = room.symbols[socket.id];
     if (room.board[x][y] === "") {
       room.board[x][y] = symbol;
-
       if (checkWin(room.board, symbol)) {
         room.scores[socket.id]++;
         io.to(roomId).emit("roundOver", {

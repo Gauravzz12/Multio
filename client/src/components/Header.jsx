@@ -34,9 +34,9 @@ function Header() {
     { text: "Games", onClick: () => handleNavigation("/Games") },
     ...(currentUser && currentUser !== "Guest"
       ? [
-          { text: "Profile", onClick: () => handleNavigation("/Profile") },
-          { text: "Logout", onClick: handleLogOut },
-        ]
+        { text: "Profile", onClick: () => handleNavigation("/Profile") },
+        { text: "Logout", onClick: handleLogOut },
+      ]
       : [{ text: "Login", onClick: () => handleNavigation("/Login") }]),
   ];
 
@@ -46,7 +46,7 @@ function Header() {
       <header className="sticky top-0 z-50 bg-gradient-to-r from-[#020530] to-[#13063e] text-white ">
         <nav className="container mx-auto p-3 ">
           <div className="flex justify-between items-center relative mx-8">
-            <h1 className="title italic font-extrabold text-3xl md:text-4xl text-[#f508ff] font-reggae-one cursor-pointer" onClick={()=>navigate('/Home')}>
+            <h1 className="title italic font-extrabold text-3xl md:text-4xl text-[#f508ff] font-reggae-one cursor-pointer" onClick={() => navigate('/Home')}>
               Multio
             </h1>
 
@@ -58,9 +58,8 @@ function Header() {
             </button>
 
             <div
-              className={`${
-                isOpen ? "flex" : "hidden"
-              } md:flex flex-col md:flex-row absolute md:relative 
+              className={`${isOpen ? "flex" : "hidden"
+                } md:flex flex-col md:flex-row absolute md:relative 
               top-full right-0 md:right-auto w-48 md:w-auto
               bg-[#020530] md:bg-transparent mt-2 md:mt-0 p-4 md:p-0 
               space-y-4 md:space-y-0 md:space-x-6 rounded-lg md:rounded-none

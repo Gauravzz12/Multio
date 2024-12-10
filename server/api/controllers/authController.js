@@ -16,7 +16,6 @@ const generateToken = (user, expiry) => {
 
 const generateUniqueUsername = async (baseUsername) => {
   let username = baseUsername;
-  let counter = 1;
   while (true) {
     const existingUser = await pool.query(
       "SELECT username FROM users WHERE username = $1",
@@ -25,7 +24,7 @@ const generateUniqueUsername = async (baseUsername) => {
     if (existingUser.rowCount === 0) {
       return username;
     }
-    username = `${baseUsername}${counter}`;
+    username = `${baseUsername}${Math.floor(Math.random() * 10000)}`;
     counter++;
   }
 };
