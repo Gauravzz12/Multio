@@ -152,10 +152,6 @@ const tttController = (io, socket) => {
     }
 
     const room = rooms[assignedRoom];
-    if (Object.keys(room.playersInfo).length >= 2) {
-      socket.emit("roomFull");
-      return;
-    }
     socket.join(assignedRoom);
     room.playersInfo[socket.id] = userInfo;
     room.scores[socket.id] = 0;
@@ -165,7 +161,7 @@ const tttController = (io, socket) => {
       assignSymbols(room);
       io.to(assignedRoom).emit("startGame", {
         board: room.board,
-        currentPlayer: room.currentPlayer,
+        currentPlayer: room.currentPlayer, 
         symbols: room.symbols,
         scores: room.scores,
         rounds: room.rounds,

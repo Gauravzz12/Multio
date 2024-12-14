@@ -10,29 +10,33 @@ const GameModeSelector = ({ socket }) => {
   const [selectedMode, setSelectedMode] = useState(null);
 
   const handleModeSelect = (mode) => {
-    setSelectedMode(mode === selectedMode ? null : mode);
+    setSelectedMode(mode);
   };
 
   const handleAction = () => {
     if (!roomInput.trim()) return;
-    if (selectedMode === 'join') {
-      socket.emit("checkRoom", { roomId: roomInput.trim() });
-      socket.once("roomStatus", ({ status }) => {
-        if (status === "notFound") {
+    socket.emit("checkRoom", { roomId: roomInput.trim() });
+    socket.once("roomStatus", ({ status: roomStatus }) => {
+      if (selectedMode === 'join') {
+        if (roomStatus === "notFound") {
           toast.error("Room does not exist");
-        } else if (status === "full") {
+        } else if (roomStatus === "full") {
           toast.error("Room is full");
-        } else if (status === "available") {
+        } else if (roomStatus === "available") {
           dispatch(setGameMode('custom'));
           dispatch(setRoomName(roomInput.trim()));
           dispatch(setMatchInfo({ rounds }));
         }
-      });
-    } else if (selectedMode === 'create') {
-      dispatch(setGameMode('custom'));
-      dispatch(setRoomName(roomInput.trim()));
-      dispatch(setMatchInfo({ rounds }));
-    }
+      } else if (selectedMode === 'create') {
+        if (roomStatus === "available") {
+          toast.error("Room already exists");
+          return;
+        }
+        dispatch(setGameMode('custom'));
+        dispatch(setRoomName(roomInput.trim()));
+        dispatch(setMatchInfo({ rounds }));
+      }
+    });
   };
 
   const handleOnlinePlay = () => {

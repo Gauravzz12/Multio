@@ -17,7 +17,7 @@ const rpsController = (io, socket) => {
     if (!assignedRoom) {
       const availableRoom = Object.entries(rooms).find(
         ([_, room]) =>
-          room.mode === "online" && Object.keys(room.playersInfo).length < 2
+          room.mode === "online" && Object.keys(room.playersInfo).length < 2 
       );
 
       if (availableRoom) {
@@ -47,11 +47,6 @@ const rpsController = (io, socket) => {
     }
 
     let room = rooms[assignedRoom];
-    if (Object.keys(room.playersInfo).length >= 2) {
-      socket.emit("roomFull");
-      return;
-    }
-
     socket.join(assignedRoom);
     room.playersInfo[socket.id] = userInfo;
     room.scores[socket.id] = 0;
@@ -137,11 +132,11 @@ const rpsController = (io, socket) => {
         } else {
           delete rooms[roomId];
         }
-        break;
-      }
+      } 
+      console.log(room);
     }
   });
-
+ 
   const determineWinner = (choices) => {
     const [user1, user2] = Object.keys(choices);
     const winningCombos = {
