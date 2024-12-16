@@ -31,7 +31,7 @@ const generateUniqueUsername = async (baseUsername) => {
 
 const redirect_URL =
   process.env.NODE_ENV === "production"
-    ? "https://multio.netlify.app"
+    ? "https://multio.netlify.app/"
     : "http://localhost:5173";
 passport.use(
   new GoogleStrategy(
@@ -268,7 +268,7 @@ module.exports = {
         `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}&avatar=${encodeURIComponent(req.user.avatar_url)}`
       );
     } catch (err) {
-      res.redirect(`${redirect_URL}`);
+      res.redirect(`${redirect_URL}/`);
     }
   },
 
@@ -286,7 +286,7 @@ module.exports = {
         `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}&avatar=${encodeURIComponent(req.user.avatar_url)}`
       );
     } catch (err) {
-      res.redirect(`${redirect_URL}`);
+      res.redirect(`${redirect_URL}/`);
     }
   },
 };
