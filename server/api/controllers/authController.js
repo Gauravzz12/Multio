@@ -208,7 +208,7 @@ module.exports = {
       res.clearCookie("refreshToken", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       });
       return res.sendStatus(204);
     } catch (err) {
@@ -268,7 +268,7 @@ module.exports = {
         `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}&avatar=${encodeURIComponent(req.user.avatar_url)}`
       );
     } catch (err) {
-      res.redirect(`${redirect_URL}/`);
+      res.redirect(`${redirect_URL}`);
     }
   },
 
@@ -286,7 +286,7 @@ module.exports = {
         `${redirect_URL}/oauth/success?token=${accessToken}&user=${req.user.username}&avatar=${encodeURIComponent(req.user.avatar_url)}`
       );
     } catch (err) {
-      res.redirect(`${redirect_URL}/`);
+      res.redirect(`${redirect_URL}`);
     }
   },
 };
