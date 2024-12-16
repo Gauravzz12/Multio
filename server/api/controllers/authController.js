@@ -31,7 +31,7 @@ const generateUniqueUsername = async (baseUsername) => {
 
 const redirect_URL =
   process.env.NODE_ENV === "production"
-    ? "https://multio.netlify.app/"
+    ? "https://multio.netlify.app"
     : "http://localhost:5173";
 passport.use(
   new GoogleStrategy(
