@@ -97,7 +97,8 @@ const RPS = () => {
             userName: user,
             userAvatar: userAvatar,
             socketID: socket.id
-          }
+          },
+          rounds: matchInfo.rounds 
         });
       } else if (gameMode === "custom" && roomName) {
         socket.emit("joinRoom", {
@@ -107,7 +108,7 @@ const RPS = () => {
             userAvatar: userAvatar,
             socketID: socket.id
           },
-          rounds: matchInfo.rounds
+          rounds: matchInfo.rounds 
         });
       }
     };
@@ -121,7 +122,7 @@ const RPS = () => {
     return () => {
       socket.off('connect', handleConnect);
     };
-  }, [socket, gameMode, roomName, user, userAvatar, matchInfo.rounds]);
+  }, [socket, gameMode, roomName, user, userAvatar ]);
 
   const handleChoice = (choice) => {
     setUserChoice(choice);

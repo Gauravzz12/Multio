@@ -113,7 +113,7 @@ const tttController = (io, socket) => {
     }
   });
 
-  socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
+  socket.on("joinRoom", ({ roomId, userInfo, rounds}) => {
     let assignedRoom = roomId;
     if (!assignedRoom) {
       const availableRoom = Object.entries(rooms).find(
@@ -132,7 +132,7 @@ const tttController = (io, socket) => {
           playersInfo: {},
           symbols: {},
           scores: {},
-          rounds: rounds,
+          rounds: rounds, 
           mode: "online",
         };
         socket.emit("roomAssigned", { roomId: assignedRoom });

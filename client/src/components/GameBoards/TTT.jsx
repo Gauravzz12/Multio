@@ -139,7 +139,7 @@ const TTT = () => {
     return () => {
       socket.off('connect', handleConnect);
     };
-  }, [socket, gameMode, roomName, user, userAvatar, matchInfo.rounds]);
+  }, [socket, gameMode, roomName, user, userAvatar]);
 
   const copyRoomId = () => {
     navigator.clipboard.writeText(roomName);

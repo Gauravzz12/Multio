@@ -12,7 +12,7 @@ const rpsController = (io, socket) => {
     }
   });
 
-  socket.on("joinRoom", ({ roomId, userInfo, rounds = 3 }) => {
+  socket.on("joinRoom", ({ roomId, userInfo, rounds}) => {
     let assignedRoom = roomId;
     if (!assignedRoom) {
       const availableRoom = Object.entries(rooms).find(
@@ -28,7 +28,7 @@ const rpsController = (io, socket) => {
         rooms[assignedRoom] = {
           playersInfo: {},
           choices: {},
-          rounds: rounds,
+          rounds: rounds, 
           mode: "online",
           scores: {},
         };
@@ -39,7 +39,7 @@ const rpsController = (io, socket) => {
         rooms[assignedRoom] = {
           playersInfo: {},
           choices: {},
-          rounds: rounds,
+          rounds: rounds, 
           mode: "custom",
           scores: {},
         };
@@ -96,11 +96,12 @@ const rpsController = (io, socket) => {
         const loser = Object.keys(room.scores).find(
           (key) => room.scores[key] !== maxScore
         );
+        console.log(room.rounds)
         setTimeout(() => {
           io.to(roomId).emit("gameOver", { winnerID: winner, loserID: loser });
           delete rooms[roomId];
         }, 1000);
-        return;
+        return; 
       }
 
       room.choices = {};
@@ -133,7 +134,6 @@ const rpsController = (io, socket) => {
           delete rooms[roomId];
         }
       } 
-      console.log(room);
     }
   });
  

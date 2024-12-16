@@ -25,7 +25,7 @@ const GameModeSelector = ({ socket }) => {
         } else if (roomStatus === "available") {
           dispatch(setGameMode('custom'));
           dispatch(setRoomName(roomInput.trim()));
-          dispatch(setMatchInfo({ rounds }));
+          dispatch(setMatchInfo({ rounds })); 
         }
       } else if (selectedMode === 'create') {
         if (roomStatus === "available") {
@@ -34,14 +34,14 @@ const GameModeSelector = ({ socket }) => {
         }
         dispatch(setGameMode('custom'));
         dispatch(setRoomName(roomInput.trim()));
-        dispatch(setMatchInfo({ rounds }));
+        dispatch(setMatchInfo({ rounds })); 
       }
     });
   };
 
   const handleOnlinePlay = () => {
     dispatch(setGameMode('online'));
-    dispatch(setMatchInfo({ rounds: 3 }));
+    dispatch(setMatchInfo({ rounds: 3 })); 
   };
 
   return (
