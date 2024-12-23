@@ -6,9 +6,10 @@ module.exports = {
       fontFamily: {
         "reggae-one": ["Reggae One"],
         "Outfit":["Outfit"],
+        "aone":["Aoboshi One"],
       },
-      dropShadow: {
-        "3xl": "-60px 60px 80px rgba(241, 3, 170,0.5)",
+      backgroundImage: {
+        hero: "url('/src/assets/images/image.png')",
       },
       keyframes: {
         'fade-in': {

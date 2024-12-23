@@ -1,5 +1,5 @@
 import React from "react";
-import img from "../assets/images/hero.png";
+import img from "../assets/images/image.png";
 import feature from "../assets/images/Features/features.png";
 import Popular from "../assets/images/Popular.png";
 import featureImage1 from '../assets/images/Features/1.png';
@@ -12,21 +12,6 @@ import cardImage from '../assets/images/GameLogo/Card.jpg';
 import { useNavigate } from "react-router-dom";
 const featureImages = [featureImage1, featureImage2, featureImage3, featureImage4];
 function Home() {
-  const textGroups = [
-    [
-      { text: "Welcome To ", color: "text-white" },
-      { text: " Multio", color: "text-[#a908ff]" },
-    ],
-    [
-      { text: "Your", color: "text-white" },
-      { text: " Multiplayer", color: "text-[#a908ff]" },
-    ],
-    [
-      { text: " Gaming", color: "text-[#a908ff]" },
-      { text: " Destination", color: "text-white" },
-    ],
-  ];
-
   const features = [
     {
       title: "Real-time Multiplayer",
@@ -45,35 +30,57 @@ function Home() {
       description: "View your game history and statistics.",
     },
   ];
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   return (
-    <main className="m-0 bg-black text-white font-bold flex flex-col scroll-smooth">
-      <section className="motto rounded px-4 md:px-12 lg:px-24 text-3xl md:text-5xl flex flex-col md:flex-row justify-between items-center bg-gradient-to-r from-[#020530] to-[#13063e] py-8 md:py-12 gap-8">
-        <article className="flex flex-col items-center md:items-start justify-center">
-          {textGroups.map((group, index) => (
-            <div key={index} className="flex flex-row mb-4 flex-wrap justify-center md:justify-start">
-              {group.map((item, itemIndex) => (
-                <h1 className={`${item.color} tracking-wider font-reggae-one italic mx-2`} key={itemIndex}>
-                  {item.text}
-                </h1>
-              ))}
+    <main className="m-0 bg-black text-white flex flex-col scroll-smooth">
+      <section className="motto relative min-h-[80vh] overflow-hidden">
+        <div className="absolute inset-0 z-10" />
+        <div className="absolute inset-0 z-0">
+          <img
+            src={img}
+            alt="background"
+            className="w-full h-full object-contain object-right-top scale-125 opacity-30"
+          />
+        </div>
+        <div className="relative z-20 px-4 md:px-12 lg:px-24 py-12 flex flex-row items-center justify-start min-h-[80vh]">
+          <article className="flex flex-col items-start justify-center gap-2 md:gap-4 w-full md:w-2/3 lg:w-1/2">
+            <h1 className="font-aone text-3xl sm:text-4xl md:text-5xl lg:text-5xl tracking-wide text-left leading-tight">
+              <span className="text-white">Multio!</span>
+              <span className="text-purple-400"> The Ultimate Arena</span>
+            </h1>
+            
+            <h2 className="font-aone text-2xl sm:text-3xl md:text-4xl lg:text-5xl tracking-wide text-left text-gray-300/90 leading-tight mb-4">
+              for Multiplayer Gaming!
+            </h2>
+            
+            <div className="text-base sm:text-lg md:text-xl lg:text-2xl space-y-2 text-gray-300/80 font-light max-w-2xl">
+              <p>Jump into thrilling multiplayer experiences, challenge friends,</p>
+              <p>or meet new players in exciting game modes.</p>
             </div>
-          ))}
-        </article>
 
-        <picture className="relative flex items-center size-auto max-w-80 max-h-80 md:h-64 lg:h-96  md:w-64 lg:w-96 md:mr-32 drop-shadow-3xl shrink-0">
-          <img src={img} alt="Hero" className="object-cover rounded-lg hover:scale-105 transition-transform duration-300 max-w-full h-auto" loading="lazy" />
-        </picture>
+            <button
+            className="py-2 px-6 bg-gradient-to-r from-[#D0517E] to-[#5612E1] text-base border-none text-white transform hover:scale-[1.02] transition-transform duration-200 active:scale-[0.98]"
+            style={{
+              clipPath:
+                "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
+            }}
+            aria-label="Login"
+            type="submit"
+          >
+            Explore Games
+          </button>
+          </article>
+        </div>
       </section>
 
       <section className="Features w-full px-4 md:px-12 lg:px-24 py-12 bg-[#09012a]">
-        <div className="flex flex-col-reverse lg:flex-row gap-12 ">
+        <div className="flex flex-col-reverse lg:flex-row gap-12">
           <section className="grid grid-cols-1 xs:grid-cols-2 gap-8 w-full lg:w-2/3 place-items-center">
             {features.map((feature, index) => (
-              <div key={index} className="transform hover:scale-105 transition-all duration-300 ">
-                <div className="relative group cursor-pointer overflow-hidden rounded-xl size-auto md:h-72 xs:max-w-80 max-w-48 ">
+              <div key={index} className="transform hover:scale-105 transition-all duration-300">
+                <div className="relative group cursor-pointer overflow-hidden rounded-xl h-72 max-w-80">
                   <div
-                    className="absolute inset-0 bg-cover bg-no-repeat bg-center duration-500 group-hover:scale-110 size-auto"
+                    className={`absolute inset-0 bg-cover bg-no-repeat bg-center duration-500 group-hover:scale-110`}
                     style={{ backgroundImage: `url(${featureImages[index]})` }}
                   />
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-300" />
@@ -94,12 +101,12 @@ function Home() {
               <hr className="bg-[#f508ff] w-16 h-1 mb-4" />
               <p className="text-xl md:text-2xl font-serif">
                 What You Will{" "}
-                <span className="text-[#a908ff] text-3xl md:text-4xl font-serif ">
+                <span className="text-[#a908ff] text-3xl md:text-4xl font-serif">
                   Experience
-                </span>{" "}
+                </span>
               </p>
             </div>
-            <picture className="relative size-auto max-w-80 max-h-80 md:h-64 lg:h-96 md:w-64 lg:w-96 drop-shadow-3xl shrink-0 flex justify-center items-center">
+            <picture className="relative max-w-80 max-h-80 md:h-64 lg:h-96 md:w-64 lg:w-96 drop-shadow-3xl flex justify-center items-center">
               <img
                 src={feature}
                 alt="Features"
@@ -115,14 +122,14 @@ function Home() {
         <div className="flex flex-col md:flex-row items-center gap-12 justify-center">
           <div className="flex flex-col items-center lg:w-1/3">
             <div>
-              <p className="text-[#a908ff] text-3xl md:text-5xl font-serif mb-2 ">Popular</p>
+              <p className="text-[#a908ff] text-3xl md:text-5xl font-serif mb-2">Popular</p>
               <hr className="bg-[#f508ff] w-16 h-1 mb-4" />
-              <p className="text-[#a908ff] text-3xl md:text-5xl font-serif mb-2 ml-7 ">
+              <p className="text-[#a908ff] text-3xl md:text-5xl font-serif mb-2 ml-7">
                 Games
               </p>
               <hr className="bg-[#f508ff] w-16 h-1 mb-4 ml-7" />
             </div>
-            <picture className="relative size-auto max-w-80 max-h-80 md:h-64 lg:h-96 md:w-64 lg:w-96 drop-shadow-3xl shrink-0 flex justify-center items-center">
+            <picture className="relative max-w-80 max-h-80 md:h-64 lg:h-96 md:w-64 lg:w-96 drop-shadow-3xl flex justify-center items-center">
               <img
                 src={Popular}
                 alt="Popular Games"
@@ -132,17 +139,13 @@ function Home() {
             </picture>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6 size-auto lg:w-2/3 min-h-72 min-w-72 ">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6 lg:w-2/3 min-h-72 min-w-72">
             {[rpsImage, tttImage, cardImage].map((image, index) => (
               <div
                 key={index}
-                className="aspect-square rounded-xl  overflow-hidden transform hover:scale-105 transition-all duration-300 shadow-lg"
-                style={{
-                  backgroundImage: `url(${image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }}
-                onClick={()=>{navigate(`/Games/${index===0?"RPS":index===1?"TTT":""}`)}}
+                className="aspect-square rounded-xl overflow-hidden transform hover:scale-105 transition-all duration-300 shadow-lg bg-cover bg-center"
+                style={{ backgroundImage: `url(${image})` }}
+                onClick={() => { navigate(`/Games/${index === 0 ? "RPS" : index === 1 ? "TTT" : ""}`) }}
               />
             ))}
           </div>
@@ -165,10 +168,10 @@ function Home() {
             </div>
 
             <form className="bg-gradient-to-r from-[#7b7fc7] to-[#3d258b] rounded-lg shadow-xl p-6 lg:w-2/3">
-              <div className="mb-4 bg-red">
+              <div className="mb-4">
                 <label
                   htmlFor="title"
-                  className="block text-gray-700 text-sm font-bold mb-2 "
+                  className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   Title
                 </label>
@@ -195,7 +198,7 @@ function Home() {
               <div className="flex items-center justify-between">
                 <button
                   type="submit"
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-sm hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-sm text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                   Post
                 </button>
