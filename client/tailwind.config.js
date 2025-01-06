@@ -1,6 +1,7 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   darkMode: "class",
+  
   theme: {
     extend: {
       fontFamily: {
@@ -28,6 +29,7 @@ module.exports = {
         lg: "1200px",
         xl: "1700px",
       },
+      
     },
   },
   plugins: [],

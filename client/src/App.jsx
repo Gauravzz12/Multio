@@ -126,7 +126,7 @@ function App() {
   }
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="flex flex-col mx-auto w-full max-w-[1700px] overflow-hidden scroll-smooth">
       <ToastContainer
         position="top-right"
         autoClose={1000}

@@ -33,19 +33,19 @@ function Header() {
   return (
     <>
       {isLoading && <Loader />}
-      <header className='sticky top-0 z-50 bg-black text-white'>
-        <nav className='container mx-auto p-3'>
-          <div className='flex justify-between items-center relative mx-8'>
-            <div className='flex items-center '>
+      <header className='sticky top-0 z-50 text-white bg-black'>
+        <nav className='p-3 mx-auto Container'>
+          <div className='relative flex items-center justify-between mx-8 sm:text-sm ss:text-xs'>
+            <div className='flex items-center'>
               <h1
-                className='title text-3xl md:text-2xl text-white font-Outfit cursor-pointer flex justify-center items-center'
+                className='flex items-center justify-center text-3xl text-white cursor-pointer font-Outfit md:text-2xl title'
                 onClick={() => navigate('/Home')}>
                 <picture>
-                  <img src={Logo} alt='logo' className='w-16 h-10 md:w-12 md:h-8 inline-block' />
+                  <img src={Logo} alt='logo' className='inline-block w-16 h-10 md:w-12 md:h-8' />
                 </picture>
                 MULTIO
               </h1>
-              <div className='hidden ss:flex  ml-20'>
+              <div className='hidden ml-20 tracking-wider ss:flex'>
                 <button
                   onClick={() => navigate('/')}
                   className={`md:w-auto px-6 py-2 rounded-full bg-black transform hover:scale-105 transition duration-300 text-white font-semibold shadow-lg font-Outfit tex-xl relative
@@ -70,17 +70,17 @@ function Header() {
             </div>
 
             <div className='flex items-center mr-6'>
-              <div className='hidden ss:flex space-x-4'>
+              <div className='hidden space-x-4 ss:flex'>
                 {currentUser && currentUser !== 'Guest' ? (
                   <button
                     onClick={handleLogOut}
-                    className="py-2 px-6 bg-black text-base text-white transform hover:scale-[1.02] transition-transform duration-200 active:scale-[0.98] relative"
+                    className="relative bg-black px-6 py-2 text-base text-white transform transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
                     style={{
                       clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                       background: 'linear-gradient(to right, #D0517E, #5612E1)',
                       padding: '2px',
                     }}>
-                    <span className="block bg-black h-full w-full py-2 px-6"
+                    <span className="block w-full h-full px-6 py-2 bg-black"
                       style={{
                         clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                       }}>
@@ -90,13 +90,13 @@ function Header() {
                 ) : (
                   <button
                     onClick={() => navigate('/Login')}
-                    className="py-2 px-6 bg-black text-base text-white transform hover:scale-[1.02] transition-transform duration-200 active:scale-[0.98] relative"
+                    className="relative bg-black px-6 py-2 text-base text-white transform transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
                     style={{
                       clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                       background: 'linear-gradient(to right, #D0517E, #5612E1)',
                       padding: '2px',
                     }}>
-                    <span className="block bg-black h-full w-full py-2 px-6"
+                    <span className="block w-full h-full px-6 py-2 bg-black"
                       style={{
                         clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                       }}>
@@ -106,7 +106,7 @@ function Header() {
                 )}
               </div>
               <button
-                className='ss:hidden text-white text-2xl'
+                className='text-2xl text-white ss:hidden'
                 onClick={() => setIsOpen(!isOpen)}>
                 {isOpen ? <FaTimes /> : <FaBars />}
               </button>
@@ -118,13 +118,13 @@ function Header() {
                   navigate('/')
                   setIsOpen(false)
                 }}
-                className="py-2 px-6 bg-black text-base border-none text-white transform hover:scale-[1.02] transition-transform duration-200 active:scale-[0.98] relative"
+                className="relative bg-black px-6 py-2 border-none text-base text-white transform transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                   background: 'linear-gradient(to right, #D0517E, #5612E1)',
                   padding: '2px',
                 }}>
-                <span className="block bg-black h-full w-full py-2 px-6"
+                <span className="block w-full h-full px-6 py-2 bg-black"
                   style={{
                     clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                   }}>
@@ -136,13 +136,13 @@ function Header() {
                   navigate('/Games')
                   setIsOpen(false)
                 }}
-                className="py-2 px-6 bg-black text-base border-none text-white transform hover:scale-[1.02] transition-transform duration-200 active:scale-[0.98] relative"
+                className="relative bg-black px-6 py-2 border-none text-base text-white transform transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                   background: 'linear-gradient(to right, #D0517E, #5612E1)',
                   padding: '2px',
                 }}>
-                <span className="block bg-black h-full w-full py-2 px-6"
+                <span className="block w-full h-full px-6 py-2 bg-black"
                   style={{
                     clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                   }}>
@@ -155,13 +155,13 @@ function Header() {
                     navigate('/Profile')
                     setIsOpen(false)
                   }}
-                  className="py-2 px-6 bg-black text-base border-none text-white transform hover:scale-[1.02] transition-transform duration-200 active:scale-[0.98] relative"
+                  className="relative bg-black px-6 py-2 border-none text-base text-white transform transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
                   style={{
                     clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                     background: 'linear-gradient(to right, #D0517E, #5612E1)',
                     padding: '2px',
                   }}>
-                  <span className="block bg-black h-full w-full py-2 px-6"
+                  <span className="block w-full h-full px-6 py-2 bg-black"
                     style={{
                       clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                     }}>
@@ -175,13 +175,13 @@ function Header() {
                     handleLogOut()
                     setIsOpen(false)
                   }}
-                  className="py-2 px-6 bg-black text-base border-none text-white transform hover:scale-[1.02] transition-transform duration-200 active:scale-[0.98] relative"
+                  className="relative bg-black px-6 py-2 border-none text-base text-white transform transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
                   style={{
                     clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                     background: 'linear-gradient(to right, #D0517E, #5612E1)',
                     padding: '2px',
                   }}>
-                  <span className="block bg-black h-full w-full py-2 px-6"
+                  <span className="block w-full h-full px-6 py-2 bg-black"
                     style={{
                       clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                     }}>
@@ -194,13 +194,13 @@ function Header() {
                     navigate('/Login')
                     setIsOpen(false)
                   }}
-                  className="py-2 px-6 bg-black text-base border-none text-white transform hover:scale-[1.02] transition-transform duration-200 active:scale-[0.98] relative"
+                  className="relative bg-black px-6 py-2 border-none text-base text-white transform transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
                   style={{
                     clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                     background: 'linear-gradient(to right, #D0517E, #5612E1)',
                     padding: '2px',
                   }}>
-                  <span className="block bg-black h-full w-full py-2 px-6"
+                  <span className="block w-full h-full px-6 py-2 bg-black"
                     style={{
                       clipPath: "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
                     }}>
