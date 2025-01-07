@@ -20,7 +20,6 @@ const startSocketServer = (server) => {
   tttNamespace.on("connection", (socket) => {
     tttController(tttNamespace, socket);
   });
-
 };
 
 module.exports = startSocketServer;
