@@ -1,215 +1,182 @@
 import React from "react";
-import img from "../assets/images/image.png";
-import feature from "../assets/images/Features/features.png";
-import Popular from "../assets/images/Popular.png";
+import { useNavigate } from "react-router-dom";
+import { FaPlay, FaFire, FaStar, FaTrophy, FaRocket } from "react-icons/fa";
 import featureImage1 from '../assets/images/Features/1.png';
 import featureImage2 from '../assets/images/Features/2.png';
 import featureImage3 from '../assets/images/Features/3.png';
 import featureImage4 from '../assets/images/Features/4.png';
-import rpsImage from '../assets/images/GameLogo/RPS.jpg';
-import tttImage from '../assets/images/GameLogo/TTT.jpg';
-import cardImage from '../assets/images/GameLogo/Card.jpg';
-import { useNavigate } from "react-router-dom";
+
 const featureImages = [featureImage1, featureImage2, featureImage3, featureImage4];
+
 function Home() {
   const features = [
     {
       title: "Real-time Multiplayer",
       description: "Play with friends or match with others online.",
+      icon: FaPlay,
+      color: "from-blue-500 to-cyan-500"
     },
     {
       title: "Cross-platform Play",
       description: "Enjoy gaming across devices seamlessly.",
+      icon: FaRocket,
+      color: "from-purple-500 to-indigo-500"
     },
     {
       title: "Huge Game Variety",
       description: "Choose from a wide range of games to play.",
+      icon: FaStar,
+      color: "from-pink-500 to-rose-500"
     },
     {
       title: "Game History & Stats",
       description: "View your game history and statistics.",
+      icon: FaTrophy,
+      color: "from-green-500 to-emerald-500"
     },
   ];
   const navigate = useNavigate();
+
   return (
-    <main className="flex flex-col m-0 text-white bg-black scroll-smooth">
-      <section className="relative overflow-hidden motto">
-        <picture>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+        <div className="absolute top-40 right-10 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000"></div>
+        <div className="absolute bottom-20 left-1/2 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000"></div>
+      </div>
 
-          <img
-            src={img}
-            alt="background"
-            className="absolute object-contain object-center w-full h-full md:scale-125 opacity-70 ss:visible "
-          />
-        </picture>
-
-        <div className="relative z-20 flex flex-row items-center justify-start px-4 py-12 md:px-12 lg:px-24">
-          <article className="flex flex-col items-start justify-center w-full gap-2 md:gap-4 md:w-2/3 lg:w-1/2">
-            <h1 className="text-3xl leading-tight tracking-wide text-left font-aone sm:text-4xl md:text-5xl lg:text-5xl">
-              <span className="text-white">Multio!</span>
-              <span className="text-purple-400"> The Ultimate Arena</span>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Hero Section */}
+        <section className="pt-20 pb-16 text-center">
+          <div className="mb-8">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-full px-6 py-3 mb-8">
+              <FaFire className="text-orange-400 w-5 h-5" />
+              <span className="text-purple-200 font-medium">Welcome to the Ultimate Gaming Arena</span>
+            </div>
+            
+            <h1 className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-bold mb-8 leading-tight">
+              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent animate-pulse">
+                MULTIO
+              </span>
             </h1>
+            
+            <p className="text-xl sm:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-12">
+              Experience the future of multiplayer gaming. Challenge friends, meet new opponents, and climb the leaderboards in our collection of classic and modern games.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <button 
+                onClick={() => navigate('/Games')}
+                className="group bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-2xl text-lg transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+              >
+                <div className="flex items-center gap-3">
+                  <FaPlay className="w-5 h-5 group-hover:animate-bounce" />
+                  <span>Start Playing</span>
+                </div>
+              </button>
+              
+              <button 
+                onClick={() => navigate('/Profile')}
+                className="group glass backdrop-blur-xl border border-white/20 hover:border-purple-400/50 text-white font-bold py-4 px-8 rounded-2xl text-lg transform hover:scale-105 transition-all duration-300"
+              >
+                <div className="flex items-center gap-3">
+                  <FaTrophy className="w-5 h-5 group-hover:animate-bounce" />
+                  <span>View Stats</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </section>
 
-            <h2 className="mb-4 text-2xl leading-tight tracking-wide text-left font-aone sm:text-3xl md:text-4xl lg:text-5xl text-gray-300/90">
-              for Multiplayer Gaming!
+        {/* Features Section */}
+        <section className="py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Why Choose Multio?
             </h2>
+            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+              Discover the features that make our platform the ultimate destination for multiplayer gaming
+            </p>
+          </div>
 
-            <div className="max-w-2xl space-y-2 text-base font-light sm:text-lg md:text-xl lg:text-2xl text-gray-300/80">
-              <p>Jump into thrilling multiplayer experiences, challenge friends,</p>
-              <p>or meet new players in exciting game modes.</p>
-            </div>
-
-            <button
-              className="py-2 px-6 bg-gradient-to-r from-[#D0517E] to-[#5612E1] text-base border-none text-white transform hover:scale-[1.02] transition-transform duration-200 active:scale-[0.98]"
-              style={{
-                clipPath:
-                  "polygon(0 0, calc(100% - 1em) 0, 100% 0.85em, 100% 100%, 1em 100%, 0 calc(100% - 0.85em))",
-              }}
-              aria-label="Login"
-              type="submit"
-            >
-              Explore Games
-            </button>
-          </article>
-        </div>
-      </section>
-
-      <section className="Features w-full px-4 md:px-12 lg:px-24 py-12 bg-[#09012a]">
-        <div className="flex flex-col-reverse gap-12 lg:flex-row">
-          <section className="grid w-full grid-cols-1 gap-8 xs:grid-cols-2 lg:w-2/3 place-items-center">
-            {features.map((feature, index) => (
-              <div key={index} className="transition-all duration-300 transform hover:scale-105">
-                <div className="relative overflow-hidden cursor-pointer group rounded-xl h-72 max-w-80">
-                  <div
-                    className={`absolute inset-0 bg-cover bg-no-repeat bg-center duration-500 group-hover:scale-110`}
-                    style={{ backgroundImage: `url(${featureImages[index]})` }}
-                  />
-                  <div className="absolute inset-0 transition-all duration-300 bg-black/40 group-hover:bg-black/60" />
-                  <div className="relative z-10 flex flex-col items-center justify-center h-full p-6 text-center">
-                    <h3 className="mb-4 text-xl font-bold md:text-2xl">{feature.title}</h3>
-                    <p className="transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-                      {feature.description}
-                    </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => {
+              const IconComponent = feature.icon;
+              return (
+                <div
+                  key={index}
+                  className="group glass backdrop-blur-xl border border-white/20 hover:border-purple-400/50 p-8 rounded-3xl transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
+                  style={{ animationDelay: `${index * 200}ms` }}
+                >
+                  <div className={`p-4 bg-gradient-to-r ${feature.color} rounded-2xl inline-block mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <IconComponent className="w-8 h-8 text-white" />
                   </div>
+                  
+                  <h3 className="text-xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 group-hover:bg-clip-text transition-all duration-300">
+                    {feature.title}
+                  </h3>
+                  
+                  <p className="text-slate-300 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
-              </div>
-            ))}
-          </section>
-
-          <div className="flex flex-col items-center justify-center lg:w-1/3">
-            <div>
-              <p className="text-[#a908ff] text-4xl md:text-6xl font-serif">Features</p>
-              <hr className="bg-[#f508ff] w-16 h-1 mb-4" />
-              <p className="font-serif text-xl md:text-2xl">
-                What You Will{" "}
-                <span className="text-[#a908ff] text-3xl md:text-4xl font-serif">
-                  Experience
-                </span>
-              </p>
-            </div>
-            <picture className="relative flex items-center justify-center max-w-80 max-h-80 md:h-64 lg:h-96 md:w-64 lg:w-96 drop-shadow-3xl">
-              <img
-                src={feature}
-                alt="Features"
-                className="object-cover h-auto max-w-full rounded-lg"
-                loading="lazy"
-              />
-            </picture>
+              );
+            })}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="Popular w-full px-4 md:px-12 lg:px-24 py-12 bg-gradient-to-r from-[#020530] to-[#13063e]">
-        <div className="flex flex-col items-center justify-center gap-12 md:flex-row">
-          <div className="flex flex-col items-center lg:w-1/3">
-            <div>
-              <p className="text-[#a908ff] text-3xl md:text-5xl font-serif mb-2">Popular</p>
-              <hr className="bg-[#f508ff] w-16 h-1 mb-4" />
-              <p className="text-[#a908ff] text-3xl md:text-5xl font-serif mb-2 ml-7">
-                Games
-              </p>
-              <hr className="bg-[#f508ff] w-16 h-1 mb-4 ml-7" />
-            </div>
-            <picture className="relative flex items-center justify-center max-w-80 max-h-80 md:h-64 lg:h-96 md:w-64 lg:w-96 drop-shadow-3xl">
-              <img
-                src={Popular}
-                alt="Popular Games"
-                className="object-cover h-auto max-w-full rounded-lg"
-                loading="lazy"
-              />
-            </picture>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 lg:grid-cols-3 lg:w-2/3 min-h-72 min-w-72">
-            {[rpsImage, tttImage, cardImage].map((image, index) => (
-              <div
-                key={index}
-                className="overflow-hidden transition-all duration-300 transform bg-center bg-cover shadow-lg aspect-square rounded-xl hover:scale-105"
-                style={{ backgroundImage: `url(${image})` }}
-                onClick={() => { navigate(`/Games/${index === 0 ? "RPS" : index === 1 ? "TTT" : ""}`) }}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="footer w-full bg-[#09012a] px-4 md:px-12 py-12">
-        <div className="mx-auto max-w-7xl">
-          <h1 className="mb-12 font-serif text-3xl text-center text-yellow-600 md:text-4xl">
-            Get In Touch With Us
-          </h1>
-
-          <div className="flex flex-col gap-12 lg:flex-row">
-            <div className="space-y-6 text-xl md:text-2xl lg:w-1/3">
-              {["Suggest Games You'd Love to Play", "Report Issues or Bugs", "Share Feedback on Gameplay Experience"].map((text, index) => (
-                <div key={index} className="border-2 rounded-xl p-4 bg-[#3c256e] hover:bg-[#4c357e] transition-colors duration-300 text-center">
-                  {text}
+        {/* Stats Section */}
+        <section className="py-20">
+          <div className="glass backdrop-blur-xl border border-white/20 rounded-3xl p-12 text-center">
+            <h3 className="text-3xl font-bold text-white mb-8">Join Our Growing Community</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="group">
+                <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
+                  10,000+
                 </div>
-              ))}
+                <p className="text-slate-300">Active Players</p>
+              </div>
+              
+              <div className="group">
+                <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
+                  50,000+
+                </div>
+                <p className="text-slate-300">Games Played</p>
+              </div>
+              
+              <div className="group">
+                <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
+                  24/7
+                </div>
+                <p className="text-slate-300">Always Online</p>
+              </div>
             </div>
-
-            <form className="bg-gradient-to-r from-[#7b7fc7] to-[#3d258b] rounded-lg shadow-xl p-6 lg:w-2/3">
-              <div className="mb-4">
-                <label
-                  htmlFor="title"
-                  className="block mb-2 text-sm font-bold text-gray-700"
-                >
-                  Title
-                </label>
-                <input
-                  placeholder="Enter title"
-                  type="text"
-                  className="w-full px-3 py-2 leading-tight text-white border rounded shadow appearance-none focus:outline-none focus:shadow-outline bg-blue-950"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="content"
-                  className="block mb-2 text-sm font-bold text-gray-700"
-                >
-                  Message
-                </label>
-                <textarea
-                  rows="5"
-                  placeholder="Enter your content"
-                  id="content"
-                  className="w-full px-3 py-2 leading-tight text-white border rounded shadow appearance-none focus:outline-none focus:shadow-outline bg-blue-950"
-                ></textarea>
-              </div>
-              <div className="flex items-center justify-between">
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-sm font-bold text-white rounded bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:shadow-outline"
-                >
-                  Post
-                </button>
-                <div className="flex items-center"></div>
-              </div>
-            </form>
           </div>
-        </div>
-      </section>
-    </main>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 text-center">
+          <div className="glass backdrop-blur-xl border border-white/20 rounded-3xl p-12">
+            <h3 className="text-4xl font-bold text-white mb-6">Ready to Dominate?</h3>
+            <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
+              Jump into the action and prove your skills against players from around the world.
+            </p>
+            
+            <button 
+              onClick={() => navigate('/Games')}
+              className="group bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-12 rounded-2xl text-xl transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
+            >
+              <div className="flex items-center gap-3">
+                <FaRocket className="w-6 h-6 group-hover:animate-bounce" />
+                <span>Enter the Arena</span>
+              </div>
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
   );
 }
 

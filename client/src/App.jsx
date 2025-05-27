@@ -21,6 +21,14 @@ const RequireAuth = lazy(() => import("./features/auth/RequireAuth"));
 const OAuthSuccess = lazy(() => import("./features/auth/OAuthSuccess"));
 const RPS = lazy(() => import("./components/GameBoards/RPS"));
 const TTT = lazy(() => import("./components/GameBoards/TTT"));
+const ConnectFour = lazy(() => import("./components/GameBoards/ConnectFour"));
+const WordBattle = lazy(() => import("./components/GameBoards/WordBattle"));
+const MemoryMatch = lazy(() => import("./components/GameBoards/MemoryMatch"));
+const NumberGuess = lazy(() => import("./components/GameBoards/NumberGuess"));
+const QuickDraw = lazy(() => import("./components/GameBoards/QuickDraw"));
+const MathDuel = lazy(() => import("./components/GameBoards/MathDuel"));
+const ColorMatch = lazy(() => import("./components/GameBoards/ColorMatch"));
+const TypingRace = lazy(() => import("./components/GameBoards/TypingRace"));
 
 function App() {
   const user = useSelector(selectCurrentUser);
@@ -88,6 +96,70 @@ function App() {
               element: (
                 <Suspense fallback={<Loader />}>
                   <TTT />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/Games/ConnectFour",
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <ConnectFour />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/Games/WordBattle",
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <WordBattle />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/Games/MemoryMatch",
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <MemoryMatch />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/Games/NumberGuess",
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <NumberGuess />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/Games/QuickDraw",
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <QuickDraw />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/Games/MathDuel",
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <MathDuel />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/Games/ColorMatch",
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <ColorMatch />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/Games/TypingRace",
+              element: (
+                <Suspense fallback={<Loader />}>
+                  <TypingRace />
                 </Suspense>
               ),
             },

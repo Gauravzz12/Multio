@@ -1,26 +1,110 @@
 import React from 'react';
-import { FaTrophy, FaMedal } from 'react-icons/fa';
+import { FaTrophy, FaMedal, FaCrown, FaFire } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
-const GameResultDisplay = ({socket}) => {
-  const { matchInfo } = useSelector(state => state.game);
-  const playerId=socket.id;
+
+const GameResultDisplay = ({ socket }) => {
+  const { matchInfo } = useSelector((state) => state.game);
+  const playerId = socket.id;
+  const isWinner = playerId === matchInfo.winner;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 animate-fadeIn">
-      <div className="bg-gray-800 p-10 rounded-2xl shadow-2xl max-w-md w-full mx-4 border border-gray-700 transform hover:scale-105 transition-all duration-300">
-        <div className="flex flex-col items-center gap-8">
-          <FaTrophy className="text-7xl text-yellow-400 animate-bounce shadow-lg" />
-          <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500 text-transparent bg-clip-text tracking-wider">
-            Game Over!
-          </h2>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50">
+      <div className="relative">
+        {/* Animated particles background */}
+        <div className="absolute inset-0 overflow-hidden rounded-3xl">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className={`absolute w-2 h-2 rounded-full ${
+                isWinner ? 'bg-yellow-400' : 'bg-blue-400'
+              } animate-ping`}
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${2 + Math.random() * 2}s`,
+              }}
+            />
+          ))}
+        </div>
 
-          <div className="w-full space-y-6">
-            <div className="flex items-center justify-center gap-3 p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors duration-200">
-              {playerId === matchInfo.winner && <FaMedal className="text-yellow-400 text-2xl animate-pulse" />}
-              <span className="font-bold text-xl text-gray-100">
-                {playerId === matchInfo.winner ? 'Winner!' : 'Better luck next time!'}
-              </span>
+        {/* Main content */}
+        <div className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-12 rounded-3xl shadow-2xl max-w-md w-full mx-4 border border-white/20 backdrop-blur-xl">
+          <div className="text-center">
+            {/* Trophy/Medal Icon */}
+            <div
+              className={`mx-auto mb-8 p-6 rounded-full ${
+                isWinner
+                  ? 'bg-gradient-to-r from-yellow-400 to-orange-500'
+                  : 'bg-gradient-to-r from-blue-500 to-purple-500'
+              } animate-bounce shadow-2xl`}
+            >
+              {isWinner ? (
+                <FaTrophy className="w-16 h-16 text-white" />
+              ) : (
+                <FaMedal className="w-16 h-16 text-white" />
+              )}
             </div>
+
+            {/* Crown for winner */}
+            {isWinner && (
+              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
+                <FaCrown className="w-12 h-12 text-yellow-400 animate-pulse" />
+              </div>
+            )}
+
+            {/* Main heading */}
+            <h2
+              className={`text-5xl font-bold mb-4 ${
+                isWinner ? 'text-yellow-400' : 'text-blue-400'
+              }`}
+            >
+              {isWinner ? 'Victory!' : 'Good Game!'}
+            </h2>
+
+            {/* Result text */}
+            <div
+              className={`text-2xl font-semibold mb-8 ${
+                isWinner ? 'text-yellow-300' : 'text-blue-300'
+              }`}
+            >
+              {isWinner ? (
+                <div className="flex items-center justify-center gap-2">
+                  <FaFire className="text-orange-400" />
+                  <span>You are the Champion!</span>
+                  <FaFire className="text-orange-400" />
+                </div>
+              ) : (
+                <span>Better luck next time!</span>
+              )}
+            </div>
+
+            {/* Decorative elements */}
+            <div className="flex justify-center gap-4 mb-8">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-3 h-3 rounded-full ${
+                    isWinner ? 'bg-yellow-400' : 'bg-blue-400'
+                  } animate-pulse`}
+                  style={{ animationDelay: `${i * 0.2}s` }}
+                />
+              ))}
+            </div>
+
+            {/* Auto-redirect message */}
+            <p className="text-slate-400 text-sm">
+              Returning to games in a moment...
+            </p>
+
+            {/* Animated border */}
+            <div
+              className={`absolute inset-0 rounded-3xl bg-gradient-to-r ${
+                isWinner
+                  ? 'from-yellow-400 via-orange-500 to-yellow-400'
+                  : 'from-blue-500 via-purple-500 to-blue-500'
+              } opacity-20 animate-pulse -z-10`}
+            ></div>
           </div>
         </div>
       </div>

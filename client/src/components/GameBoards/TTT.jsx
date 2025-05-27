@@ -178,78 +178,87 @@ const TTT = () => {
       </td>
     );
   };
-
   return (
-    <div className="flex flex-col items-center mt-4 text-center text-white relative min-h-screen p-4 max-w-8xl mx-auto w-full  h-[90vh] bg-gray-900 rounded-xl shadow-2xl  overflow-hidden border border-gray-700">
-      <button
-        onClick={closeGameBoard}
-        className="absolute top-4 right-4 text-white hover:text-gray-300"
-      >
-        <FaTimes size={24} />
-      </button>
-      <h2 className="text-3xl md:text-5xl mb-8 font-bold tracking-wider flex justify-center bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-blue-500">
-        Tic Tac Toe
-      </h2>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000"></div>
+        <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000"></div>
+      </div>
 
-      {gameMode === "custom" && roomName && (
-        <div className="fixed bottom-4 left-4 z-50 flex items-center gap-2 bg-gray-800/80 backdrop-blur-sm p-3 rounded-lg shadow-lg transition-all duration-300 hover:bg-gray-700/80">
-          <button
-            onClick={copyRoomId}
-            className="text-sm md:text-base hover:scale-105 transition-transform duration-300"
-          >
-            <p className="flex items-center">
-              Copy Room Id
-              <FaCopy className="text-xl hover:text-gray-300 ml-2 transition-colors duration-300" />
-            </p>
-          </button>
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+        {/* Close Button */}
+        <button
+          onClick={closeGameBoard}
+          className="fixed top-6 right-6 z-50 p-3 glass rounded-2xl border border-white/20 text-white hover:text-red-400 hover:border-red-400/50 transition-all duration-300 hover:scale-110 group"
+        >
+          <FaTimes size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+        </button>        {/* Game Title */}
+        <div className="text-center mb-12">
+          <h1 className="text-6xl md:text-8xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent animate-pulse">
+            TIC TAC TOE
+          </h1>
+          <div className="w-32 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
         </div>
-      )}
 
-
-
-      {showScore && <ScoreBoard socket={socket} />}
-      {!gameMode ? (
-        <GameModeSelector socket={socket} />
-      ) : waitingForOpponent ? (
-        <OpponentLoader />
-      ) : result ? gameOver ? (<GameResultDisplay socket={socket} />) : (
-        <div className={`p-4 rounded-xl backdrop-blur-sm mb-4 ${result === "winner" ? "bg-green-500/10" :
-          result === "loser" ? "bg-red-500/10" : "bg-yellow-500/10"
-          }`}>
-          <div className="flex flex-col items-center space-y-2">
-            <h2 className={`text-xl md:text-3xl font-bold ${result === "winner" ? "text-green-500" :
-              result === "loser" ? "text-red-500" : "text-yellow-500"
-              }`}>
-              {result === "winner" ? "You won! 🎉" :
-                result === "loser" ? "You lost! 😔" : "It's a draw! 🤝"}
-            </h2>
-
+        {gameMode === "custom" && roomName && (
+          <div className="fixed bottom-4 left-4 z-50 flex items-center gap-2 bg-gray-800/80 backdrop-blur-sm p-3 rounded-lg shadow-lg transition-all duration-300 hover:bg-gray-700/80">
+            <button
+              onClick={copyRoomId}
+              className="text-sm md:text-base hover:scale-105 transition-transform duration-300"
+            >
+              <p className="flex items-center">
+                Copy Room Id
+                <FaCopy className="text-xl hover:text-gray-300 ml-2 transition-colors duration-300" />
+              </p>
+            </button>
           </div>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center space-y-6">
-          <h3 className="text-xl md:text-3xl">
-            You are: <span className="font-bold">{mySymbol}</span>
-          </h3>
-          <h3 className={`text-xl md:text-3xl font-bold ${currentPlayer === socket?.id ? "text-green-500" : "text-red-500"
+        )}
+
+        {showScore && <ScoreBoard socket={socket} />}
+        {!gameMode ? (
+          <GameModeSelector socket={socket} />
+        ) : waitingForOpponent ? (
+          <OpponentLoader />
+        ) : result ? gameOver ? (<GameResultDisplay socket={socket} />) : (
+          <div className={`p-4 rounded-xl backdrop-blur-sm mb-4 ${result === "winner" ? "bg-green-500/10" :
+            result === "loser" ? "bg-red-500/10" : "bg-yellow-500/10"
             }`}>
-            {currentPlayer === socket?.id ? "Your turn" : "Opponent's turn"}
-          </h3>
-          <div className="mt-4 p-2 rounded-lg bg-gray-800/30 backdrop-blur-sm">
-            <table>
-              <tbody className={`border-4 rounded-lg ${currentPlayer === socket?.id ? "border-green-500" : "border-red-500"
+            <div className="flex flex-col items-center space-y-2">
+              <h2 className={`text-xl md:text-3xl font-bold ${result === "winner" ? "text-green-500" :
+                result === "loser" ? "text-red-500" : "text-yellow-500"
                 }`}>
-                {board.map((row, rowIndex) => (
-                  <tr key={rowIndex} className={`border-4 ${currentPlayer === socket?.id ? "border-green-500" : "border-red-500"
-                    }`}>
-                    {row.map((cell, cellIndex) => renderCell(rowIndex, cellIndex))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                {result === "winner" ? "You won! 🎉" :
+                  result === "loser" ? "You lost! 😔" : "It's a draw! 🤝"}
+              </h2>
+            </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="flex flex-col items-center space-y-6">
+            <h3 className="text-xl md:text-3xl">
+              You are: <span className="font-bold">{mySymbol}</span>
+            </h3>
+            <h3 className={`text-xl md:text-3xl font-bold ${currentPlayer === socket?.id ? "text-green-500" : "text-red-500"
+              }`}>
+              {currentPlayer === socket?.id ? "Your turn" : "Opponent's turn"}
+            </h3>
+            <div className="mt-4 p-2 rounded-lg bg-gray-800/30 backdrop-blur-sm">
+              <table>
+                <tbody className={`border-4 rounded-lg ${currentPlayer === socket?.id ? "border-green-500" : "border-red-500"
+                  }`}>
+                  {board.map((row, rowIndex) => (
+                    <tr key={rowIndex} className={`border-4 ${currentPlayer === socket?.id ? "border-green-500" : "border-red-500"
+                      }`}>
+                      {row.map((cell, cellIndex) => renderCell(rowIndex, cellIndex))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

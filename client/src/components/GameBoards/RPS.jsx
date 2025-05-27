@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { selectCurrentUser, selectCurrentAvatar } from "../../features/auth/authSlice";
 import {
   setGameMode,
   setRoomName,
@@ -9,18 +11,16 @@ import {
   setMatchInfo,
   resetMatchInfo
 } from "../../features/games/gameSlice";
+import { FaTimes, FaCopy } from "react-icons/fa";
 import rockIcon from "../../assets/images/RPS/rock.svg";
 import paperIcon from "../../assets/images/RPS/paper.svg";
 import scissorsIcon from "../../assets/images/RPS/scissors.svg";
+import defaultAvatar from "../../assets/images/default-avatar.png";
 import GameModeSelector from "../GameModeSelector";
 import OpponentLoader from "../OpponentLoader";
-import { FaCopy, FaTimes } from "react-icons/fa";
-import useSocket from "../../hooks/useSocket";
 import ScoreBoard from "../ScoreBoard";
-import { useNavigate } from "react-router-dom";
-import { selectCurrentUser, selectCurrentAvatar } from "../../features/auth/authSlice";
 import GameResultDisplay from "../GameResultDisplay";
-import defaultAvatar from '../../assets/images/default-avatar.png';
+import useSocket from "../../hooks/useSocket";
 
 const RPS = () => {
   const dispatch = useDispatch();
@@ -184,60 +184,106 @@ const RPS = () => {
       </div>
     );
   };
-
   return (
-    <div className="flex flex-col items-center mt-4 text-center text-white relative min-h-screen p-4 max-w-8xl mx-auto w-full  h-[90vh] bg-gray-900 rounded-xl shadow-2xl  overflow-hidden border border-gray-700">
-      <button
-        onClick={closeGameBoard}
-        className="absolute top-4 right-4 text-white hover:text-gray-300"
-      >
-        <FaTimes size={24} />
-      </button>
-      <h2 className="text-white text-4xl md:text-5xl mb-4 font-bold tracking-wider flex justify-center">
-        Rock Paper Scissors
-      </h2>
-      {gameMode === "custom" && roomName && (
-        <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-gray-800 p-2 rounded">
-          <button onClick={copyRoomId}>
-            <p className="flex items-center">
-              Copy Room Id
-              <FaCopy className="text-xl hover:text-gray-300 ml-1" />
-            </p>
-          </button>
-        </div>
-      )}
-      {showScore ? <ScoreBoard socket={socket} /> : ""}
-      {!gameMode ? (
-        <GameModeSelector socket={socket} />
-      ) : waitingForOpponent ? (
-        <OpponentLoader />
-      ) : !result ? (
-        <ChoiceButtons />
-      ) : gameOver ? (<GameResultDisplay socket={socket} />) : (
-        <div className={`flex flex-col items-center mt-4 p-4 rounded-xl backdrop-blur-sm ${result === "You win!" ? "bg-green-500/10" :
-          result === "You lose!" ? "bg-red-500/10" : "bg-yellow-500/10"
-          }`}>
-          <div className="flex justify-around w-full max-w-sm mb-4">
-            <div className="flex flex-col items-center">
-              <h2 className="text-xl mb-2">You</h2>
-              <img src={choiceIcons[userChoice]} alt={userChoice}
-                className="w-16 h-16 md:w-20 md:h-20 animate-pulse" />
-              <p className="text-base mt-1">{userChoice}</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <h2 className="text-xl mb-2">Opponent</h2>
-              <img src={choiceIcons[opponentChoice]} alt={opponentChoice}
-                className="w-16 h-16 md:w-20 md:h-20 animate-pulse" />
-              <p className="text-base mt-1">{opponentChoice}</p>
-            </div>
-          </div>
-          <h1 className={`text-2xl md:text-3xl font-bold ${result === "You win!" ? "text-green-500" :
-            result === "You lose!" ? "text-red-500" : "text-yellow-500"
-            }`}>
-            {result}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000"></div>
+        <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000"></div>
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+        {/* Close Button */}
+        <button
+          onClick={closeGameBoard}
+          className="fixed top-6 right-6 z-50 p-3 glass rounded-2xl border border-white/20 text-white hover:text-red-400 hover:border-red-400/50 transition-all duration-300 hover:scale-110 group"
+        >
+          <FaTimes size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+        </button>
+
+        {/* Game Title */}
+        <div className="text-center mb-12">
+          <h1 className="text-6xl md:text-8xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent animate-pulse">
+            ROCK PAPER SCISSORS
           </h1>
+          <div className="w-32 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
         </div>
-      )}
+
+        {/* Room ID Display */}
+        {gameMode === "custom" && roomName && (
+          <div className="fixed bottom-4 left-4 z-50 flex items-center gap-2 bg-gray-800/80 backdrop-blur-sm p-3 rounded-lg shadow-lg transition-all duration-300 hover:bg-gray-700/80">
+            <button
+              onClick={copyRoomId}
+              className="text-sm md:text-base hover:scale-105 transition-transform duration-300"
+            >
+              <p className="flex items-center">
+                Copy Room Id
+                <FaCopy className="text-xl hover:text-gray-300 ml-2 transition-colors duration-300" />
+              </p>
+            </button>
+          </div>
+        )}
+
+        {/* Main Game Content */}
+        <div className="w-full max-w-4xl mx-auto">
+          {showScore && <ScoreBoard socket={socket} />}
+          
+          {!gameMode ? (
+            <GameModeSelector socket={socket} />
+          ) : waitingForOpponent ? (
+            <OpponentLoader />
+          ) : !result ? (
+            <ChoiceButtons />
+          ) : gameOver ? (
+            <GameResultDisplay socket={socket} />
+          ) : (
+            <div className={`glass backdrop-blur-xl border border-white/20 rounded-3xl p-8 text-center ${
+              result === "You win!" ? "bg-green-500/10" :
+              result === "You lose!" ? "bg-red-500/10" : "bg-yellow-500/10"
+            }`}>
+              <div className="flex justify-around w-full max-w-lg mx-auto mb-6">
+                <div className="flex flex-col items-center">
+                  <h2 className="text-xl mb-4 text-white font-semibold">You</h2>
+                  <div className="relative">
+                    <img 
+                      src={choiceIcons[userChoice]} 
+                      alt={userChoice}
+                      className="w-20 h-20 md:w-24 md:h-24 animate-bounce" 
+                    />
+                    <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-pulse"></div>
+                  </div>
+                  <p className="text-lg mt-3 text-slate-300">{userChoice}</p>
+                </div>
+                
+                <div className="flex items-center justify-center">
+                  <div className="text-4xl font-bold text-white animate-pulse">VS</div>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <h2 className="text-xl mb-4 text-white font-semibold">Opponent</h2>
+                  <div className="relative">
+                    <img 
+                      src={choiceIcons[opponentChoice]} 
+                      alt={opponentChoice}
+                      className="w-20 h-20 md:w-24 md:h-24 animate-bounce" 
+                    />
+                    <div className="absolute inset-0 bg-red-500/20 rounded-full animate-pulse"></div>
+                  </div>
+                  <p className="text-lg mt-3 text-slate-300">{opponentChoice}</p>
+                </div>
+              </div>
+              
+              <h1 className={`text-3xl md:text-4xl font-bold ${
+                result === "You win!" ? "text-green-500" :
+                result === "You lose!" ? "text-red-500" : "text-yellow-500"
+              }`}>
+                {result}
+              </h1>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
