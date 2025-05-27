@@ -44,7 +44,7 @@ const TTT = () => {
     const newSocket = io(
       import.meta.env.MODE === "development"
         ? "http://localhost:5000/ttt"
-        : "https://multio-backend.up.railway.app/ttt"
+        : "https://multio-backend.onrender.com/ttt"
     );
     setSocket(newSocket);
 

@@ -35,7 +35,7 @@ const ConnectFour = () => {
     const newSocket = io(
       import.meta.env.MODE === "development"
         ? "http://localhost:5000/connectfour"
-        : "https://multio-backend.up.railway.app/connectfour"
+        : "https://multio-backend.onrender.com/connectfour"
     );
     setSocket(newSocket);
 

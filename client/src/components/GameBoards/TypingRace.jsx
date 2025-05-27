@@ -35,7 +35,7 @@ const TypingRace = () => {
     const newSocket = io(
       import.meta.env.MODE === "development"
         ? "http://localhost:5000/typingrace"
-        : "https://multio-backend.up.railway.app/typingrace"
+        : "https://multio-backend.onrender.com/typingrace"
     );
     setSocket(newSocket);
 

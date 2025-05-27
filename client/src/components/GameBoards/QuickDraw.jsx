@@ -35,7 +35,7 @@ const QuickDraw = () => {
     const newSocket = io(
       import.meta.env.MODE === "development"
         ? "http://localhost:5000/quickdraw"
-        : "https://multio-backend.up.railway.app/quickdraw"
+        : "https://multio-backend.onrender.com/quickdraw"
     );
     setSocket(newSocket);
 

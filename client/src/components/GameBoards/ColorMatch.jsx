@@ -35,7 +35,7 @@ const ColorMatch = () => {
     const newSocket = io(
       import.meta.env.MODE === "development"
         ? "http://localhost:5000/colormatch"
-        : "https://multio-backend.up.railway.app/colormatch"
+        : "https://multio-backend.onrender.com/colormatch"
     );
     setSocket(newSocket);
 

@@ -35,7 +35,7 @@ const MemoryMatch = () => {
     const newSocket = io(
       import.meta.env.MODE === "development"
         ? "http://localhost:5000/memorymatch"
-        : "https://multio-backend.up.railway.app/memorymatch"
+        : "https://multio-backend.onrender.com/memorymatch"
     );
     setSocket(newSocket);
 

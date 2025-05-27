@@ -35,7 +35,7 @@ const WordBattle = () => {
     const newSocket = io(
       import.meta.env.MODE === "development"
         ? "http://localhost:5000/wordbattle"
-        : "https://multio-backend.up.railway.app/wordbattle"
+        : "https://multio-backend.onrender.com/wordbattle"
     );
     setSocket(newSocket);
 

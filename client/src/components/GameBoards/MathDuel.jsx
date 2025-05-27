@@ -35,7 +35,7 @@ const MathDuel = () => {
     const newSocket = io(
       import.meta.env.MODE === "development"
         ? "http://localhost:5000/mathduel"
-        : "https://multio-backend.up.railway.app/mathduel"
+        : "https://multio-backend.onrender.com/mathduel"
     );
     setSocket(newSocket);
 

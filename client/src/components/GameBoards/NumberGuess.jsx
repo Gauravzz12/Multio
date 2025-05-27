@@ -35,7 +35,7 @@ const NumberGuess = () => {
     const newSocket = io(
       import.meta.env.MODE === "development"
         ? "http://localhost:5000/numberguess"
-        : "https://multio-backend.up.railway.app/numberguess"
+        : "https://multio-backend.onrender.com/numberguess"
     );
     setSocket(newSocket);
 
