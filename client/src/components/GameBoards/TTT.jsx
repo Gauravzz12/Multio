@@ -179,7 +179,7 @@ const TTT = () => {
     );
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
@@ -187,14 +187,15 @@ const TTT = () => {
         <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000"></div>
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+      <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-4xl mx-auto p-4 min-h-[80vh]">
         {/* Close Button */}
         <button
           onClick={closeGameBoard}
           className="fixed top-6 right-6 z-50 p-3 glass rounded-2xl border border-white/20 text-white hover:text-red-400 hover:border-red-400/50 transition-all duration-300 hover:scale-110 group"
         >
           <FaTimes size={20} className="group-hover:rotate-90 transition-transform duration-300" />
-        </button>        {/* Game Title */}
+        </button>
+        {/* Game Title */}
         <div className="text-center mb-12">
           <h1 className="text-6xl md:text-8xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent animate-pulse">
             TIC TAC TOE
@@ -221,40 +222,52 @@ const TTT = () => {
           <GameModeSelector socket={socket} />
         ) : waitingForOpponent ? (
           <OpponentLoader />
-        ) : result ? gameOver ? (<GameResultDisplay socket={socket} />) : (
-          <div className={`p-4 rounded-xl backdrop-blur-sm mb-4 ${result === "winner" ? "bg-green-500/10" :
+        ) : result ? gameOver ? (
+          <GameResultDisplay socket={socket} />
+        ) : (
+          <div className={`glass backdrop-blur-xl border border-white/20 rounded-3xl p-8 text-center mb-8 shadow-2xl ${
+            result === "winner" ? "bg-green-500/10" :
             result === "loser" ? "bg-red-500/10" : "bg-yellow-500/10"
-            }`}>
+          }`}>
             <div className="flex flex-col items-center space-y-2">
-              <h2 className={`text-xl md:text-3xl font-bold ${result === "winner" ? "text-green-500" :
-                result === "loser" ? "text-red-500" : "text-yellow-500"
-                }`}>
+              <h2 className={`text-2xl md:text-3xl font-bold ${
+                result === "winner" ? "text-green-400" :
+                result === "loser" ? "text-red-400" : "text-yellow-400"
+              } animate-pulse`}>
                 {result === "winner" ? "You won! 🎉" :
                   result === "loser" ? "You lost! 😔" : "It's a draw! 🤝"}
               </h2>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center space-y-6">
-            <h3 className="text-xl md:text-3xl">
-              You are: <span className="font-bold">{mySymbol}</span>
-            </h3>
-            <h3 className={`text-xl md:text-3xl font-bold ${currentPlayer === socket?.id ? "text-green-500" : "text-red-500"
-              }`}>
-              {currentPlayer === socket?.id ? "Your turn" : "Opponent's turn"}
-            </h3>
-            <div className="mt-4 p-2 rounded-lg bg-gray-800/30 backdrop-blur-sm">
-              <table>
-                <tbody className={`border-4 rounded-lg ${currentPlayer === socket?.id ? "border-green-500" : "border-red-500"
-                  }`}>
-                  {board.map((row, rowIndex) => (
-                    <tr key={rowIndex} className={`border-4 ${currentPlayer === socket?.id ? "border-green-500" : "border-red-500"
-                      }`}>
-                      {row.map((cell, cellIndex) => renderCell(rowIndex, cellIndex))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="flex flex-col items-center space-y-8 w-full">
+            <div className="glass backdrop-blur-2xl border-4 border-purple-500/60 rounded-3xl p-10 text-center shadow-2xl w-full max-w-lg mx-auto">
+              <h3 className="text-xl md:text-2xl mb-2 text-white">You are: <span className="font-bold text-purple-400">{mySymbol}</span></h3>
+              <h3 className={`text-xl md:text-2xl font-bold mb-4 ${currentPlayer === socket?.id ? "text-green-400" : "text-red-400"} animate-pulse`}>
+                {currentPlayer === socket?.id ? "Your turn" : "Opponent's turn"}
+              </h3>
+              <div className="mt-4 p-4 rounded-3xl bg-gradient-to-br from-purple-900/60 to-slate-900/60 backdrop-blur-md border-4 border-purple-700/60 shadow-inner flex items-center justify-center">
+                <table className="mx-auto">
+                  <tbody className="">
+                    {board.map((row, rowIndex) => (
+                      <tr key={rowIndex}>
+                        {row.map((cell, cellIndex) => (
+                          <td
+                            key={`${rowIndex}-${cellIndex}`}
+                            onClick={() => handleCellClick(rowIndex, cellIndex)}
+                            className={`relative w-24 h-24 md:w-28 md:h-28 border-4 ${currentPlayer === socket?.id ? "border-green-500" : "border-red-500"} cursor-pointer hover:bg-purple-800/40 transition-colors duration-300 rounded-2xl group shadow-xl m-2`}
+                          >
+                            <div className="absolute inset-0 flex items-center justify-center p-2 md:p-3">
+                              {cell === "X" && <FaTimes className="w-16 h-16 md:w-20 md:h-20 text-violet-400 drop-shadow-lg group-hover:scale-110 transition-transform duration-300" />}
+                              {cell === "O" && <FaRegCircle className="w-16 h-16 md:w-20 md:h-20 text-blue-400 drop-shadow-lg group-hover:scale-110 transition-transform duration-300" />}
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
